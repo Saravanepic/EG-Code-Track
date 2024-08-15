@@ -1,0 +1,31 @@
+#algolia-home-search #header-search-input {
+	border-radius: 0;
+  	border: none;
+    border-bottom: 1px solid #979797;
+    background: transparent;
+    background-image: url('//entergallery.com/cdn/shop/t/80/assets/search-solid_small.png?v=95400137615217448461717738989');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 20px;
+}
+
+#algolia-home-search #header-search-input::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: #9f9f9f;
+  opacity: 1; /* Firefox */
+}
+
+#algolia-home-search #header-search-input:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: #9f9f9f;
+}
+
+#algolia-home-search #header-search-input::-ms-input-placeholder { /* Microsoft Edge */
+  color: #9f9f9f;
+}
+
+#algolia-home-search .algolia-quicksearch-container {
+	padding: 0; 
+}
+
+#algolia-home-search .form-container {
+ 	border: none; 
+}

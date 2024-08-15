@@ -1,0 +1,55 @@
+{% assign header_image = section.settings.blog-sidebar-image %}
+{% if header_image != blank %}
+
+    {% if section.settings.blog-sidebar-image-size == 'original' %}
+            {% include 'responsive-image' with header_image, alt: collection.title, class: 'collection-page--feature-image' %}			
+    {% else %}
+
+        <style>
+            {% if header_image != blank %}
+                {% capture selector %}.collection-image .img{% endcapture %}
+                {% if collection.metafields.accentuate.optional_header_replacement != blank %}
+                    {{ selector }} {
+                        background-image: url('{{ header_image | append: 'w_1660' }}');
+                    }
+                {% else %}
+                    {% include 'responsive-background-image' with header_image, selector: selector %}
+                {% endif %}
+
+            .collection-image .img {
+                background-position: center;
+                background-repeat: no-repeat;
+                background-size: cover;
+            }
+            {% endif %}
+
+            .collection-image .img {
+            height: {{ section.settings.blog-sidebar-image-size }};
+            }
+
+            @media only screen and (min-width: 768px) {
+            .collection-image .rellax.img {
+                height: {{ section.settings.blog-sidebar-image-size | remove:'vw' | times:1.15 | append:'vw' }};
+                margin-top: {{ section.settings.blog-sidebar-image-size | remove:'vw' | times:-0.6 | append:'vw' }};
+            }
+            }
+
+            .parallax.collection-image-parallax {
+            height: {{ section.settings.blog-sidebar-image-size }};
+            }
+        </style>
+
+        {% capture image_layout %}
+            <div class="collection-image">
+                <div class="collection-page--feature-image {% if section.settings.parallax %} parallax collection-image-parallax{% endif %}">
+                    <div id="rellax--collection-image" class="img{% if section.settings.parallax %} rellax {% else %} aspect-locked {% endif %}" data-rellax-percentage="0.15" data-rellax-speed="-4"></div>
+                </div>
+            </div>
+        {% endcapture %}
+
+        {{ image_layout }}
+
+    {% endif %}
+{% else %}
+    <div class="no-collection-img"></div>
+{% endif %}

@@ -1,0 +1,128 @@
+    <style>
+      label[for="product-select-option-{{ option_index }}"] { display: none; }
+      #product-select-option-{{ option_index }} { display: none; }
+      #product-select-option-{{ option_index }} + .custom-style-select-box { display: none !important; }
+    </style>
+  {%- capture framesCount -%}{% increment framesCount %}{%- endcapture -%}
+
+  <div class="swatch clearfix">
+        <div class="swatch-items-wrapper clearfix">
+
+
+          <!-- No frame option -->
+          <div data-value="No Frame"
+                  data-asset-url="404"
+                  data-price="0"
+                  class="swatch-element color available">
+
+                  <div class="tooltip">Unframed</div>
+                  <input 
+                    checked="checked" 
+                    id="swatch-frame-no-frame-{{framesCount}}" 
+                    type="radio" 
+                    name="properties[_frame_id]"
+                    value="None" 
+                    disabled 
+                    onClick="dataLayer.push({'event': 'no-frame', 'name': '{{ product.title }}'});" />
+
+                  <label for="swatch-frame-no-frame-{{framesCount}}"
+                            style="background-color: white;
+                            background-image: url({{ 'no-frame.png' | asset_url }});
+                            ">
+                  </label>
+
+          </div>
+
+
+  {% paginate collections['frames'].products by 1000 %}
+   {% assign sorted_products = collections['frames'].products | sort:'title' | reverse %}
+  {% for frame in sorted_products %}
+
+    {% if tags contains frame.type %}
+      {% for frame_variant in frame.variants %}
+      {% if frame_variant.available %}
+
+        {% assign frame_product_prefix =  frame.title | split: ' ' | first | handleize %}
+        {% assign frame_product_image =  frame_product_prefix | append: '-frame.png' | asset_url %}
+        {% assign frame_variant_prefix =  frame_variant.title | split: ' ' | first | handleize %}
+
+        {% if frame.variants.size == 1 or frame_variant_prefix == 'no' %}
+          {% capture frame_swatch_icon %}{{ frame_product_prefix }}{% endcapture %}
+          {% assign frame_variant_prefix = blank %}
+        {% else %}
+          {% capture frame_swatch_icon %}{{ frame_product_prefix }}-{{ frame_variant_prefix }}{% endcapture %}
+        {% endif %}
+
+        {% assign frame_swatch_icon =  frame_swatch_icon | append: '.png' | asset_url %}
+
+        {% if frame.variants.size == 1 or frame_variant_prefix == 'no' %}
+          {% assign frame_title = frame.title %}
+          {% capture frame_title_tooltip %}<span class="tooltip__title">{{ frame.title }}</span>{% endcapture %}
+
+        {% else %}
+          {% capture frame_title %}{{ frame.title }} with {{ frame_variant.title }}{% endcapture %}
+          {% capture frame_title_tooltip %}<span class="tooltip__title">{{ frame.title }}</span> with <span class="tooltip__mount">{{ frame_variant.title }}</span>{% endcapture %}
+        {% endif %}
+
+              <!--
+                  show_floats: {{ settings.show_floats }}
+                  hide_floats: {{ product.metafields.accentuate.hide_floats }}
+                  just_frame: {{ forloop.first }}
+              -->
+              {% assign frameTitle = frame_title | handleize %}
+              {% if product.metafields.accentuate.hide_floats != 'true' or forloop.first == true and settings.show_floats == true or forloop.first == true %}
+              {% if frameTitle contains 'white-frame' and product.metafields.accentuate.hide_white_frames %}
+          	  {% elsif frameTitle contains 'black-frame' and product.metafields.accentuate.hide_black_frames %}
+          	  {% else %}
+          		<!-- Recommended Frame: {{recommended_frame}} -->
+          		 
+          		{% if recommended_frame %}
+          			{% assign recommended_frame_key = frame.handle | append: ":" | append: frame_variant.id %}
+          			{% if recommended_frame_key == recommended_frame %}
+                    	<!-- Recommended Frame -->
+          				{% assign recommended = true %}
+          			{% else %}
+          				{% assign recommended = false %}
+          			{% endif %}
+          		{% else %}
+          			{% assign recommended = false %}
+          		{% endif %}
+              <div data-value="{{ frameTitle }}"
+                   	  data-id="{{ frame_variant.id }}"
+                   	  data-handle="{{ frame.handle }}"
+                   	  data-recommended="{% if recommended == true %}true{% else %}false{% endif %}"
+                      data-asset-url="{{ frame_product_image }}"
+                      data-price="{{ frame_variant.price }}"
+                      {% if frame_variant_prefix %}data-modifier="{{ frame_variant_prefix }}"{% endif %}
+                      class="swatch-element color available">
+
+                <div class="tooltip {% if recommended == true %}tooltip_recommended{% endif %}">{% if recommended == true %}<strong>Recommended Frame:</strong> {% endif %}{{ frame_title_tooltip }} <span class="tooltip__cost">+ {{ frame_variant.price | money_without_trailing_zeros }}</span></div>
+                      <input 
+                        id="swatch-frame-{{ frame_title | handleize }}-{{framesCount}}" 
+                        type="radio" 
+                        name="properties[_frame_id]"
+                        value="{{ frame_variant.id }}" 
+                        data-frame-info="{{ product.title | escape }}" 
+                        data-frame-parent="{{ product.id }}"
+                        disabled
+                        onClick="dataLayer.push({'event': 'frame', 'frame-type': '{{ frameTitle }}', 'productName': '{{ product.title }}' });" />
+
+                      <label
+                        class="{% if recommended == true %}recommended_frame{%endif %}"
+                        for="swatch-frame-{{ frame_title | handleize }}-{{framesCount}}"
+                        style="background-color: {{ frame_variant_prefix }};
+                                background-image: url({{ frame_swatch_icon }});
+                                ">
+                      </label>
+
+              </div>
+          	  {% endif %}
+              {% endif %}
+
+      {% endif %}
+      {% endfor %}
+    {% endif %}
+  {% endfor %}
+  {% endpaginate %}
+        </div>
+  </div>

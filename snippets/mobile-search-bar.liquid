@@ -1,0 +1,26 @@
+<form action="{{ routes.search_url }}" 
+      method="get" 
+      class="input-group search-bar" 
+      role="search" 
+      onsubmit="this.q.value = this.searchtext.value + this.q.value">
+
+  <!-- show only products -->
+  <input type="hidden" name="type" value="product" />
+
+  <!-- the user's search -->
+  {% comment %}
+  <input type="search" name="searchtext" value="{{ search.terms | escape | remove: ' and -tag:No-Search' }}" placeholder="{{ 'general.search.placeholder' | t }}" class="input-group-field" aria-label="{{ 'general.search.placeholder' | t }}">
+  {% endcomment %}
+  <input type="search" name="shopify_products[query]" value="{{ search.terms | escape | remove: ' and -tag:No-Search' }}" placeholder="{{ 'general.search.placeholder' | t }}" class="input-group-field" aria-label="{{ 'general.search.placeholder' | t }}">
+  
+  <!-- the suffix to hide those with No-Search -->
+  <input id="searchtext-suffix" type="hidden" name="q" value= ' and -tag:No-Search'>
+
+
+  <span class="input-group-btn hidden">
+    <button type="submit" class="btn icon-fallback-text">
+      <i class="fa fa-search"></i>
+      <span class="fallback-text">{{ 'general.search.submit' | t }}</span>
+    </button>
+  </span>
+</form>

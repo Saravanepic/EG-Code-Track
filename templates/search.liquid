@@ -1,0 +1,26 @@
+<!-- /templates/search.liquid -->
+
+
+
+  <div class="page-main--wrapper">
+    <div class="{% comment %}large--two-thirds push--large--one-sixth{% endcomment %}">
+      
+      {% include "algolia-search" %}
+
+      {% comment %}
+      <div class="sitewide--title-wrapper{% if settings.heading_style == 'dotted-line' %} header-style--ignore{% endif %}">
+        {% if search.performed %}
+          {% if search.results_count == 0 %}
+            <h1 class="page--title">{{ 'general.search.no_results_html' | t: terms: search.terms | remove: ' and -tag:No-Search'}}</h1>
+          {% else %}
+            <h1 class="page--title">{{ 'general.search.results_for_html' | t: terms: search.terms | remove: ' and -tag:No-Search'}}</h1>
+          {% endif %}
+        {% else %}
+          <h1 class="page--title">{{ 'general.search.title' | t }}</h1>
+        {% endif %}
+      </div>
+
+        {% include 'search-bar' %}
+	  {% endcomment %}
+    </div>
+</div>

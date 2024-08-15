@@ -1,0 +1,279 @@
+              <!-- NEW FILTERS -->
+
+			  {% assign tags = current_tags | join: '~~~' | downcase | split: '~~~' %}
+              {% comment %}
+              <pre>{{ current_tags }}</pre>
+			  <pre>{{ tags }}</pre>
+			  {% endcomment %}
+              
+			  <div id="art-filters-toggle" class="closed">Filters</div>
+              <div id="art-filters" class="closed">
+                <div class="left">
+                <span class="title">Filter by:</span>
+                
+                {% if settings.filtering_show_collections %}
+                <!-- collection filter -->
+                <span class="filter">
+                  <select data-filter-type="collection" data-filter-key="collection" class="art-filter" id="filter-collection" required>
+                    <option value="">All Collections</option>
+                    {% for block in section.blocks %}
+                      {%- assign coll = collections[block.settings.filter_collection] -%}
+                      {% unless coll.handle == "artworks" or coll.handle == "All" %}
+                      <option value="{{ coll.handle }}" {% if coll.handle == collection.handle %}selected{% endif %}>{{ coll.title }}</option>
+                      {% endunless %}
+                    {% endfor %}
+                  </select>
+                </span>
+                {% endif %}
+                  
+                {% if settings.filtering_show_artists %}  
+                <!-- artists filter -->
+                <span class="filter">
+                  <select data-filter-type="collection" data-filter-key="artist" class="art-filter" id="filter-artist" required>
+                    <option value="">All Artists</option>
+                    {% for col in collections %}
+                    	{% if col.metafields.accentuate.collection_type == 'Artist' %}
+                    		{% if col.all_products_count > 0 %}
+                    		<option value="{{ col.handle }}" {% if col.handle == collection.handle %}selected{% endif %}>{{ col.title }}</option>
+                    		{% endif %}
+                    	{% endif %}
+                    {% endfor %}
+                  </select>
+                </span>
+                {% endif %}
+                  
+                {% if settings.filtering_show_styles %}
+                <!-- Style filter -->
+                <span class="filter">
+                  <select data-filter-type="filter" data-filter-key="style" class="art-filter" id="filter-style" required>
+                    <option value="">All Styles</option>
+                    {% assign filter_options = settings.filtering_content_styles | split: "|" %}
+                    {% for filter in filter_options %}
+                    	{% assign filter_array = filter | split: "#" %}
+                    	{% assign tag_name = "style:" | append: filter_array[1] | replace: "-", " " | downcase %}
+                    	<option value="{{ filter_array[1] }}" {% if tags contains tag_name %}selected{% endif %}>{{ filter_array[0] }}</option>
+                    {% endfor %}
+                    
+                    {% comment %}
+                    	These are now stored in theme settings 
+                    {% endcomment %}
+                    {% comment %}
+                    <option value="abstract" {% if tags contains "style:abstract" %}selected{% endif %}>Abstract</option>
+                    <option value="cartoon" {% if tags contains "style:cartoon" %}selected{% endif %}>Cartoon</option>
+                    <option value="conceptual" {% if tags contains "style:conceptual" %}selected{% endif %}>Conceptual</option>
+                    <option value="contemporary-pop" {% if tags contains "style:contemporary-pop" %}selected{% endif %}>Contemporary Pop</option>
+                    <option value="expressionist" {% if tags contains "style:expressionist" %}selected{% endif %}>Expressionist</option>
+                    <option value="figurative" {% if tags contains "style:figurative" %}selected{% endif %}>Figurative</option>
+                    <option value="illustration" {% if tags contains "style:illustration" %}selected{% endif %}>Illustration</option>
+                    <option value="pop-art" {% if tags contains "style:pop-art" %}selected{% endif %}>Pop Art</option>
+                    <option value="still-life" {% if tags contains "style:still-life" %}selected{% endif %}>Still Life</option>
+                    <option value="street-art" {% if tags contains "style:street-art" %}selected{% endif %}>Street Art</option>
+                    <option value="photography" {% if tags contains "style:photography" %}selected{% endif %}>Photography</option>
+                    {% endcomment %}
+                  </select>
+                </span>
+                {% endif %}
+                
+                {% comment %}
+                {% if settings.filtering_show_price %}
+                <!-- Price filter -->
+                <span class="filter">
+                  <select data-filter-type="filter" data-filter-key="price" class="art-filter" id="filter-price" required>
+                    <option value="">All Prices</option>
+                    {% assign filter_options = settings.filtering_content_price | split: "|" %}
+                    {% for filter in filter_options %}
+                    	{% assign filter_array = filter | split: "#" %}
+                    	{% assign tag_name = "price:" | append: filter_array[1] | replace: "-", " " | downcase %}
+                    	<option value="{{ filter_array[1] }}" {% if tags contains tag_name %}selected{% endif %}>{{ filter_array[0] }}</option>
+                    {% endfor %}
+                    
+                    {% comment %}
+                    	These are now stored in theme settings 
+                    {% endcomment %}
+                    {% comment %}
+                    <option value="low" {% if tags contains "price:low" %}selected{% endif %}>Low</option>
+                    <option value="medium" {% if tags contains "price:medium" %}selected{% endif %}>Medium</option>
+                    <option value="high" {% if tags contains "price:high" %}selected{% endif %}>High</option>
+                    {% endcomment %}
+                  </select>
+                </span>
+                {% endif %}
+                {% endcomment %}
+                
+                {% comment %}
+                {% if settings.filtering_show_orientation %}
+                <!-- Orientation filter -->
+                <span class="filter">
+                  <select data-filter-type="filter" data-filter-key="orientation" class="art-filter" id="filter-orientation" required>
+                    <option value="">All Orientations</option>
+                    {% assign filter_options = settings.filtering_content_orientation | split: "|" %}
+                    {% for filter in filter_options %}
+                    	{% assign filter_array = filter | split: "#" %}
+                    	{% assign tag_name = "orientation:" | append: filter_array[1] | replace: "-", " " | downcase %}
+                    	<option value="{{ filter_array[1] }}" {% if tags contains tag_name %}selected{% endif %}>{{ filter_array[0] }}</option>
+                    {% endfor %}
+                    
+                    {% comment %}
+                    	These are now stored in theme settings 
+                    {% endcomment %}
+                    {% comment %}
+                    <option value="landscape" {% if tags contains "orientation:landscape" %}selected{% endif %}>Landscape</option>
+                    <option value="portrait" {% if tags contains "orientation:portrait" %}selected{% endif %}>Portrait</option>
+                    <option value="square" {% if tags contains "orientation:square" %}selected{% endif %}>Square</option>
+                    {% endcomment %}
+                  </select>
+                </span>
+                {% endif %}
+                {% endcomment %}
+                
+                {% if settings.filtering_show_sizes %}
+                <!-- Size filter -->
+                <span class="filter">
+                  <select data-filter-type="filter" data-filter-key="size" class="art-filter" id="filter-size" required>
+                    <option value="">All Sizes</option>
+                    
+                    {% assign filter_options = settings.filtering_content_sizes | split: "|" %}
+                    {% for filter in filter_options %}
+                    	{% assign filter_array = filter | split: "#" %}
+                    	{% assign tag_name = "size:" | append: filter_array[1] | replace: "-", " " | downcase %}
+                    	<option value="{{ filter_array[1] }}" {% if tags contains tag_name %}selected{% endif %}>{{ filter_array[0] }}</option>
+                    {% endfor %}
+                    
+                    {% comment %}
+                    	These are now stored in theme settings 
+                    {% endcomment %}
+                    {% comment %}
+                    <option value="XS" {% if tags contains "size:xs" %}selected{% endif %}>Extra Small</option>
+                    <option value="S" {% if tags contains "size:s" %}selected{% endif %}>Small</option>
+                    <option value="M" {% if tags contains "size:m" %}selected{% endif %}>Medium</option>
+                    <option value="L" {% if tags contains "size:l" %}selected{% endif %}>Large</option>
+                    <option value="XL" {% if tags contains "size:xl" %}selected{% endif %}>Extra Large</option>
+                    <option value="XXL" {% if tags contains "size:xxl" %}selected{% endif %}>XXL</option>
+                    {% endcomment %}
+                  </select>
+                </span>
+                {% endif %}
+                
+                {% if settings.filtering_show_mediums %}
+                <!-- Medium filter -->
+                <span class="filter">
+                  <select data-filter-type="filter" data-filter-key="medium" class="art-filter" id="filter-medium" required>
+                    <option value="">All Mediums</option>
+                                        
+                    {% assign filter_options = settings.filtering_content_mediums | split: "|" %}
+                    {% for filter in filter_options %}
+                    	{% assign filter_array = filter | split: "#" %}
+                    	{% assign tag_name = "medium:" | append: filter_array[1] | replace: "-", " " | downcase %}
+                    	<option value="{{ filter_array[1] }}" {% if tags contains tag_name %}selected{% endif %}>{{ filter_array[0] }}</option>
+                    {% endfor %}
+                    
+                    {% comment %}
+                    	These are now stored in theme settings 
+                    {% endcomment %}
+                    {% comment %}
+                    <option value="acrylic" {% if tags contains "medium:acrylic" %}selected{% endif %}>Acrylic</option>
+                    <option value="collage" {% if tags contains "medium:collage" %}selected{% endif %}>Collage</option>
+                    <option value="etching" {% if tags contains "medium:etching" %}selected{% endif %}>Etching</option>
+                    <option value="giclee" {% if tags contains "medium:giclee" %}selected{% endif %}>Giclee</option>
+                    <option value="lithograph" {% if tags contains "medium:lithograph" %}selected{% endif %}>Lithograph</option>
+                    <option value="mixed-media" {% if tags contains "medium:mixed-media" %}selected{% endif %}>Mixed Media</option>
+                    <option value="originals" {% if tags contains "medium:originals" %}selected{% endif %}>Originals</option>
+                    <option value="other" {% if tags contains "medium:other" %}selected{% endif %}>Other</option>
+                    <option value="photography-print" {% if tags contains "medium:photography-print" %}selected{% endif %}>Photography Print</option>
+                    <option value="screen-print" {% if tags contains "medium:screen-print" %}selected{% endif %}>Screen Print</option>
+                    <option value="sculpture" {% if tags contains "medium:sculpture" %}selected{% endif %}>Sculpture</option>
+                    {% endcomment %}
+                  </select>
+                </span>
+                {% endif %}
+                
+                {% if settings.filtering_show_subjects %}  
+                <!-- Subject filter -->
+                <span class="filter">
+                  <select data-filter-type="filter" data-filter-key="subject" class="art-filter" id="filter-subject" required>
+                    <option value="">All Subjects</option>
+                    
+                    {% assign filter_options = settings.filtering_content_subjects | split: "|" %}
+                    {% for filter in filter_options %}
+                    	{% assign filter_array = filter | split: "#" %}
+                    	{% assign tag_name = "subject:" | append: filter_array[1] | replace: "-", " " | downcase %}
+                    	{% assign tag_name_with_hyphen = "subject:" | append: filter_array[1] | downcase %}
+                    	<option value="{{ filter_array[1] }}" {% if tags contains tag_name %}selected{% endif %} {% if tags contains tag_name_with_hyphen %}selected{% endif %}>{{ filter_array[0] }}</option>
+                    {% endfor %}
+                    
+                    {% comment %}
+                    	These are now stored in theme settings 
+                    {% endcomment %}
+                    {% comment %}
+                    <option value="abstract" {% if tags contains "subject:abstract" %}selected{% endif %}>Abstract</option>
+                    <option value="architecture" {% if tags contains "subject:architecture" %}selected{% endif %}>Architecture</option>
+                    <option value="botanical" {% if tags contains "subject:botanical" %}selected{% endif %}>Botanical</option>
+                    <option value="celebrity" {% if tags contains "subject:celebrity" %}selected{% endif %}>Celebrity</option>
+                    <option value="cityscapes" {% if tags contains "subject:cityscapes" %}selected{% endif %}>Cityscapes</option>
+                    <option value="fantasy" {% if tags contains "subject:fantasy" %}selected{% endif %}>Fantasy</option>
+                    <option value="fashion" {% if tags contains "subject:fashion" %}selected{% endif %}>Fashion</option>
+                    <option value="human-figure" {% if tags contains "subject:human-figure" %}selected{% endif %}>Human Figure</option>
+                    <option value="interiors" {% if tags contains "subject:interiors" %}selected{% endif %}>Interiors</option>
+                    <option value="landscapes" {% if tags contains "subject:landscapes" %}selected{% endif %}>Landscapes</option>
+                    <option value="merchandise" {% if tags contains "subject:merchandise" %}selected{% endif %}>Merchandise</option>
+                    <option value="music" {% if tags contains "subject:music" %}selected{% endif %}>Music</option>
+                    <option value="nature" {% if tags contains "subject:nature" %}selected{% endif %}>Nature</option>
+                    <option value="portraits" {% if tags contains "subject:portraits" %}selected{% endif %}>Portraits</option>
+                    <option value="satire" {% if tags contains "subject:satire" %}selected{% endif %}>Satire</option>
+                    <option value="spirituality" {% if tags contains "subject:spirituality" %}selected{% endif %}>Spirituality</option>
+                    <option value="sports" {% if tags contains "subject:sports" %}selected{% endif %}>Sports</option>
+                    <option value="still-life" {% if tags contains "subject:still-life" %}selected{% endif %}>Still Life</option>
+                    <option value="transport" {% if tags contains "subject:transport" %}selected{% endif %}>Transport</option>
+                    <option value="typography" {% if tags contains "subject:typography" %}selected{% endif %}>Typography</option>
+                    <option value="urban" {% if tags contains "subject:urban" %}selected{% endif %}>Urban</option>
+                    <option value="wildlife" {% if tags contains "subject:wildlife" %}selected{% endif %}>Wildlife</option>
+					{% endcomment %}
+                    
+                  </select>
+                </span>
+                {% endif %}
+                  
+                </div>
+                
+                {% if settings.filtering_show_sorting %}
+                <div class="right hide-mobile">
+                <!-- Sort filter -->
+                <span class="title title-sort">Sort by:</span>
+                <span class="filter">
+                  <select data-filter-type="sort" data-filter-key="age" class="art-filter" id="filter-sort" required>
+                    <!--<option value="">Default</option>-->
+                    {% for option in collection.sort_options %}
+                      {% unless option.value == "created-ascending" %}
+                    	{% if option.value == "created-descending" %}
+                            <option value="{{ option.value }}"{% if option.value == collection.sort_by %} selected{% endif %}>New</option>
+                    	{% else %}
+      				  		<option value="{{ option.value }}"{% if option.value == collection.sort_by %} selected{% endif %}>{{ option.name }}</option>
+                    	{% endif %}
+                      {% endunless %}
+    				{% endfor %}
+                  </select>
+                </span>
+                </div>
+                
+                <div class="right hide-desktop">  
+                <!-- Sort filter -->
+                <span class="filter">
+                  <select data-filter-type="sort" data-filter-key="age" class="art-filter" id="filter-sort" required>
+                    <!--<option value="">Default</option>-->
+                    {% for option in collection.sort_options %}
+                      {% unless option.value == "created-ascending" %}
+                    	{% if option.value == "created-descending" %}
+                            <option value="{{ option.value }}"{% if option.value == collection.sort_by %} selected{% endif %}>Sort by: New</option>
+                    	{% else %}
+      				  		<option value="{{ option.value }}"{% if option.value == collection.sort_by %} selected{% endif %}>Sort by: {{ option.name }}</option>
+                    	{% endif %}
+                      {% endunless %}
+    				{% endfor %}
+                  </select>
+                </span>
+                </div>
+                {% endif %}
+                
+                
+              </div>
+              <!-- /NEW FILTERS -->

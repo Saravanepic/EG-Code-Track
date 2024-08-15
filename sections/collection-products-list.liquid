@@ -1,0 +1,354 @@
+{% case section.settings.colors %}
+  {% when 'white' %}
+    <div class="homepage-sections-wrapper homepage-sections-wrapper--white">
+  {% when 'light' %}
+    <div class="homepage-sections-wrapper homepage-sections-wrapper--light">
+  {% when 'accent' %}
+    <div class="homepage-sections-wrapper homepage-sections-wrapper--accent">
+  {% when 'dark' %}
+    <div class="homepage-sections-wrapper homepage-sections-wrapper--dark">
+{% endcase %}
+
+{%- assign items-per-row = section.settings.items-per-row -%}
+
+  <div class="homepage-collections-background">
+
+    <div class="wrapper show-on-scroll section--{{ section.id }}">
+
+    	<div class="page-width">
+    	  {% if section.settings.title != blank %}
+    	    <div class="sitewide--title-wrapper">
+            {% if settings.heading_style == 'zigzag' %}<span class="zig-zag-border"></span>{% endif %}
+    	      <h2 class="homepage-sections--title">{{ section.settings.title | escape }}</h2>
+    	    </div>
+    	  {% endif %}
+
+
+    	      {% for block in section.blocks %}
+                {% assign mod = forloop.index0 | modulo: 3 %}
+
+                {% if mod == 0 %}
+                <div class="gridlayout">
+                {% endif %}
+
+              {% case block.type %}
+
+              {% when 'featured_product' %}
+
+                {% assign product = all_products[block.settings.product] %}
+
+                {% comment %}
+                    Check if the product is on sale and set a variable to be used below.
+                {% endcomment %}
+                {% assign on_sale = false %}
+                {% if product.compare_at_price > product.price %}
+                    {% assign on_sale = true %}
+                {% endif %}
+
+                {% comment %}
+                    Check if the product is sold out and set a variable to be used below.
+                {% endcomment %}
+                {% assign sold_out = true %}
+                {% if product.available %}
+                    {% assign sold_out = false %}
+                {% endif %}
+
+                <div class="grid__item small--one-whole large--one-third">
+                    {% include 'grid-view-item', with show_vendor: true %}
+                </div>
+
+              {% when 'featured_collection' %}
+
+
+            {%- assign collection = collections[block.settings.collection] -%}
+            {% capture collection_title %}{{ collection.title | escape }}{% endcapture %}
+
+            {% if block.settings.subheading != blank %}
+                {% capture collection_title %}{{ block.settings.subheading | escape }}{% endcapture %}
+            {% endif %}
+
+            {% if collection.empty? %}
+              {% comment %}add default state for collection block in storefront editor{% endcomment %}
+              {% capture collection_title %}{{ 'homepage.onboarding.collection_title' | t }}{% endcapture %}
+            {% endif %}
+
+                <div class="grid__item grid__item small--one-whole large--one-third" data-initial="{{ collection_title | slice: 0 }}">
+                <div class="grid-view-item">
+                  <a href="{{ collection.url }}" class="grid__image" title="{{ 'collections.general.link_title' | t: title: collection_title }}">
+                  {% if block.settings.collection_img %}
+                      <img src="{{ block.settings.collection_img | img_url: 'large' }}" alt="{{ collection_title }}" class="list-collections--indiv-banner-image" />
+                  {% else %}
+                    {% if collection.image %}
+                      <img src="{{ collection.image | img_url: 'large' }}" alt="{{ collection_title }}" class="list-collections--indiv-banner-image" />
+                    {% else %}
+                      <img src="{{ collection.products[0].featured_image | img_url: 'large' }}" alt="{{ collection_title }}" class="list-collections--indiv-banner-image" />
+                    {% endif %}
+                  {% endif %}
+                  </a>
+                  <h3 class="list-collections--indiv-collection-title">{{ collection_title }}</h3>
+                </div>
+              </div>
+
+              {% when 'featured_link' %}
+
+                {% capture link_title %}{{ block.settings.subheading | escape }}{% endcapture %}
+
+                <div class="grid__item grid__item small--one-whole large--one-third" data-initial="{{ collection_title | slice: 0 }}">
+                <div class="grid-view-item">
+                  <a href="{{ collection.url }}" class="grid__image">
+                    <img src="{{ block.settings.link_img | img_url: 'large' }}" alt="{{ collection_title }}" class="list-collections--indiv-banner-image" />
+                  </a>
+                  <h3 class="list-collections--indiv-collection-title">{{ link_title }}</h3>
+                </div>
+              </div>
+
+            {% endcase %}
+
+                {% if mod == 2 %}
+                </div>
+                {% endif %}
+
+    	      {% endfor %}
+    	  </div>
+
+        {% if section.blocks.size == 0 %}
+          <div class="placeholder-noblocks">
+            {{ 'homepage.onboarding.no_content' | t }}
+          </div>
+        {% endif %}
+
+    	</div>
+
+    </div>
+
+  </div>
+
+</div>
+
+{% schema %}
+{
+    "name": {
+        "en": "Collection / Products",
+        "de": "Kollektions/ Products",
+        "es": "colecciones / Products",
+        "fr": "collections / Products",
+        "pt-PT": "coleção / Products"
+    },
+    "class": "featured-collections-wrapper",
+    "max_blocks": 6,
+    "settings": [{
+            "type": "select",
+            "id": "colors",
+            "label": {
+                "en": "Color scheme",
+                "de": "Farbschema",
+                "es": "Esquema de colores",
+                "fr": "Palette de couleurs",
+                "pt-PT": "Esquema de cores"
+            },
+            "default": "light",
+            "options": [{
+                    "value": "white",
+                    "label": {
+                        "en": "Minimal",
+                        "fr": "Minimal",
+                        "de": "Minimal",
+                        "es": "Mínimo",
+                        "pt-PT": "Mínimo"
+                    }
+                },
+                {
+                    "value": "light",
+                    "label": {
+                        "en": "Light",
+                        "de": "Licht",
+                        "es": "Luz",
+                        "fr": "Clair",
+                        "pt-PT": "Claro"
+                    }
+                },
+                {
+                    "value": "accent",
+                    "label": {
+                        "en": "Feature",
+                        "de": "Eigenschaft",
+                        "es": "Destacado",
+                        "fr": "Caractéristique",
+                        "pt-PT": "Funcionalidade"
+                    }
+                },
+                {
+                    "value": "dark",
+                    "label": {
+                        "en": "Dark",
+                        "de": "Dunkel",
+                        "es": "Oscuro",
+                        "fr": "Foncé",
+                        "pt-PT": "Escuro"
+                    }
+                }
+            ]
+        },
+        {
+            "type": "text",
+            "id": "title",
+            "label": {
+                "en": "Heading",
+                "de": "Überschrift",
+                "es": "Encabezado",
+                "fr": "Rubrique",
+                "pt-PT": "Título"
+            },
+            "default": {
+                "en": "Featured Collections",
+                "de": "Hervorgehobene Kollektionen",
+                "es": "Colecciones destacadas",
+                "fr": "Collections en vedette",
+                "pt-PT": "Coleções em Destaque"
+            }
+        }
+    ],
+    "blocks": [
+        {
+            "type": "featured_product",
+            "name": "Product",
+            "settings": [
+                {
+                    "label": {
+                        "en": "Product",
+                        "de": "Product",
+                        "es": "Product",
+                        "fr": "Product",
+                        "pt-PT": "Product"
+                    },
+                    "id": "product",
+                    "type": "product"
+                }
+            ]
+        },
+        {
+            "type": "featured_collection",
+            "name": {
+                "en": "Collection",
+                "de": "Kollektion",
+                "es": "Colección",
+                "fr": "Collection",
+                "pt-PT": "Coleção"
+            },
+            "settings": [{
+                    "label": {
+                        "en": "Collection",
+                        "de": "Kollektion",
+                        "es": "Colección",
+                        "fr": "Collection",
+                        "pt-PT": "Coleção"
+                    },
+                    "id": "collection",
+                    "type": "collection"
+                },
+                {
+                    "id": "collection_img",
+                    "type": "image_picker",
+                    "label": {
+                        "en": "Image (Optional)",
+                        "de": "Bild (Optional)",
+                        "es": "Imagen (Opcional)",
+                        "fr": "Image (Facultatif)",
+                        "pt-PT": "Imagem (Opcional)"
+                    },
+                    "info": {
+                        "en": "1600 x 1600px recommended",
+                        "de": "1600 x 1600 px empfohlen",
+                        "es": "Recomendado 1600 x 1600 px",
+                        "fr": "1600 x 1600 px recommandé",
+                        "pt-PT": "1600 x 1600px, recomendado"
+                    }
+                },
+                {
+                    "type": "text",
+                    "id": "subheading",
+                    "label": {
+                        "en": "Subheading",
+                        "de": "Unterüberschrift",
+                        "es": "Subtítulo",
+                        "fr": "Sous-titre",
+                        "pt-PT": "Subtítulo"
+                    },
+                    "info": "If not blank, this will replace the Collection title."
+                }
+            ]
+        },
+        {
+            "type": "featured_link",
+            "name": {
+                "en": "Link",
+                "de": "Link",
+                "es": "Link",
+                "fr": "Link",
+                "pt-PT": "Link"
+            },
+            "settings": [{
+                    "id": "featured_link",
+                    "type": "url",
+                    "label": "Banner button link"
+                },
+                {
+                    "id": "link_img",
+                    "type": "image_picker",
+                    "label": {
+                        "en": "Image (Optional)",
+                        "de": "Bild (Optional)",
+                        "es": "Imagen (Opcional)",
+                        "fr": "Image (Facultatif)",
+                        "pt-PT": "Imagem (Opcional)"
+                    },
+                    "info": {
+                        "en": "1600 x 1600px recommended",
+                        "de": "1600 x 1600 px empfohlen",
+                        "es": "Recomendado 1600 x 1600 px",
+                        "fr": "1600 x 1600 px recommandé",
+                        "pt-PT": "1600 x 1600px, recomendado"
+                    }
+                },
+                {
+                    "type": "text",
+                    "id": "subheading",
+                    "label": {
+                        "en": "Subheading",
+                        "de": "Unterüberschrift",
+                        "es": "Subtítulo",
+                        "fr": "Sous-titre",
+                        "pt-PT": "Subtítulo"
+                    }
+                }
+            ]
+        }
+    ],
+    "presets": [{
+        "name": {
+            "en": "Collection / Products",
+            "de": "Kollektions / Products",
+            "es": "colecciones / Products",
+            "fr": "collections / Products",
+            "pt-PT": "coleção / Products"
+        },
+        "category": {
+            "en": "Collection",
+            "de": "Kollektion",
+            "es": "Colección",
+            "fr": "Collection",
+            "pt-PT": "Coleção"
+        },
+        "blocks": [{
+                "type": "featured_collection"
+            },
+            {
+                "type": "featured_collection"
+            },
+            {
+                "type": "featured_collection"
+            }
+        ]
+    }]
+}
+{% endschema %}

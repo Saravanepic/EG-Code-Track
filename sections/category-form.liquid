@@ -1,0 +1,212 @@
+{% case section.settings.colors %}
+  {% when 'white' %}
+    <div class="homepage-sections-wrapper homepage-sections-wrapper--white newsletter--section">
+  {% when 'light' %}
+    <div class="homepage-sections-wrapper homepage-sections-wrapper--light newsletter--section">
+  {% when 'accent' %}
+    <div class="homepage-sections-wrapper homepage-sections-wrapper--accent newsletter--section">
+  {% when 'dark' %}
+    <div class="homepage-sections-wrapper homepage-sections-wrapper--dark newsletter--section">
+{% endcase %}
+
+  <div class="wrapper show-on-scroll">
+    <div class="gridlayout row--table">
+      <div class="grid__item large--one-half small--one-whole newsletter--section--grid vertical--align">
+
+        <div class="newsletter--section--grid_inner newsletter_title">
+          <h3>{{ section.settings.category_form_heading }}</h3>
+            {% if section.settings.category_form_description != empty %}
+              <div class="rte">{{ section.settings.category_form_description }}</div>
+            {% endif %}
+        </div>
+
+      </div>
+      <div class="grid__item large--one-half small--one-whole newsletter--section--grid vertical--align">
+
+        <div class="newsletter--section--grid_inner newsletter_form_section">
+            {% if section.settings.category_form_content != empty %}
+              <div class="rte">{{ section.settings.category_form_content }}</div>
+            {% endif %}
+            
+            {% if section.settings.hubspot_override != "" %}
+              {{ section.settings.hubspot_override}}
+            {% else %}
+              {% form 'contact' %}
+                {{ form.errors | default_errors }}
+                {% if form.posted_successfully? %}
+                  <p class="note form-success success_section">{{ 'general.newsletter_form.confirmation' | t }}</p>
+                {% else %}
+                  <input type="hidden" name="contact[tags]" value="{{ section.settings.category_form_title }}">
+                  <div class="form-wrapper" id="category-form-wrapper">
+                    <div class="form-block">
+                      <label for="category_name">First Name</label>
+                      <input id="category_name" type="text" name="contact[name]" class="input-group-field name" aria-label="{{ 'general.newsletter_form_section.newsletter_email' | t }}" autocorrect="off" autocapitalize="off">
+                    </div>
+
+                    <div class="form-block">
+                      <label for="category_email">Email</label>
+                      <input id="category_email" type="email" placeholder="{{ 'general.newsletter_form_section.newsletter_text_inner' | t }}" name="contact[email]" class="input-group-field email" aria-label="{{ 'general.newsletter_form_section.newsletter_email' | t }}" autocorrect="off" autocapitalize="off">
+                    </div>
+                    <input id="category_submit" type="submit" class="btn btn-default submit" name="subscribe" value="{{ 'general.newsletter_form.submit' | t }}">
+                  </div>
+                {% endif %}
+              {% endform %}
+            {% endif %}
+
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+{% schema %}
+{
+    "name": {
+        "en": "Category Form",
+        "de": "Kategorieformular",
+        "es": "Formulario de categoría",
+        "fr": "Formulaire de catégorie",
+        "pt-PT": "Category Form"
+    },
+    "class": "homepage-section--category-form-wrapper",
+    "settings": [
+        {
+            "type": "select",
+            "id": "colors",
+            "label": {
+                "en": "Color scheme",
+                "de": "Farbschema",
+                "es": "Esquema de colores",
+                "fr": "Palette de couleurs",
+                "pt-PT": "Esquema de cores"
+            },
+            "default": "light",
+            "options": [
+                {
+                    "value": "white",
+                    "label": {
+                        "en": "Minimal",
+                        "fr": "Minimal",
+                        "de": "Minimal",
+                        "es": "Mínimo",
+                        "pt-PT": "Mínimo"
+                    }
+                },
+                {
+                    "value": "light",
+                    "label": {
+                        "en": "Light",
+                        "de": "Licht",
+                        "es": "Luz",
+                        "fr": "Clair",
+                        "pt-PT": "Claro"
+                    }
+                },
+                {
+                    "value": "accent",
+                    "label": {
+                        "en": "Feature",
+                        "de": "Eigenschaft",
+                        "es": "Destacado",
+                        "fr": "Caractéristique",
+                        "pt-PT": "Funcionalidade"
+                    }
+                },
+                {
+                    "value": "dark",
+                    "label": {
+                        "en": "Dark",
+                        "de": "Dunkel",
+                        "es": "Oscuro",
+                        "fr": "Foncé",
+                        "pt-PT": "Escuro"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "category_form_heading",
+            "type": "text",
+            "label": {
+                "en": "Heading",
+                "de": "Überschrift",
+                "es": "Encabezado",
+                "fr": "Rubrique",
+                "pt-PT": "Título"
+            },
+            "default": {
+                "en": "Join our Mailing List",
+                "de": "Melden Sie sich bei unserer Mailingliste an",
+                "es": "Únase a nuestra lista de correo electrónico",
+                "fr": "Inscrivez-vous à notre liste d'envoi",
+                "pt-PT": "Aderir à nossa Lista de E-mails"
+            }
+        },
+        {
+            "type": "richtext",
+            "id": "category_form_description",
+            "label": {
+                "en": "Description",
+                "de": "Beschreibung",
+                "es": "Descripción",
+                "fr": "Description",
+                "pt-PT": "Descrição"
+            }
+        },
+        {
+            "type": "text",
+            "id": "category_form_title",
+            "label": {
+                "en": "Form Title",
+                "de": "Formulartitel",
+                "es": "Título del formulario",
+                "fr": "Titre du formulaire",
+                "pt-PT": "Form Title"
+            }
+        },
+        {
+            "type": "richtext",
+            "id": "category_form_content",
+            "label": {
+                "en": "Above Form Content",
+                "de": "Obiger Formularinhalt",
+                "es": "Arriba del contenido del formulario",
+                "fr": "Au-dessus du contenu du formulaire",
+                "pt-PT": "Above Form Content"
+            }
+        },
+        {
+            "type": "textarea",
+            "id": "hubspot_override",
+            "label": {
+                "en": "Hubspot Form",
+                "de": "Hubspot-Formular",
+                "es": "Formulario de Hubspot",
+                "fr": "Formulaire Hubspot",
+                "pt-PT": "Hubspot Form"
+            }
+        }
+    ],
+    "presets": [
+        {
+            "name": {
+                "en": "Category Form",
+                "de": "Kategorieformular",
+                "es": "Formulario de categoría",
+                "fr": "Formulaire de catégorie",
+                "pt-PT": "Category Form"
+            },
+            "category": {
+                "en": "Category Form",
+                "de": "Kategorieformular",
+                "es": "Formulario de categoría",
+                "fr": "Formulaire de catégorie",
+                "pt-PT": "Category Form"
+            }
+        }
+    ]
+}
+{% endschema %}

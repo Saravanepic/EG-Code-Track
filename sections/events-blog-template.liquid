@@ -1,0 +1,205 @@
+<!-- /templates/blog.liquid -->
+<!-- WIP do not use yet. -->
+
+{% assign header_image = section.settings.blog-sidebar-image %}
+
+{% if header_image != blank %}
+
+  {% if section.settings.blog-sidebar-image-size == 'original' %}
+        {% include 'responsive-image' with header_image, alt: collection.title, class: 'collection-page--feature-image' %}
+  {% else %}
+
+    <style>
+      {% if header_image != blank %}
+        {% capture selector %}.collection-image .img{% endcapture %}
+        {% if collection.metafields.accentuate.optional_header_replacement != blank %}
+          {{ selector }} {
+            background-image: url('{{ header_image | append: 'w_1660' }}');
+          }
+        {% else %}
+          {% include 'responsive-background-image' with header_image, selector: selector %}
+        {% endif %}
+
+        .collection-image .img {
+          background-position: center;
+          background-repeat: no-repeat;
+          background-size: cover;
+        }
+      {% endif %}
+
+      .collection-image .img {
+        height: {{ section.settings.blog-sidebar-image-size }};
+      }
+
+      @media only screen and (min-width: 768px) {
+        .collection-image .rellax.img {
+          height: {{ section.settings.blog-sidebar-image-size | remove:'vw' | times:1.15 | append:'vw' }};
+          margin-top: {{ section.settings.blog-sidebar-image-size | remove:'vw' | times:-0.6 | append:'vw' }};
+        }
+      }
+
+      .parallax.collection-image-parallax {
+        height: {{ section.settings.blog-sidebar-image-size }};
+      }
+    </style>
+
+    {% capture image_layout %}
+      <div class="collection-image">
+          <div class="collection-page--feature-image {% if section.settings.parallax %} parallax collection-image-parallax{% endif %}">
+            <div id="rellax--collection-image" class="img{% if section.settings.parallax %} rellax {% else %} aspect-locked {% endif %}" data-rellax-percentage="0.15" data-rellax-speed="-4"></div>
+          </div>
+      </div>
+    {% endcapture %}
+
+    {{ image_layout }}
+
+  {% endif %}
+{% else %}
+  <div class="no-collection-img"></div>
+{% endif %}
+
+
+<div class="wrapper main-content" id="overview">
+
+  {% include 'breadcrumb' %}
+
+  {% comment %}
+    This template is also used for listing out articles of a specific tag.
+    You can change layouts or styles by checking if current_tags is true.
+  {% endcomment %}
+
+  <div class="wrapper">
+
+    <header class="section-header collection-page--header">
+      <div class="sitewide--title-wrapper list-collections--title-artists--wrapper">
+        {% if settings.heading_style == 'zigzag' %}<span class="zig-zag-border"></span>{% endif %}
+        {% if current_tags %}
+          {% if settings.heading_style == 'zigzag' %}<span class="zig-zag-border"></span>{% endif %}
+          <h1 class="page--title">
+            <a href="{{ blog.url }}/tagged/{{ current_tags | join: ' + ' | replace: ' ', '-' | downcase }}">{{ blog.title }} {{ current_tags.first }}</a>
+          </h1>
+        {% else %}
+          {% if settings.heading_style == 'zigzag' %}<span class="zig-zag-border"></span>{% endif %}
+          <h1 class="page--title">{{ blog.title }}</h1>
+        {% endif %}
+        <div class="list-collections--filter-subset-links">
+            <a href="#future-events" data-scroll-to="future-events">Future</a>
+            <a href="#past-events" data-scroll-to="past-events">Past</a>
+        </div>
+      </div>
+    </header>
+
+    <header class="section-header">
+      <div class="sitewide--title-wrapper">
+        {% if settings.heading_style == 'zigzag' %}<span class="zig-zag-border"></span>{% endif %}
+        <h2 class="page--title" id="future-events">
+        Future Art Events
+        </h2>
+      </div>
+    </header>
+    <!-- past events blog content slot -->
+    <div class="blog-main--wrapper" id="future-blog-articles">
+
+    </div>
+
+    <div class="padder"></div>
+    <header class="section-header">
+      <div class="sitewide--title-wrapper">
+        {% if settings.heading_style == 'zigzag' %}<span class="zig-zag-border"></span>{% endif %}
+        <h2 class="page--title" id="past-events">
+        Past Art Events
+        </h2>
+      </div>
+    </header>
+    <!-- past events blog content slot -->
+    <div class="blog-main--wrapper wrapper main-content" id="past-blog-articles">
+
+    </div>
+
+    <!-- paginator -->
+    <div class="gridlayout blog-main--wrapper" id="load-more-pluck">
+
+    </div>
+
+  </div>
+
+</div>
+
+{% schema %}
+{
+    "name": {
+        "en": "Blog pages",
+        "de": "Blogseiten",
+        "es": "Páginas del blog",
+        "fr": "Pages du blog",
+        "pt-PT": "Páginas de blogs"
+    },
+    "settings": [
+        {
+            "type": "image_picker",
+            "id": "blog-sidebar-image",
+            "label": {
+                "en": "Image",
+                "de": "Bild",
+                "es": "Imagen",
+                "fr": "Image",
+                "pt-PT": "Imagem"
+            }
+        },
+        {
+            "type": "select",
+            "id": "blog-sidebar-image-size",
+            "label": {
+                "en": "Image size",
+                "de": "Größe",
+                "es": "Tamaño de la Imagen",
+                "fr": "Taille de l'image",
+                "pt-PT": "Tamanho da imagem"
+            },
+            "options": [
+                {
+                    "value": "20vh",
+                    "label": {
+                        "en": "Small",
+                        "de": "Klein",
+                        "es": "Pequeño",
+                        "fr": "Petite",
+                        "pt-PT": "Pequeno"
+                    }
+                },
+                {
+                    "value": "30vh",
+                    "label": {
+                        "en": "Medium",
+                        "de": "Mittel",
+                        "es": "Mediano",
+                        "fr": "Moyenne",
+                        "pt-PT": "Médio"
+                    }
+                },
+                {
+                    "value": "60vh",
+                    "label": {
+                        "en": "Large",
+                        "de": "Groß",
+                        "es": "Grande",
+                        "fr": "Grande",
+                        "pt-PT": "Grande"
+                    }
+                },
+                {
+                    "value": "original",
+                    "label": {
+                        "en": "Original",
+                        "de": "Original",
+                        "es": "Original",
+                        "fr": "D'origine",
+                        "pt-PT": "Original"
+                    }
+                }
+            ],
+            "default": "20vh"
+        }
+    ]
+}
+{% endschema %}

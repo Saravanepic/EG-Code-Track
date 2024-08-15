@@ -1,0 +1,89 @@
+{% assign count = 0 %}
+{% assign collection_handle = product.vendor | handleize %}
+{% assign collection = collections[collection_handle] %}
+
+
+{% comment %}
+    Use class grid-uniform to have evenly sized columns clear
+    each other properly at each breakpoint.
+{% endcomment %}
+
+{% assign desktop_item_width = 'large--one-third wow fadeInUp' %}
+{% assign tablet_item_width = 'medium--one-half' %}
+{% assign mobile_item_width = 'small--one-half' %}
+
+{%if collection %}
+<div class="clearfix collection" id="other_artworks_container">
+    <div class="wrapper products--match-height" role="main">
+
+        <div class="sitewide--title-wrapper">
+            <h2 class="page--title"><a href="/collections/{{ product.vendor | handleize }}">{{ product.vendor }} Artworks</a></h2>
+        </div>
+
+        <div class="grid-uniform wow fadeInUp collection-page--featured-grid" id="other_artworks">
+
+
+			    {% for product in collection.products %}
+            
+                {% comment %}
+                    Check if the product is on sale and set a variable to be used below.
+                {% endcomment %}
+                {% assign on_sale = false %}
+                {% if product.compare_at_price > product.price %}
+                    {% assign on_sale = true %}
+                {% endif %}
+
+                {% comment %}
+                    Check if the product is sold out and set a variable to be used below.
+                {% endcomment %}
+                {% assign sold_out = true %}
+                {% if product.available %}
+                    {% assign sold_out = false %}
+                {% endif %}
+
+                {% unless sold_out %}
+
+
+                    <div class="grid__item {{ mobile_item_width }} {{ tablet_item_width }} {{ desktop_item_width }}">
+                        {% assign show_vendor = true %}
+                        {% include 'grid-view-item', lazyload: true, importance: "low" %}
+                    </div>
+
+                    {% assign count = count | plus: 1 %}
+                {% endunless %}
+
+                {% endfor %}
+
+        </div>
+        <script>
+            var other_artworks_container = document.getElementById('other_artworks_container');
+            var other_artworks = document.getElementById('other_artworks');
+            if (other_artworks.children.length === 0) {
+                other_artworks_container.style.display = 'none';
+            } else {
+                for (var i = other_artworks.children.length; i >= 0; i--) {
+                    other_artworks.appendChild(other_artworks.children[Math.random() * i | 0]);
+                }
+              	// Load images from data-src
+                var all = other_artworks.getElementsByTagName("img");
+			    for(var i = 0, max = 6; i < max; i++) {
+                  	var img = all[i];
+                  	img.src = img.dataset.src;
+				}
+            }
+        </script>
+        {% comment %} <style>
+        @media screen and (max-width: 768px) {
+            #other_artworks > .grid__item:nth-child(1n+3) {
+                display: none;
+            }
+        }
+        #other_artworks > .grid__item:nth-child(1n+4) {
+            display: none;
+        }
+        </style> {% endcomment %}
+        
+
+    </div>
+</div>
+{% endif %}

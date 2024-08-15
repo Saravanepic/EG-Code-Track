@@ -1,0 +1,77 @@
+{%- form 'localization', class: 'localization-selector-form' -%}
+  {%- if show_locale_selector and shop.published_locales.size > 1 -%}
+    <div class="localization-selector localization-selector__locale">
+      <wetheme-dropdown fit="current" direction="{{ direction | default: "down" }}">
+        <h2 class="hide" id="lang-heading">
+          {{ 'layout.header.language' | t }}
+        </h2>
+
+        <select name="locale_code">
+          {% for locale in form.available_locales %}
+            <option value="{{ locale.iso_code }}" {%- if locale.iso_code == form.current_locale.iso_code -%}selected="selected"{% endif %}>{{ locale.endonym_name }}</option>
+          {% endfor %}
+        </select>
+      </wetheme-dropdown>
+    </div>
+  {%- endif -%}
+
+  {%- if show_currency_selector and shop.enabled_currencies.size > 1 -%}
+    <div class="localization-selector localization-selector__currency">
+      <wetheme-dropdown fit="current" direction="{{ direction | default: "down" }}">
+        <h2 class="hide" id="currency-heading">
+          {{ 'layout.header.currency' | t }}
+        </h2>
+        <select name="currency_code">
+          {% comment %} Limit top currencies to this list {% endcomment %}
+		  {% comment %}{% assign top_currencies = "AED,AUD,CAD,CHF,DKK,JPY,NZD,SGD" | split: ',' %}{% endcomment %}
+          {% assign top_currencies = settings.currency_whitelist | replace: ' ', '' | split: ',' %}
+          
+          {% comment %} Probably a better way to always keep GBP first but, time constraints {% endcomment %}
+          {% for currency in form.available_currencies %}
+            {% if currency.iso_code == 'GBP' %}
+              <option value="{{ currency.iso_code }}" {%- if currency.iso_code == form.current_currency.iso_code -%}selected="selected"{%- endif -%}>{{ currency.iso_code }} {%- if currency.symbol -%}{{ currency.symbol }}{%- endif -%}</option>
+            {% endif %}
+          {% endfor %}
+
+          {% comment %} Probably a better way to always keep US Dollar & Euro first but, time constraints {% endcomment %}
+          {% assign reversed_available_currencies = form.available_currencies | reverse %}
+          {% for currency in reversed_available_currencies %}
+            {% if currency.iso_code == 'USD' or currency.iso_code == 'EUR' %}
+            <option value="{{ currency.iso_code }}" {%- if currency.iso_code == form.current_currency.iso_code -%}selected="selected"{%- endif -%}>{{ currency.iso_code }} {%- if currency.symbol -%}{{ currency.symbol }}{%- endif -%}</option>
+            {% endif %}
+          {% endfor %}
+          
+          {% comment %} Render the rest of the currencies defined in the template settings {% endcomment %}
+          {% for top_currency in top_currencies %}
+          	{% for currency in form.available_currencies %}
+          	  {% if top_currency ==  currency.iso_code %}
+          		<option value="{{ currency.iso_code }}" {%- if currency.iso_code == form.current_currency.iso_code -%}selected="selected"{%- endif -%}>{{ currency.iso_code }} {%- if currency.symbol -%}{{ currency.symbol }}{%- endif -%}</option>
+          	  {% endif %}
+            {% endfor %}
+          {% endfor %}
+          
+          {% comment %}
+          {% for currency in form.available_currencies %}
+            {% if currency.iso_code != 'USD' and currency.iso_code != 'EUR' and currency.iso_code != 'GBP' %}
+          		{% if top_currencies contains currency.iso_code %}
+            		<option value="{{ currency.iso_code }}" {%- if currency.iso_code == form.current_currency.iso_code -%}selected="selected"{%- endif -%}>{{ currency.iso_code }} {%- if currency.symbol -%}{{ currency.symbol }}{%- endif -%}</option>
+          		{% endif %}
+            {% endif %}
+          {% endfor %}
+          {% endcomment %}
+          
+          {% comment %} Check if selected currency is not in top list {% endcomment %}
+          {% comment %}
+          {% if currency.iso_code != 'USD' and currency.iso_code != 'EUR' and currency.iso_code != 'GBP' %}
+            {% if top_currencies contains currency.iso_code %}
+            {% else %}
+          		<!-- show other currency here -->
+            {% endif %}
+		  {% endif %}
+          {% endcomment %}
+          
+        </select>
+      </wetheme-dropdown>
+    </div>
+  {%- endif -%}
+{%- endform -%}

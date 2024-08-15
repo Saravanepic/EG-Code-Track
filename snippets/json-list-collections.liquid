@@ -1,0 +1,26 @@
+<!-- /templates/collection.liquid -->
+
+{% capture grid_item_width %}large--one-third medium--one-half small--one-whole{% endcapture %}
+{% if search.performed %}
+  <!-- hook into search -->
+  <script id="hidden-collection-search-template" type="text/x-custom-template">
+  <div class="grid__item {{ grid_item_width }}">
+    <div class="grid-view-item">
+      <div class="aspect-square">
+            <a href="${url}" class="grid__image aspect-square--inner" title="${title}">
+              <div class="faux-img">
+                <img src="${image}" alt="${title}" class="list-collections--indiv-banner-image" />
+              </div>
+            </a>
+      </div>
+    </div>
+    <a href="${url}">
+      <h3 class="list-collections--indiv-collection-title" style="text-align: left;">${title}</h3>
+      <p>
+      ${content}
+      </p>
+    </a>
+  </div>
+</div>
+  </script>
+{% endif %}

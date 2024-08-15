@@ -1,0 +1,18 @@
+  [
+  {% for col in collections %}
+    {% if col.metafields.accentuate.collection_type == 'Artist' %}
+      {% if col.image or col.products.first %}
+        {
+          "title" : "{{ col.title | escape }}",
+          "content" : "{{ col.description | newline_to_br | strip_newlines | replace: '<br />', ' ' | strip_html | escape | truncate: 280 }}",
+          "url" : "{{ col.url }}"
+          {% if col.image %}
+              ,"image": "{{ col.image | img_url: 'medium' }}"
+          {% else %}
+              ,"image": "{{ col.products.first | img_url: 'medium' }}"
+          {% endif %}
+        }{% unless forloop.last %},{% endunless %}
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+  ]

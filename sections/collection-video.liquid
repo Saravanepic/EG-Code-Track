@@ -1,0 +1,194 @@
+<!-- {{ collection.metafields.accentuate.video }} -->
+
+{% if collection.metafields.accentuate.video %}
+<div class="wrapper" id="video">
+
+    {% assign has_text = false %}
+
+    <!-- all products -->
+     {% if section.settings.title != blank or section.settings.richtext != '' %}
+    <header class="section-header">
+        {% if section.settings.title != blank %}
+        <div class="sitewide--title-wrapper">
+        {% if settings.heading_style == 'zigzag' %}<span class="zig-zag-border"></span>{% endif %}
+        <h2 class="page--title">
+         {{ collection.title }} {{ section.settings.title | escape }}
+        </h2>
+        </div>
+        {% endif %}
+        {% if section.settings.richtext != '' %}
+            {{ section.settings.richtext }}
+        {% endif %}
+    </header>
+    {% assign has_text = true %}
+    {% endif %}
+
+    <div class="gridlayout">
+
+    {% for video_url in collection.metafields.accentuate.video %}
+    {% capture thecycle %}{% cycle 'odd', 'even' %}{% endcapture %}
+    <div class="grid__item {% unless forloop.last == true and thecycle == 'odd'%} large--one-half {% endunless %}">
+
+        <div>
+
+            {% if video_url contains 'youtube' %}
+                {% assign video_id = video_url | split: '?v=' | last | split: '&' | first %}
+                <!-- {{ video_id }} -->
+                <div class="embed-container">
+                    <div class="homepage-hero-youtube-video" id="homepage-hero-youtube-video-{{ video_id }}"
+                         data-homepage-hero-video-link="{{ video_id }}"
+                         data-homepage-hero-video-autoplay="{% if section.settings.autoplay %}true{% else %}false{% endif %}"
+                         data-homepage-hero-video-loop="{% if section.settings.loop %}true{% else %}false{% endif %}"
+                         data-homepage-hero-video-mute="{% if section.settings.mute %}true{% else %}false{% endif %}">
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if video_url contains 'vimeo' %}
+                {% assign video_id = video_url | split: '/' | last | split: '?' | first %}
+                <div class="embed-container">
+                    <div class="homepage-hero-vimeo-video" id="homepage-hero-vimeo-video-{{ video_id }}"
+                         data-vimeo-id="{{ video_id  }}"
+                         data-vimeo-autoplay="{% if section.settings.autoplay %}true{% else %}false{% endif %}"
+                         data-vimeo-loop="{% if section.settings.loop %}true{% else %}false{% endif %}"
+                         data-vimeo-width="746"
+                         data-homepage-hero-video-mute="{% if section.settings.mute %}true{% else %}false{% endif %}">
+                    </div>
+                </div>
+
+            {% endif %}
+        </div>
+
+    </div>
+    {% endfor %}
+</div>
+
+</div>
+
+<style>
+    .homepage-video-content-overlay-wrapper-{{ section.id }}::before {
+        opacity: 0.{{ section.settings.video_overlay_opacity }} !important;
+    }
+</style>
+
+{% endif %}
+
+{% schema %}
+{
+    "name": {
+        "en": "Video (Collection Page)",
+        "de": "Video (Collection Page)",
+        "es": "Vídeo (Collection Page)",
+        "fr": "Vidéo (Collection Page)",
+        "pt-PT": "Vídeo (Collection Page)"
+    },
+    "class": "homepage-section--video-wrapper show-on-scroll",
+    "settings": [
+        {
+            "type": "text",
+            "id": "title",
+            "label": {
+                "en": "Heading",
+                "de": "Überschrift",
+                "es": "Encabezado",
+                "fr": "Rubrique",
+                "pt-PT": "Título"
+            }
+        },
+        {
+            "type": "richtext",
+            "id": "richtext",
+            "label": {
+                "en": "Description",
+                "de": "Beschreibung",
+                "es": "Descripción",
+                "fr": "Description",
+                "pt-PT": "Descrição"
+            },
+            "info": {
+                "en": "Optional",
+                "de": "Optional",
+                "es": "Opcional",
+                "fr": "Facultatif",
+                "pt-PT": "Opcional"
+            }
+        },
+        {
+            "type": "checkbox",
+            "id": "autoplay",
+            "label": {
+                "en": "Autoplay",
+                "de": "Automatische Wiedergabe",
+                "es": "Reproducción automática",
+                "fr": "Lecture automatique",
+                "pt-PT": "Reprodução Automática"
+            },
+            "default": false
+        },
+        {
+            "type": "checkbox",
+            "id": "loop",
+            "label": {
+                "en": "Loop",
+                "de": "Schleife",
+                "es": "En bucle",
+                "fr": "Boucle",
+                "pt-PT": "Repetição"
+            },
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "mute",
+            "label": {
+                "en": "Mute",
+                "de": "Stummschalten",
+                "es": "Silenciar",
+                "fr": "Muet",
+                "pt-PT": "Silenciar"
+            },
+            "default": false
+        },
+        {
+            "type": "range",
+            "id": "video_overlay_opacity",
+            "min": 0,
+            "max": 95,
+            "step": 5,
+            "unit": {
+                "en": "%",
+                "de": "%",
+                "es": "%",
+                "fr": "%",
+                "pt-PT": "%"
+            },
+            "label": {
+                "en": "Overlay opacity",
+                "de": "Überlagerungsdeckkraft",
+                "es": "Capacidad de sobrexposición",
+                "fr": "Opacité de superposition",
+                "pt-PT": "Opacidade de sobreposição"
+            },
+            "default": 50
+        }
+    ],
+    "presets": [
+        {
+            "name": {
+                "en": "Video",
+                "de": "Video",
+                "es": "Vídeo",
+                "fr": "Vidéo",
+                "pt-PT": "Vídeo"
+            },
+            "category": {
+                "en": "Video",
+                "de": "Video",
+                "es": "Vídeo",
+                "fr": "Vidéo",
+                "pt-PT": "Vídeo"
+            }
+        }
+    ]
+}
+{% endschema %}

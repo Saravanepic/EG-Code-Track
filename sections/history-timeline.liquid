@@ -1,0 +1,225 @@
+<div class="wrapper main-content">
+
+    <div class="timeline__title-box">
+      <h1 class="timeline__title">{{ section.settings.title }}</h1>
+    </div>
+
+
+    {% for block in section.blocks %}
+        {% case block.type %}
+        {% when 'event-left' %}
+            <div class="timeline__container">
+                <div class="timeline__left has-image">
+                    <div class="timeline__image">{% include 'responsive-image' with block.settings.event_image %}</div>
+                </div>
+                <div class="timeline__right has-text">
+                    <div class="timeline__info-box">
+                        <p class="timeline__date--right">{{ block.settings.date}}</p>
+                        <p class="timeline__title">{{ block.settings.title}}</p>
+                        <p class="timeline__text">{{ block.settings.richtext}}</p>
+                    </div>
+                </div>
+            </div>
+        {% when 'event-right' %}
+         <div class="timeline__container">
+                <div class="timeline__left has-text">
+                <div class="timeline__info-box">
+                        <p class="timeline__date--left">{{ block.settings.date}}</p>
+                        <p class="timeline__title">{{ block.settings.title}}</p>
+                        <p class="timeline__text">{{ block.settings.richtext}}</p>
+                    </div>
+                    
+                </div>
+                <div class="timeline__right has-image">
+                   <div class="timeline__image">{% include 'responsive-image' with block.settings.event_image %}</div>
+                </div>
+            </div>
+
+        {% endcase %}
+    {% endfor %}
+<div class="timeline__logo"><img src="{{ 'ENTER_LOGO.png' | asset_url }}"></div>
+</div>
+
+
+<style>
+    .timeline__container{
+        width: 100%;
+        display: flex;
+    }
+    .timeline__left, .timeline__right{
+        width: 50%;
+    }
+    .timeline__image{
+        max-width: 620px;
+        max-height: 515px;
+        padding: 35px 70px 0;
+        margin-bottom: 50px;
+    }
+    .timeline__right .timeline__image, .timeline__right .lazyload-wrapper {
+        margin-right: auto;
+        justify-content: left;
+    }
+    .timeline__left .timeline__image, .timeline__left .lazyload-wrapper{
+        margin-left: auto;
+        justify-content: right;
+    }
+    .timeline__left{
+        border-right: 1px solid black;
+        text-align: right;
+    }
+    .timeline__info-box{
+        padding: 30px;
+    }
+
+    .timeline__date--left, .timeline__date--right{
+        position: relative;
+        margin-bottom: 0;
+    }
+    .timeline__date--left:before {
+        content: "";
+        display: block;
+        width: 20px;
+        height: 1px;
+        background: #000;
+        right: -30px;
+        top: 50%;
+        position: absolute;
+        }
+    .timeline__date--right:before {
+        content: "";
+        display: block;
+        width: 20px;
+        height: 1px;
+        background: #000;
+        left: -30px;
+        top: 50%;
+        position: absolute;
+        }
+    .timeline__date--left,.timeline__date--right, .timeline__title{
+        font-family: 'Kanit';
+        font-size: 30px;
+        letter-spacing: 0;
+        line-height: 40px;
+    }
+    .timeline__text{  
+        font-family: 'Poppins';
+        font-size: 14px;
+        letter-spacing: 1.33px;
+        line-height: 21px;
+    }
+    .timeline__logo{
+        justify-content: center;
+        display: flex;
+        margin-top: -4px;
+    }
+   
+    .timeline__logo img{
+        width: 50px;
+    }
+    .timeline__title-box{  
+        font-family: 'Kanit';
+        font-size: 30px;
+        letter-spacing: 0;
+        line-height: 40px;
+        text-align: center;
+        padding: 50px 0;
+        }
+    @media only screen and (max-width: 768px) {
+        .timeline__container{
+            display: grid;
+        }
+        .timeline__left, .timeline__right{
+            width: 100%;
+            border-right: 0;
+            border-left: 1px solid black;
+            text-align: left;
+        }
+        .has-image {
+            order:2;
+        }
+        .timeline__date--left:before {
+        left: -30px;
+        }
+        .timeline__image{
+         padding: 0x 35px 0;
+        }
+        .timeline__logo{
+            justify-content: left;
+            
+        }
+    }
+</style>
+
+{% schema %}
+    {
+        "name": "Timeline",
+        "settings": [
+             {
+                "type": "text",
+                "id": "title",
+                "label": "Heading",
+                "default": "Timeline title"     
+                }
+        ],
+        "blocks": [
+            {
+                "type": "event-left",
+                "name": "Event image on left",
+                "settings": [
+                    {
+                    "type": "text",
+                    "id": "date",
+                    "label": "Date",
+                    "default": "2003"     
+                    },
+                    {
+                    "type": "text",
+                    "id": "title",
+                    "label": "Heading",
+                    "default": "Event title"     
+                    },
+                    {
+                        "type": "richtext",
+                        "id": "richtext",
+                        "label": "Text",
+                        "default":
+                            "<p>Lorem ipsum, Lorem ipsum, Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum </p>"
+                    }, {
+                    "type": "image_picker",
+                    "id": "event_image",
+                    "label": "Image"
+                }
+                ]
+            }, {
+                "type": "event-right",
+                "name": "Event image on right",
+                "settings": [
+                    {
+                    "type": "text",
+                    "id": "date",
+                    "label": "Date",
+                    "default": "2003"     
+                    },
+                    {
+                    "type": "text",
+                    "id": "title",
+                    "label": "Heading",
+                    "default": "Event title"     
+                    },
+                    {
+                        "type": "richtext",
+                        "id": "richtext",
+                        "label": "Text",
+                        "default":
+                            "<p>Lorem ipsum, Lorem ipsum, Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum </p>"
+                    }, {
+                    "type": "image_picker",
+                    "id": "event_image",
+                    "label": "Image"
+                }
+                ]
+            }
+        ]
+        
+    }
+{% endschema %}

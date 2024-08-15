@@ -1,0 +1,202 @@
+{% for link in menu.links %}
+
+    {% if link.links != blank %}
+
+
+      <!-- 1st Menu for loop -->
+      {% if forloop.index == 1 %} 
+        <!-- Target Mobile Artisits -->
+          <li class="mobile-nav__item{% if link.active %} mobile-nav__item--active{% endif %}" aria-haspopup="true">
+        <div class="mobile-nav__has-sublist">
+        <a href="{{ link.url }}" class="mobile-nav__link">{{ link.title }}</a>
+        <div class="mobile-nav__toggle">
+            <button type="button" class="icon-fallback-text mobile-nav__toggle-open">
+            <i class="icon-arrow-right" aria-hidden="true"></i>
+            <span class="fallback-text">{{ 'cart.general.see_more' | t }}</span>
+            </button>
+            <button type="button" class="icon-fallback-text mobile-nav__toggle-close">
+            <i class="icon-arrow-down" aria-hidden="true"></i>
+            <span class="fallback-text">{{ 'cart.general.close_cart' | t | json }}</span>
+            </button>
+        </div>
+        </div>
+        <ul class="mobile-nav__sublist mobile-nav__sublist_artists">
+            {% for sub_link in link.links %}
+            {% if sub_link.levels > 0 %}
+<!--  -->
+    {% if forloop.index == 1 %}
+          <li class="mobile-nav__item mobile-nav__item_sub{{forloop.index  }} {% if sub_link.active %} mobile-nav__item--active{% endif %}">
+                <div class="mobile-nav__has-sublist">
+                <a href="{{ sub_link.url }}" class="mobile-nav__link">{{ sub_link.title | escape }}</a>
+                    <div class="mobile-nav__toggle">
+                    <button type="button" class="icon-fallback-text mobile-nav__toggle-open">
+                        <i class="icon-arrow-right" aria-hidden="true"></i>
+                        <span class="fallback-text">{{ 'cart.general.see_more' | t }}</span>
+                    </button>
+                    <button type="button" class="icon-fallback-text mobile-nav__toggle-close">
+                        <i class="icon-arrow-down" aria-hidden="true"></i>
+                        <span class="fallback-text">{{ 'cart.general.close_cart' | t | json }}</span>
+                    </button>
+                    </div>
+                </div>
+                <ul class="mobile-nav__sublist">
+                    {% for sub_sub_link in sub_link.links %}
+                    <li class="mobile-nav__item">
+                        <a href="{{ sub_sub_link.url  }}" class="mobile-nav__link">{{ sub_sub_link.title | escape }}</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                </li>
+         
+    {% elsif forloop.index == 2 %}
+
+   <li class="mobile-nav__item mobile-nav__item_sub{{forloop.index  }} {% if sub_link.active %} mobile-nav__item--active{% endif %}">
+                <div class="mobile-nav__has-sublist">
+                <a href="{{ sub_link.url }}" class="mobile-nav__link">{{ sub_link.title | escape }}</a>
+                    <div class="mobile-nav__toggle">
+                    <button type="button" class="icon-fallback-text mobile-nav__toggle-open">
+                        <i class="icon-arrow-right" aria-hidden="true"></i>
+                        <span class="fallback-text">{{ 'cart.general.see_more' | t }}</span>
+                    </button>
+                    <button type="button" class="icon-fallback-text mobile-nav__toggle-close">
+                        <i class="icon-arrow-down" aria-hidden="true"></i>
+                        <span class="fallback-text">{{ 'cart.general.close_cart' | t | json }}</span>
+                    </button>
+                    </div>
+                </div>
+                <ul class="mobile-nav__sublist">
+                    {% for link in linklists.menu-tab-1.links %}
+                    <li class="mobile-nav__item">
+                        <a href="{{ link.url  }}" class="mobile-nav__link">{{ link.title | escape }}</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                </li>
+      
+      {% elsif forloop.index == 3 %}
+
+       <li class="mobile-nav__item mobile-nav__item_sub{{forloop.index  }} {% if sub_link.active %} mobile-nav__item--active{% endif %}">
+                <div class="mobile-nav__has-sublist">
+                <a href="{{ sub_link.url }}" class="mobile-nav__link">{{ sub_link.title | escape }}</a>
+                    <div class="mobile-nav__toggle">
+                    <button type="button" class="icon-fallback-text mobile-nav__toggle-open">
+                        <i class="icon-arrow-right" aria-hidden="true"></i>
+                        <span class="fallback-text">{{ 'cart.general.see_more' | t }}</span>
+                    </button>
+                    <button type="button" class="icon-fallback-text mobile-nav__toggle-close">
+                        <i class="icon-arrow-down" aria-hidden="true"></i>
+                        <span class="fallback-text">{{ 'cart.general.close_cart' | t | json }}</span>
+                    </button>
+                    </div>
+                </div>
+                <ul class="mobile-nav__sublist">
+                    {% for link in linklists.menu-tab-2.links %}
+                    <li class="mobile-nav__item">
+                        <a href="{{ link.url  }}" class="mobile-nav__link">{{ link.title | escape }}</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                </li>
+        
+      {% elsif forloop.index == 4 %}
+
+       <li class="mobile-nav__item mobile-nav__item_sub{{forloop.index  }} {% if sub_link.active %} mobile-nav__item--active{% endif %}">
+                <div class="mobile-nav__has-sublist">
+                <a href="{{ sub_link.url }}" class="mobile-nav__link">{{ sub_link.title | escape }}</a>
+                    <div class="mobile-nav__toggle">
+                    <button type="button" class="icon-fallback-text mobile-nav__toggle-open">
+                        <i class="icon-arrow-right" aria-hidden="true"></i>
+                        <span class="fallback-text">{{ 'cart.general.see_more' | t }}</span>
+                    </button>
+                    <button type="button" class="icon-fallback-text mobile-nav__toggle-close">
+                        <i class="icon-arrow-down" aria-hidden="true"></i>
+                        <span class="fallback-text">{{ 'cart.general.close_cart' | t | json }}</span>
+                    </button>
+                    </div>
+                </div>
+                <ul class="mobile-nav__sublist">
+                    {% for link in linklists.menu-tab-3.links %}
+                    <li class="mobile-nav__item">
+                        <a href="{{ link.url  }}" class="mobile-nav__link">{{ link.title | escape }}</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                </li>
+      <li class="mobile-nav__item {% if sub_link.active %} mobile-nav__item--active{% endif %}">
+                <a href="/collections" class="mobile-nav__link">All Artists A-Z</a>
+                </li>
+      
+    {% else %}
+      <!-- No dropdown -->
+                <li class="mobile-nav__item {% if sub_link.active %} mobile-nav__item--active{% endif %}">
+                <a href="{{ sub_link.url }}" class="mobile-nav__link">{{ sub_link.title | escape }}</a>
+                </li>
+    {% endif %}
+<!--  -->
+
+              
+          
+            {% endif %}
+            {% endfor %}
+        </ul>
+        </li>
+      {% endif %}
+      <!--  1st Menu for loop close -->
+      
+    <li class="mobile-nav__item{% if link.active %} mobile-nav__item--active{% endif %}" aria-haspopup="true" {% if forloop.index == 1 %} style="display:none;"{% endif %}>
+        <div class="mobile-nav__has-sublist">
+        <a href="{{ link.url }}" class="mobile-nav__link">{{ link.title }}</a>
+        <div class="mobile-nav__toggle">
+            <button type="button" class="icon-fallback-text mobile-nav__toggle-open">
+            <i class="icon-arrow-right" aria-hidden="true"></i>
+            <span class="fallback-text">{{ 'cart.general.see_more' | t }}</span>
+            </button>
+            <button type="button" class="icon-fallback-text mobile-nav__toggle-close">
+            <i class="icon-arrow-down" aria-hidden="true"></i>
+            <span class="fallback-text">{{ 'cart.general.close_cart' | t | json }}</span>
+            </button>
+        </div>
+        </div>
+        <ul class="mobile-nav__sublist">
+            {% for sub_link in link.links %}
+            {% if sub_link.levels > 0 %}
+            <li class="mobile-nav__item {% if sub_link.active %} mobile-nav__item--active{% endif %}">
+                <div class="mobile-nav__has-sublist">
+                <a href="{{ sub_link.url }}" class="mobile-nav__link">{{ sub_link.title | escape }}</a>
+                    <div class="mobile-nav__toggle">
+                    <button type="button" class="icon-fallback-text mobile-nav__toggle-open">
+                        <i class="icon-arrow-right" aria-hidden="true"></i>
+                        <span class="fallback-text">{{ 'cart.general.see_more' | t }}</span>
+                    </button>
+                    <button type="button" class="icon-fallback-text mobile-nav__toggle-close">
+                        <i class="icon-arrow-down" aria-hidden="true"></i>
+                        <span class="fallback-text">{{ 'cart.general.close_cart' | t | json }}</span>
+                    </button>
+                    </div>
+                </div>
+                <ul class="mobile-nav__sublist">
+                    {% for sub_sub_link in sub_link.links %}
+                    <li class="mobile-nav__item">
+                        <a href="{{ sub_sub_link.url  }}" class="mobile-nav__link">{{ sub_sub_link.title | escape }}</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                </li>
+            {% else %}
+                <li class="mobile-nav__item {% if sub_link.active %} mobile-nav__item--active{% endif %}">
+                <a href="{{ sub_link.url }}" class="mobile-nav__link">{{ sub_link.title | escape }}</a>
+                </li>
+            {% endif %}
+            {% endfor %}
+        </ul>
+        </li>
+
+        {% else %}
+
+        <li class="mobile-nav__item{% if link.active %} mobile-nav__item--active{% endif %}">
+        <a href="{{ link.url }}" class="mobile-nav__link">{{ link.title }}</a>
+        </li>
+
+    {% endif %}
+
+{% endfor %}

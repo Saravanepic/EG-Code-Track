@@ -1,0 +1,35 @@
+<section class="px-4 md:px-8 pt-5 md:pt-16 xl:pt-20">
+  <div class="max-w-6xl mx-auto">
+    <h2>{{ section.settings.link_section_title }}</h2>
+    <div class=" text-lg">
+      {{ section.settings.link_section_content }}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "CMS Link Section",
+  "settings": [
+    {
+        "type": "header",
+        "content": "Link Section"
+    },
+    {
+        "type": "text",
+        "id": "link_section_title",
+        "label": "Link Section Title"
+    },
+    {
+        "type": "richtext",
+        "id": "link_section_content",
+        "label": "Link Section Content"
+    }
+  ],
+  "presets": [
+    {
+      "name": "CMS Link Section"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,1150 @@
+{% assign display-total-collection-products-number-rows = section.settings.desktop-products-per-row %}
+{% assign display-total-collection-products-per-row = section.settings.collection-products-per-page %}
+
+{% if collection.handle == 'all' or collection.metafields.accentuate.collection_type == 'Artworks' %}
+  {% assign pseudo_all = true %}
+{% else %}
+  {% assign pseudo_all = false %}
+{% endif %}
+
+<!-- pseudo_all? {{ pseudo_all }} -->
+
+{% case section.settings.collection-layout %}
+
+	{% when 'grid' %}
+		{% assign display-total-collection-products-total = display-total-collection-products-number-rows | times: display-total-collection-products-per-row %}
+
+{% endcase %}
+
+{% paginate collection.products by display-total-collection-products-total %}
+
+{% if collection.id == 160146522225 %}
+  {% assign today_date = 'now' | date: '%s' | times: 1 %}
+  {% if today_date < 1638187199 %}
+    <!-- date today: {{ today_date }} -->
+    <!-- show black friday banner on all collection only -->
+    <a href="https://entergallery.com/blogs/news/black-friday-at-enter-gallery-1" class="slideshow__link">
+
+      <!--
+      <div style="position: relative;" class="lazyload-wrapper lazyload-blur-wrapper slideshow-mobile-image">
+          <img class="lazyload " src="//cdn.shopify.com/s/files/1/0268/6510/7057/files/New_Black_Friday_square_banner_150x.png?v=1637584807" data-src="//cdn.shopify.com/s/files/1/0268/6510/7057/files/New_Black_Friday_square_banner_{width}.png?v=1637584807" data-sizes="auto" data-lowsrc="//cdn.shopify.com/s/files/1/0268/6510/7057/files/New_Black_Friday_square_banner_150x.png?v=1637584807" data-blur="true" data-aspectratio="1.0" style="max-width: 1400px; max-height: 1400px" alt="" draggable="false">
+      </div>
+      -->
+
+      <div style="position: relative;" class="lazyload-wrapper lazyload-blur-wrapper slideshow-desktop-image lazyloaded" data-expand="-1">
+          <img class="lazyautosizes lazyloaded" src="//cdn.shopify.com/s/files/1/0268/6510/7057/files/New_Black_Friday_banner_150x.png?v=1637584774" data-sizes="auto" data-lowsrc="//cdn.shopify.com/s/files/1/0268/6510/7057/files/New_Black_Friday_banner_150x.png?v=1637584774" data-blur="true" data-aspectratio="2.0" alt="" data-srcset="//cdn.shopify.com/s/files/1/0268/6510/7057/files/New_Black_Friday_banner_150x.png?v=1637584774 150w, //cdn.shopify.com/s/files/1/0268/6510/7057/files/New_Black_Friday_banner_300x.png?v=1637584774 300w, //cdn.shopify.com/s/files/1/0268/6510/7057/files/New_Black_Friday_banner_600x.png?v=1637584774 600w, //cdn.shopify.com/s/files/1/0268/6510/7057/files/New_Black_Friday_banner_900x.png?v=1637584774 900w, //cdn.shopify.com/s/files/1/0268/6510/7057/files/New_Black_Friday_banner_1200x.png?v=1637584774 1200w, //cdn.shopify.com/s/files/1/0268/6510/7057/files/New_Black_Friday_banner_1500x.png?v=1637584774 1500w, //cdn.shopify.com/s/files/1/0268/6510/7057/files/New_Black_Friday_banner_1800x.png?v=1637584774 1800w, //cdn.shopify.com/s/files/1/0268/6510/7057/files/New_Black_Friday_banner_2100x.png?v=1637584774 2100w" sizes="1211px" srcset="//cdn.shopify.com/s/files/1/0268/6510/7057/files/New_Black_Friday_banner_150x.png?v=1637584774 150w, //cdn.shopify.com/s/files/1/0268/6510/7057/files/New_Black_Friday_banner_300x.png?v=1637584774 300w, //cdn.shopify.com/s/files/1/0268/6510/7057/files/New_Black_Friday_banner_600x.png?v=1637584774 600w, //cdn.shopify.com/s/files/1/0268/6510/7057/files/New_Black_Friday_banner_900x.png?v=1637584774 900w, //cdn.shopify.com/s/files/1/0268/6510/7057/files/New_Black_Friday_banner_1200x.png?v=1637584774 1200w, //cdn.shopify.com/s/files/1/0268/6510/7057/files/New_Black_Friday_banner_1500x.png?v=1637584774 1500w, //cdn.shopify.com/s/files/1/0268/6510/7057/files/New_Black_Friday_banner_1800x.png?v=1637584774 1800w, //cdn.shopify.com/s/files/1/0268/6510/7057/files/New_Black_Friday_banner_2100x.png?v=1637584774 2100w" draggable="false">
+      </div>
+
+    </a>
+  {% endif %}
+{% endif %}
+
+{% if section.settings.show-collection-image or collection.metafields.accentuate.show_collection_image %}
+
+	{% assign header_image = section.settings.default_header_image %}
+	{% if collection.metafields.accentuate.optional_header_replacement != blank %}
+		{% assign header_image = collection.metafields.accentuate.optional_header_replacement[0]['src'] %}
+	{% endif %}
+
+	{% if header_image != blank %}
+
+		{% if section.settings.collection-image-size == 'original' %}
+
+			{% if collection.metafields.accentuate.optional_header_replacement != blank %}
+				<img src="{{ header_image }}" alt="{{ img.alt }}" />
+			{% else %}
+		  		{% include 'responsive-image' with header_image, alt: collection.title, class: 'collection-page--feature-image' %}
+			{% endif %}
+
+		{% else %}
+
+			<style>
+			  {% if header_image != blank %}
+				  {% capture selector %}.collection-image .img{% endcapture %}
+					{% if collection.metafields.accentuate.optional_header_replacement != blank %}
+						{{ selector }} {
+							background-image: url('{{ header_image | append: 'w_1660' }}');
+						}
+					{% else %}
+						{% include 'responsive-background-image' with header_image, selector: selector %}
+					{% endif %}
+
+			    .collection-image .img {
+			      background-position: center;
+			      background-repeat: no-repeat;
+			      background-size: cover;
+			    }
+			  {% endif %}
+
+			  .collection-image .img {
+			    height: {{ section.settings.collection-image-size }};
+			  }
+
+			  @media only screen and (min-width: 768px) {
+			    .collection-image .rellax.img {
+			      height: {{ section.settings.collection-image-size | remove:'vw' | times:1.15 | append:'vw' }};
+			      margin-top: {{ section.settings.collection-image-size | remove:'vw' | times:-0.6 | append:'vw' }};
+			    }
+			  }
+
+			  .parallax.collection-image-parallax {
+			    height: {{ section.settings.collection-image-size }};
+			  }
+			</style>
+
+			{% capture image_layout %}
+				<div class="collection-image">
+				    <div class="collection-page--feature-image {% if section.settings.parallax %} parallax collection-image-parallax{% endif %}">
+					    <div id="rellax--collection-image" class="img{% if section.settings.parallax %} rellax {% else %} aspect-locked {% endif %}" data-rellax-percentage="0.15" data-rellax-speed="-4"></div>
+				    </div>
+				</div>
+			{% endcapture %}
+
+			{{ image_layout }}
+
+		{% endif %}
+	{% else %}
+		<div class="no-collection-img"></div>
+	{% endif %}
+{% endif %}
+
+
+{% include 'breadcrumb' %}
+
+<div class="wrapper main-content" id="overview">
+
+	{% case section.settings.collection-layout %}
+
+	{% when 'grid' %}
+
+			<div class="collection-style--grid">
+			  <div class="collection-main-body{% if section.settings.match-height %} products--match-height{% endif %}">
+
+					<div class="collection-style--grid-inner">
+
+            {% unless pseudo_all %}
+            <header class="section-header collection-page--header">
+              <div class="sitewide--title-wrapper list-collections--title-artists--wrapper">
+                {% if settings.heading_style == 'zigzag' %}<span class="zig-zag-border"></span>{% endif %}
+                <h1 class="page--title">
+                {{ collection.title }}
+                {% if collection.metafields.accentuate.collection_type == 'Artist'
+                    and collection.description != blank and section.settings.show-collection-description %}
+                  Biography
+                {% endif %}
+                </h1>
+                <div class="list-collections--filter-subset-links">
+                  	{% comment %}
+                      {% if collection.description != blank and section.settings.show-collection-description %}
+                        <a href="#overview" data-scroll-to="overview">Overview</a>
+                      {% endif %}
+                  	{% endcomment %}
+                    <a href="#works" data-scroll-to="works">Artworks</a>
+                    <!-- hidden until news articles are found -->
+                    <a href="#news" data-scroll-to="news" class="collection-blog-display" style="display: none;">News &amp; Events</a>
+                    {% if collection.metafields.accentuate.video %}
+                    <a href="#video" data-scroll-to-exact="video">Video</a>
+                    {% endif %}
+                </div>
+              </div>
+            </header>
+            {% endunless %}
+
+
+            {% unless pseudo_all %}
+						<div class="section collection-page--description">
+              {% if collection.description != blank and section.settings.show-collection-description %}
+                <div class="gridlayout" id="content_all">
+                {% if collection.image != blank %}
+                  <div class="grid__item small--one-whole small--show medium--show large--hide">
+                    <div class="rte rte--header collection-sidebar__description">
+                        {% include 'responsive-image' with collection.image.src, alt: collection.title, class: 'collection-page--description-image' %}
+                    </div>
+                  </div>
+                {% endif %}
+                  <div class="grid__item large--one-half medium--one-whole small--one-whole">
+                    <div class="rte rte--header collection-sidebar__description" id="content_description">
+                      {{ collection.description }}
+                    </div>
+                  </div>
+                {% if collection.image != blank %}
+                  <div class="grid__item large--one-half small--hide medium--hide">
+                    <div class="rte rte--header collection-sidebar__description" id="content_image">
+                        {% include 'responsive-image' with collection.image.src, alt: collection.title, class: 'collection-page--description-image' %}
+                    </div>
+                  </div>
+                {% endif %}
+                </div>
+              {% endif %}
+						</div>
+            {% endunless %}
+
+
+			    {% comment %}
+			      Use class grid-uniform to have evenly sized columns clear
+			      each other properly at each breakpoint.
+			    {% endcomment %}
+
+					{% case section.settings.desktop-products-per-row %}
+						{% when 2 %}
+							{% assign desktop_item_width = 'large--one-half wow fadeInUp' %}
+						{% when 3 %}
+							{% assign desktop_item_width = 'large--one-third wow fadeInUp' %}
+						{% when 4 %}
+							{% assign desktop_item_width = 'large--one-quarter wow fadeInUp' %}
+						{% when 5 %}
+							{% assign desktop_item_width = 'large--one-fifth wow fadeInUp' %}
+						{% when 6 %}
+							{% assign desktop_item_width = 'large--one-sixth wow fadeInUp' %}
+					{% endcase %}
+
+					{% case section.settings.tablet-products-per-row %}
+						{% when 2 %}
+							{% assign tablet_item_width = 'medium--one-half' %}
+						{% when 3 %}
+							{% assign tablet_item_width = 'medium--one-third' %}
+						{% when 4 %}
+							{% assign tablet_item_width = 'medium--one-quarter' %}
+					{% endcase %}
+
+					{% case section.settings.mobile-products-per-row %}
+						{% when 1 %}
+							{% assign mobile_item_width = 'small--one-whole' %}
+						{% when 2 %}
+							{% assign mobile_item_width = 'small--one-half' %}
+						{% when 3 %}
+							{% assign mobile_item_width = 'small--one-third' %}
+					{% endcase %}
+
+          <a name="works" id="works" style="visibility: hidden;"></a>
+
+            {% if pseudo_all %}
+              {% assign featured_products = collections[section.settings.all_products_featured].products %}
+
+                  {% for block in section.blocks %}
+                    {% if block.settings.filter_collection == collection.handle and block.settings.filter_collection_highlights != blank %}
+                      {% assign featured_products = collections[block.settings.filter_collection_highlights].products %}
+                    {% endif %}
+                  {% endfor %}
+
+            {% else %}
+              {% assign featured_products = collection.metafields.accentuate.featured_products  | split: "|" %}
+            {% endif %}
+
+
+            <!-- highlights (if any) -->
+          {% unless pseudo_all %}
+          {% if featured_products != blank %}
+          {% if collection.metafields.accentuate.featured_products or pseudo_all %}
+            <header class="section-header">
+              <div class="sitewide--title-wrapper">
+                {% if settings.heading_style == 'zigzag' %}<span class="zig-zag-border"></span>{% endif %}
+                <h2 class="page--title">
+                {% if pseudo_all %}
+                  Highlights
+                {% else %}
+                  Highlights from {{ collection.title }}
+                {% endif %}
+                </h2>
+              </div>
+            </header>
+            {% endif %}
+
+
+          {% comment %}
+            This was written for collections first, the all collection has been shimmed
+          {% endcomment %}
+			    <div class="grid-uniform wow fadeInUp collection-page--featured-grid">
+
+			      {% for handle in featured_products %}
+
+              {% if forloop.index > 4 %}
+                {% break %}
+              {% endif %}
+
+              {% if pseudo_all %}
+                {% assign product = handle %}
+              {% else %}
+                {% assign product = all_products[handle] %}
+              {% endif %}
+
+              {% comment %}
+                Check if the product is on sale and set a variable to be used below.
+              {% endcomment %}
+              {% assign on_sale = false %}
+              {% if product.compare_at_price > product.price %}
+                {% assign on_sale = true %}
+              {% endif %}
+
+              {% comment %}
+                Check if the product is sold out and set a variable to be used below.
+              {% endcomment %}
+              {% assign sold_out = true %}
+              {% if product.available %}
+                {% assign sold_out = false %}
+              {% endif %}
+
+              <div class="grid__item {{ mobile_item_width }} {{ tablet_item_width }} {{ desktop_item_width }}">
+
+                  {% include 'grid-view-item' %}
+
+              </div>
+            {% endfor %}
+
+            </div>
+            {% endif %}
+            {% endunless %}
+
+
+					<input type="hidden" id="grid_item_width_classes" value="{{ mobile_item_width }} {{ tablet_item_width }} {{ desktop_item_width }}" />
+
+            {% if pseudo_all %}
+            <!-- if Artworks page --->
+            <a id="artworks" name="artworks" style="visibility: hidden;"></a>
+            <div class="padder"></div>
+            <div class="sitewide--title-wrapper list-collections--title-artists--wrapper">
+              {% if settings.heading_style == 'zigzag' %}<span class="zig-zag-border"></span>{% endif %}
+              
+              {% assign collection_title_downcase = collection.title|downcase %}
+              {% if collection_title_downcase == "all" %}
+              	<h1 id="collection-title" class="homepage-sections--title">Artworks</h1>
+              {% else %}
+              	<h1 id="collection-title" class="homepage-sections--title">{{ collection.title }}</h1>
+              {% endif %}
+              {% comment %}
+              <div class="list-collections--filter-subset-links">
+                  {% assign col_counter = 0 %}
+                  {% assign col_length = section.blocks | size %}
+                  {% for block in section.blocks %}
+                	  {% assign col_counter = col_counter | plus: 1  %}
+                	{% if col_counter == 5 %}
+                		<select class="small-hide" onchange="if (this.value) window.location.href=this.value">
+                          <option value="">More Collections</option>
+                	{% endif %}
+                      {%- assign coll = collections[block.settings.filter_collection] -%}
+                      {% if col_counter > 4 %}<option value="/collections/{{ coll.handle }}/#artworks" {% if coll.handle == collection.handle %}selected{% endif %}>{% endif %}
+                      <a href="/collections/{{ coll.handle }}/#artworks"
+                          class="small-hide {% if coll.handle == collection.handle %}active{% endif %}">{{ coll.title }}</a>
+                      {% if col_counter > 4 %}</option>{% endif %}
+                    {% if col_counter == col_length %}
+                		</select>
+                    {% endif %}
+                  {% endfor %}
+                  <select class="large--hide" onchange="window.location.href = this.value">
+                    {% for block in section.blocks %}
+                      {%- assign coll = collections[block.settings.filter_collection] -%}
+                      <option value="/collections/{{ coll.handle }}/#artworks" {% if coll.handle == collection.handle %}selected{% endif %}>{{ coll.title }}</option>
+                    {% endfor %}
+                  </select>
+
+                    {% if section.settings.collection-show-filter-by-size %}
+                		<script>
+                          function filterBySize(val){
+                            console.log(val);
+                            var collection = window.location.href.split('//')[1].split('/')[2];
+                            var url = "/collections/" + collection;
+                            if (val){
+                            	url += "/" + val;
+                            }
+                            if (window.location.hash){
+                             	url += "#" + window.location.hash;
+                            } else {
+                              	url += '#artworks';
+                            }
+                            console.log(url);
+                            window.location.href = url;
+                          }
+                		</script>
+                		<!--
+                		<div class="filter-size">
+                          <select  onchange="filterBySize(this.value)">
+                            <option value="">All Sizes</option>
+                            <option value="small" {% if current_tags.first == "small" %}selected{% endif %}>Small</option>
+                            <option value="mediuam" {% if current_tags.first == "medium" %}selected{% endif %}>Medium</option>
+                            <option value="large" {% if current_tags.first == "large" %}selected{% endif %}>Large</option>
+                          </select>
+                		</div>
+						-->
+            		{% endif %}
+              </div>
+              {% endcomment %}
+            </div>
+
+			{% render "artists-filters" %}
+            {% comment %}<div class='products-filter-loading'><div class='lds-ring'><div></div><div></div><div></div><div></div></div></div>{% endcomment %}
+
+
+            {% if collection.description != blank %}
+            	{% if collection.metafields.accentuate.collection_type == 'Artworks' %}
+            		<div id="collection-description" class="grid__item large--one-whole medium--one-whole small--one-whole" style="padding-left: 0;">
+              			<div class="rte rte--header collection-sidebar__description">
+                			{{ collection.description }}
+              			</div>
+            		</div>
+                {% else %}
+                    <div id="collection-description" class="grid__item large--two-thirds medium--one-whole small--one-whole" style="padding-left: 0;">
+              			<div class="rte rte--header collection-sidebar__description">
+                			{{ collection.description }}
+              			</div>
+            		</div>
+                {% endif %}
+            {% endif %}
+
+            {% else %}
+            <!-- if Artist Page -->
+            <a id="artworks" name="artworks" style="visibility: hidden;"></a>
+            <header class="section-header">
+              <div class="sitewide--title-wrapper">
+                {% if settings.heading_style == 'zigzag' %}<span class="zig-zag-border"></span>{% endif %}
+                <h2 id="collection-title" class="page--title">
+                {{ collection.title }} Artworks
+                </h2>
+              </div>
+            </header>
+            {% comment %}{% render "artists-filters" %}{% endcomment %}
+            {% endif %}
+
+
+						{% if section.settings.tags_enable or section.settings.collection-show-sort-by %}
+						<div class="collection-none-sidebar-wrapper">
+
+								{% if section.settings.tags_enable %}
+										<div class="collection-sidebar-filter">
+											<wetheme-dropdown fit="parent">
+												<label for="tags">{{ 'collections.filters.title_tags' | t }}</label>
+												<select id="tags" class="needsclick collection-sidebar-filter-select coll-filter">
+													<option value="">{{ 'collections.filters.all_tags' | t }}</option>
+													{% for tag in collection.all_tags %}
+													{% if current_tags contains tag %}
+													<option value="{{ tag | handle }}" selected>{{ tag }}</option>
+													{% else %}
+													<option value="{{ tag | handle }}">{{ tag }}</option>
+													{% endif %}
+													{% endfor %}
+												</select>
+											</wetheme-dropdown>
+										</div>
+
+										<div id="link-to-tag-generic" style="display: none; visibility: hidden;">
+											{{ 'tag' | link_to_tag: 'tag' }}"
+										</div>
+										{% if collection.handle %}
+											<input type="hidden" id="link-to-collection" value="{{ collection.url }}" />
+										{% elsif collection.products.first.type == collection.title %}
+											<input type="hidden" id="link-to-collection" value="{{ collection.title | url_for_type }}" />
+										{% elsif collection.products.first.vendor == collection.title %}
+											<input type="hidden" id="link-to-collection" value="{{ collection.title | url_for_vendor }}" />
+										{% endif %}
+								{% endif %}
+
+
+                {% if section.settings.collection-show-sort-by %}
+
+                {% include 'collection-sort-by-settings' %}
+                {% assign sort_by_keys = selected_keys | split: ',' %}
+                {% assign sort_by_labels = selected_labels | split: ',' %}
+
+									<div class="collection-sidebar-filter">
+										<wetheme-dropdown fit="parent">
+											<label for="sort-by">{{ 'collections.sorting.title' | t }}</label>
+											<select id="sort-by" class="needsclick coll-sort-by collection-sidebar-filter-select">
+												<option value="" disabled selected>Select option</option>
+												{% assign current_key = collection.sort_by | default: collection.default_sort_by | escape %}
+												{% for key in sort_by_keys %}
+													{% assign full_label = 'collections.sorting.' | append: sort_by_labels[forloop.index0] %}
+													<option value="{{ key }}"{% if key == current_key %} selected{% endif %}>{{ full_label | t }}</option>
+												{% endfor %}
+											</select>
+										</wetheme-dropdown>
+									</div>
+								{% endif %}
+						</div>
+						{% endif %}
+
+
+          {% if paginate.previous %}
+            {% if section.settings.pagination_options == 'pagination_infinite_scrolling' or section.settings.pagination_options == 'pagination_load_more' %}
+            <div class="text-center show-view-all--button">
+              <a href="{{ collection.url }}#works" class="btn" aria-label="Load Previous">
+                Load Previous
+              </a>
+            </div>
+            {% endif %}
+          {% endif %}
+
+          <style>.content-wrapper.gridlayout { margin-left:0px; margin-top:15px; padding-bottom: 20px; } @media(max-width:991px) { .content-wrapper.gridlayout .grid__item { padding-right:15px; padding-left:15px; } }</style>
+          <div class="content-wrapper gridlayout bg-gray-100" style="display:none;">
+            {% comment %}
+            <style>#artist-collection-description { margin-top:15px; } #artist-collection-description p:last-of-type { margin-bottom:0px; }</style>
+            <div id="artist-collection-description" class="bg-gray-100 py-5 md:py-5 xl:py-5 px-4">
+
+            </div>
+
+            <div id="content_image"></div>
+            {% endcomment %}
+          </div>
+
+			    <div id="products-ajax" class="grid-uniform collection-main-body-inner wow fadeInUp">
+          <div id="products-ajax-inner">
+
+			      {% for product in collection.products %}
+
+            {% comment %}
+              Check if the product is on sale and set a variable to be used below.
+            {% endcomment %}
+            {% assign on_sale = false %}
+            {% if product.compare_at_price > product.price %}
+              {% assign on_sale = true %}
+            {% endif %}
+
+            {% comment %}
+              Check if the product is sold out and set a variable to be used below.
+            {% endcomment %}
+            {% assign sold_out = true %}
+            {% if product.available %}
+              {% assign sold_out = false %}
+            {% endif %}
+
+            <div class="grid__item pagination-item {{ mobile_item_width }} {{ tablet_item_width }} {{ desktop_item_width }}">
+
+                {% include 'grid-view-item' %}
+
+            </div>
+
+
+			      {% else %}
+
+			        {% if pseudo_all and collection.all_vendors.size == 0 and collection.all_types.size == 0 %}
+
+			          <div class="grid__item pagination-item">
+  <div class="grid grid--uniform">
+    {% for i in (1..8) %}
+      <div class="grid__item {{ mobile_item_width }} {{ tablet_item_width }} {{ desktop_item_width }}">
+        <div class="grid-view-item">
+          <a href="#" class="grid-view-item__link">
+            <div class="grid-view-item__image">
+              {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+              {{ 'product-' | append: current | placeholder_svg_tag: 'placeholder-svg' }}
+            </div>
+            <div class="h4 grid-view-item__title">{{ 'homepage.onboarding.product_title' | t }}</div>
+            <div class="grid-view-item__meta">
+              <span class="product-price__price">{{ 1999 | money_with_currency }}</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+			        {% else %}
+
+			          {% comment %}
+			            If collection exists but is empty, display message
+			          {% endcomment %}
+			          <div class="grid__item">
+			            <p>{{ 'collections.general.no_matches' | t }}</p>
+			          </div>
+
+			        {% endif %}
+
+			      {% endfor %}
+
+			      </div>
+                </div>
+			  </div>
+			</div>
+
+	{% endcase %}
+
+	{% if paginate.pages > 1 %}
+{% if section.settings.pagination_options == 'pagination_infinite_scrolling' or section.settings.pagination_options == 'pagination_load_more' %}
+<div style="display: none" class="pagination-loading">
+    <i class="fa fa-circle-o-notch fa-spin fa-fw"></i>
+    <span class="sr-only">Loading...</span>
+</div>
+{% endif %}
+
+<div  id="products-ajax-pagination" class="pagination{% if section.settings.collection-layout == 'sidebar' %} grid__item large--three-quarters push--large--one-quarter{% endif %}{% if section.settings.pagination_options == 'pagination_infinite_scrolling' %} pagination-infinite{% elsif section.settings.pagination_options == 'pagination_load_more' %} pagination--load-more{% endif %}" data-paginate-items={{ paginate.items }} data-paginate-offset={{ paginate.current_offset }} data-paginate-size={{ paginate.page_size }}>
+  <ul>
+    {% if paginate.previous %}
+      <li class="pagination-arrow"><a href="{{ paginate.previous.url }}#artworks"><i class="fa fa-chevron-left"></i></a></li>
+    {% else %}
+      <li class="prev disabled"><a href="#" onclick="return false;">&laquo;</a></li>
+    {% endif %}
+
+    {% for part in paginate.parts %}
+      {% if part.is_link %}
+        {% comment %}<li class="pagination-number">{{ part.title | link_to: part.url }}</li>{% endcomment %}
+        <li class="pagination-number"><a href="{{ part.url }}#artworks">{{ part.title }}</a></li>
+      {% else %}
+        {% if part.title == '&hellip;' %}
+        <li class="ellipsis">{{ part.title }}</li>
+        {% else %}
+        {% comment %}<li class="active pagination-number">{{ part.title | link_to: part.url }}</li>{% endcomment %}
+        <li class="active pagination-number"><a href="{{ part.url }}#artworks">{{ part.title }}</a></li>
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+
+    {% if paginate.next %}
+      <li class="pagination-arrow pagination-next"><a href="{{ paginate.next.url }}#artworks"><i class="fa fa-chevron-right"></i></a></li>
+    {% else %}
+      <li class="next disabled"><a href="#" onclick="return false;">&raquo;</a></li>
+    {% endif %}
+  </ul>
+</div>
+{% endif %}
+
+{% endpaginate %}
+
+{% if section.settings.tags_enable == true and section.settings.collection-show-sort-by == true %}
+<style>
+	@media only screen and (max-width: 767px) {
+		.collection-sidebar-filter{
+			width: 49%;
+			float: left;
+			padding: 0 10px;
+		}
+		.collection-sidebar-filter-select {
+			width: 100%;
+		}
+	}
+</style>
+{% endif %}
+
+{% schema %}
+{
+    "name": {
+        "en": "Collection pages",
+        "de": "Kollektionsseiten",
+        "es": "Páginas de colecciones",
+        "fr": "Pages de collection",
+        "pt-PT": "Páginas de coleções"
+    },
+    "settings": [
+        {
+          "type": "image_picker",
+          "id": "default_header_image",
+          "label": "Default header image (all Products)"
+        },
+        {
+            "type": "checkbox",
+            "id": "show-collection-image",
+            "label": {
+                "en": "Show collection image",
+                "de": "Kollektionsbild anzeigen",
+                "es": "Mostar la imagen de la colección",
+                "fr": "Afficher l'image de la collection",
+                "pt-PT": "Mostrar imagem da coleção"
+            },
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "parallax",
+            "label": {
+                "en": "Enable parallax effect",
+                "de": "Parallaxeneffekt aktivieren",
+                "es": "Habilitar efecto de paralaje",
+                "fr": "Activer l'effet parallaxe",
+                "pt-PT": "Ativar efeito de paralaxe"
+            },
+            "default": true,
+            "info": {
+                "en": "Parallax won't be visible when the 'Collection image size' is set to 'Original'",
+                "de": "Parallax wird nicht angezeigt, wenn die Größe des Kollektionsbilds auf 'Original' eingestellt ist",
+                "es": "Parallax no estará visible cuando el 'Tamaño de la imagen de la colección' se establezca como 'Original'",
+                "fr": "La parallaxe ne sera pas visible lorsque la 'Taille de l'image de la collection' sera réglée sur 'D'origine'.",
+                "pt-PT": "A paralaxe não será visível quando o \"Tamanho da imagem da coleção\" estiver definido como \"Original\""
+            }
+        },
+        {
+          "type":      "collection",
+          "id":        "all_products_featured",
+          "label":     "All Products Featured Collection (Highlights)",
+          "info":      "When viewing all products, which collection should be featured?"
+        },
+        {
+            "type": "select",
+            "id": "collection-image-size",
+            "label": {
+                "en": "Collection image size",
+                "de": "Größe des Kollektionsbilds",
+                "es": "Tamaño de la imagen de la colección",
+                "fr": "Taille de l'image de la collection",
+                "pt-PT": "Tamanho da imagem da coleção"
+            },
+            "options": [
+                {
+                    "value": "20vh",
+                    "label": {
+                        "en": "Small",
+                        "de": "Klein",
+                        "es": "Pequeño",
+                        "fr": "Petite",
+                        "pt-PT": "Pequeno"
+                    }
+                },
+                {
+                    "value": "30vh",
+                    "label": {
+                        "en": "Medium",
+                        "de": "Mittel",
+                        "es": "Mediano",
+                        "fr": "Moyenne",
+                        "pt-PT": "Médio"
+                    }
+                },
+                {
+                    "value": "60vh",
+                    "label": {
+                        "en": "Large",
+                        "de": "Groß",
+                        "es": "Grande",
+                        "fr": "Grande",
+                        "pt-PT": "Grande"
+                    }
+                },
+                {
+                    "value": "original",
+                    "label": {
+                        "en": "Original",
+                        "de": "Original",
+                        "es": "Original",
+                        "fr": "D'origine",
+                        "pt-PT": "Original"
+                    }
+                }
+            ],
+            "default": "20vh"
+        },
+        {
+            "type": "select",
+            "id": "collection-layout",
+            "label": {
+                "en": "Layout",
+                "de": "Layout",
+                "es": "Diseño",
+                "fr": "Mise en page",
+                "pt-PT": "Apresentação"
+            },
+            "options": [
+                {
+                    "value": "grid",
+                    "label": {
+                        "en": "Grid",
+                        "de": "Raster",
+                        "es": "Cuadrícula",
+                        "fr": "Grille",
+                        "pt-PT": "Grelha"
+                    }
+                }
+            ],
+            "default": "grid"
+        },
+        {
+            "type": "checkbox",
+            "id": "show-collection-description",
+            "label": {
+                "en": "Show collection description",
+                "de": "Kollektionsbeschreibung anzeigen",
+                "es": "Mostrar descripción de la colección",
+                "fr": "Afficher la description de la collection",
+                "pt-PT": "Mostrar descrição da coleção"
+            },
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "tags_enable",
+            "label": {
+                "en": "Enable 'Filter'",
+                "de": "Filter' aktivieren",
+                "es": "Habilitar 'Filtrar'",
+                "fr": "Activer le 'Filtre'.",
+                "pt-PT": "Ativar \"Filtro\""
+            },
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "collection-show-sort-by",
+            "label": {
+                "en": "Enable 'Sort by'",
+                "de": "Sortieren nach' aktivieren",
+                "es": "Habilitar 'Ordenar por'",
+                "fr": "Activer 'Trier par",
+                "pt-PT": "Ativar \"Ordenar por\""
+            },
+            "default": true
+		},
+        {
+            "type": "checkbox",
+            "id": "collection-show-filter-by-size",
+            "label": {
+                "en": "Enable 'Filter by size'",
+                "de": "Sortieren nach' aktivieren",
+                "es": "Habilitar 'Ordenar por'",
+                "fr": "Activer 'Trier par",
+                "pt-PT": "Ativar \"Ordenar por\""
+            },
+            "default": false
+		},
+    {
+            "type": "header",
+            "content": {
+                "en": "Enable sorting options",
+                "de": "Sortieroptionen aktivieren",
+                "es": "Habilitar opciones de ordenación",
+                "fr": "Activer les Options de tri",
+                "pt-PT": "Ativar opções de triagem"
+            }
+		},
+		{
+            "type": "checkbox",
+            "id": "sort-by-manual",
+            "label": {
+                "en": "Featured",
+                "de": "Ausgewählt",
+                "es": "Destacados",
+                "fr": "En vedette",
+                "pt-PT": "Em Destaque"
+            },
+            "default": true
+		},
+		{
+            "type": "checkbox",
+            "id": "sort-by-price-ascending",
+            "label": {
+                "en": "Price, low to high",
+                "de": "Preis, niedrig nach hoch",
+                "es": "Precio, menor a mayor",
+                "fr": "Prix: faible à élevé",
+                "pt-PT": "Preço, mais baratos"
+            },
+            "default": true
+		},
+		{
+            "type": "checkbox",
+            "id": "sort-by-price-descending",
+            "label": {
+                "en": "Price, high to low",
+                "de": "Preis, hoch nach niedrig",
+                "es": "Precio, mayor a menor",
+                "fr": "Prix: élevé à faible",
+                "pt-PT": "Preço, mais caros"
+            },
+            "default": true
+		},
+		{
+            "type": "checkbox",
+            "id": "sort-by-title-ascending",
+            "label": {
+                "en": "Alphabetically, A-Z",
+                "de": "Alphabetisch, A-Z",
+                "es": "Alfabéticamente, A-Z",
+                "fr": "A-Z",
+                "pt-PT": "Alfabeticamente, A-Z"
+            },
+            "default": true
+		},
+		{
+            "type": "checkbox",
+            "id": "sort-by-title-descending",
+            "label": {
+                "en": "Alphabetically, Z-A",
+                "de": "Alphabetisch, Z-A",
+                "es": "Alfabéticamente, Z-A",
+                "fr": "Z-A",
+                "pt-PT": "Alfabeticamente, Z-A"
+            },
+            "default": true
+		},
+		{
+            "type": "checkbox",
+            "id": "sort-by-created-ascending",
+            "label": {
+                "en": "Date, old to new",
+                "de": "Datum, alt nach neu",
+                "es": "Fecha, antiguo a nuevo",
+                "fr": "Date: ancien à récent",
+                "pt-PT": "Data, mais antigos"
+            },
+            "default": true
+		},
+		{
+            "type": "checkbox",
+            "id": "sort-by-created-descending",
+            "label": {
+                "en": "Date, new to old",
+                "de": "Datum, neu nach alt",
+                "es": "Fecha, nuevo a antiguo",
+                "fr": "Date: récent à ancien",
+                "pt-PT": "Data, mais recentes"
+            },
+            "default": true
+		},
+		{
+            "type": "checkbox",
+            "id": "sort-by-best-selling",
+            "label": {
+                "en": "Best selling",
+                "de": "Meistverkauft",
+                "es": "Más vendidos",
+                "fr": "Meilleurs vendeurs",
+                "pt-PT": "Mais Vendidos"
+            },
+            "default": true
+		},
+        {
+            "type": "header",
+            "content": {
+                "en": "Products per row",
+                "de": "Produkte pro Zeile",
+                "es": "Productos por fila",
+                "fr": "Produits par ligne",
+                "pt-PT": "Produtos por linha"
+            }
+        },
+        {
+            "type": "range",
+            "id": "desktop-products-per-row",
+            "min": 2,
+            "max": 6,
+            "step": 1,
+            "label": {
+                "en": "Desktop",
+                "de": "Desktop",
+                "es": "Escritorio",
+                "fr": "Ordinateur de bureau",
+                "pt-PT": "Ambiente de trabalho"
+            },
+            "default": 4
+        },
+        {
+            "type": "range",
+            "id": "tablet-products-per-row",
+            "min": 2,
+            "max": 4,
+            "step": 1,
+            "label": {
+                "en": "Tablet",
+                "de": "Tablet",
+                "es": "Tablet",
+                "fr": "Tablette",
+                "pt-PT": "Tablet"
+            },
+            "default": 2
+        },
+        {
+            "type": "range",
+            "id": "mobile-products-per-row",
+            "min": 1,
+            "max": 3,
+            "step": 1,
+            "label": {
+                "en": "Mobile",
+                "de": "Mobil",
+                "es": "Móvil",
+                "fr": "Téléphone mobile",
+                "pt-PT": "Telemóvel"
+            },
+            "default": 1
+        },
+        {
+            "type": "range",
+            "id": "collection-products-per-page",
+            "min": 1,
+            "max": 10,
+            "step": 1,
+            "label": {
+                "en": "Number of rows per page",
+                "de": "Anzahl an Zeilen pro Seite",
+                "es": "Número de filas por página",
+                "fr": "Nombre de lignes par page",
+                "pt-PT": "Número de linhas por página"
+            },
+            "default": 4,
+            "info": {
+                "en": "Only applicable to desktop",
+                "de": "Gilt nur für den Desktop",
+                "es": "Solo aplicable a escritorio",
+                "fr": "Ne s'applique qu'aux ordinateurs de bureau",
+                "pt-PT": "Apenas aplicável no ambiente de trabalho"
+            }
+				},
+				{
+					"type": "select",
+					"id": "pagination_options",
+					"label": {
+							"en": "Pagination type",
+							"de": "Seitenzählungsart",
+							"es": "Tipo de paginación",
+							"fr": "Type de pagination",
+							"pt-PT": "Tipo de paginação"
+					},
+					"options": [
+							{
+									"value": "pagination_default",
+									"label": {
+											"en": "Paged navigation",
+											"de": "Seitennummerierte Navigation",
+											"es": "Navegación paginada",
+											"fr": "Navigation paginée",
+											"pt-PT": "Navegação por página"
+									}
+							},
+							{
+									"value": "pagination_infinite_scrolling",
+									"label": {
+											"en": "Infinite scrolling",
+											"de": "Unbegrenztes Scrolling",
+											"es": "Desplazamiento infinito",
+											"fr": "Défilement infini",
+											"pt-PT": "Scrolling infinito"
+									}
+							},
+							{
+									"value": "pagination_load_more",
+									"label": {
+											"en": "Load more button",
+											"de": "Schaltfläche \"Mehr anzeigen\"",
+											"es": "Cargar botón más",
+											"fr": "Charger plus de boutons",
+											"pt-PT": "Botão carregar mais"
+									}
+							}
+					],
+					"default": "pagination_default"
+				},
+        {
+            "type": "checkbox",
+            "id": "quick_shop_enable",
+            "label": {
+                "en": "Enable quick view",
+                "de": "Schnellansicht aktivieren",
+                "es": "Habilitar vista rápida",
+                "fr": "Activer la vue rapide",
+                "pt-PT": "Ativar visualização rápida"
+            },
+            "default": false
+        },
+        {
+            "type": "checkbox",
+            "id": "hover-effect",
+            "label": {
+                "en": "Enable hover effect",
+                "de": "Hover-Effekt aktivieren",
+                "es": "Habilitar efecto hover",
+                "fr": "Activer l'effet survol",
+                "pt-PT": "Ativar efeito ao passar o rato"
+            },
+            "default": false,
+            "info": {
+                "en": "Show second product image on hover",
+                "de": "Zweites Produktbild beim Hover anzeigen",
+                "es": "Mostar la segunda imagen del producto al pasar el ratón sobre la imagen",
+                "fr": "Afficher l'image du second produit survolé",
+                "pt-PT": "Mostrar imagem do segundo produto ao passar o rato"
+            }
+        },
+        {
+            "type": "checkbox",
+            "id": "show-vendor",
+            "label": {
+                "en": "Show vendor",
+                "de": "Verkäufer anzeigen",
+                "es": "Mostrar vendedor",
+                "fr": "Afficher le vendeur",
+                "pt-PT": "Mostrar vendedor"
+            },
+            "default": false
+        },
+        {
+            "type": "header",
+            "content": {
+                "en": "Auto-height images",
+                "de": "Automatische Bildhöhe",
+                "es": "Altura automática de las imágenes",
+                "fr": "Modifier automatiquement la hauteur des images",
+                "pt-PT": "Configurar automaticamente a altura das imagens"
+            }
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "en": "Set all of your images to be the same height",
+                "de": "Stellen Sie alle Ihre Bilder auf dieselbe Höhe ein",
+                "es": "Configura sus imágenes para que todas tengan la misma altura.",
+                "fr": "Réglez toutes vos images à la même hauteur",
+                "pt-PT": "Configure uma altura para todas as suas imagens"
+            }
+        },
+        {
+            "type": "checkbox",
+            "id": "match-height",
+            "label": {
+                "en": "Enable auto-height",
+                "de": "Automatische Höhe aktivieren",
+                "es": "Habilitar altura automática",
+                "fr": "Activer la hauteur automatique",
+                "pt-PT": "Ativar configuração automática de altura"
+            },
+            "default": false
+        },
+        {
+            "type": "header",
+            "content": {
+                "en": "Reviews",
+                "de": "Bewertungen",
+                "es": "Opiniones",
+                "fr": "Commentaires",
+                "pt-PT": "Opiniões"
+            }
+        },
+        {
+            "type": "checkbox",
+            "id": "show_reviews",
+            "label": {
+                "en": "Enable",
+                "de": "Aktivieren",
+                "es": "Habilitar",
+                "fr": "Activer",
+                "pt-PT": "Ativar efeito de paralaxe"
+            },
+            "default": false
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "en": "You will need to install Shopify's [Product Reviews app](https://apps.shopify.com/product-reviews) before enabling this option.",
+                "de": "Sie müssen Shopifys [Produktbewertungen-App](https://apps.shopify.com/product-reviews) installieren, um diese Option aktivieren zu können.",
+                "es": "Necesitará instalar la aplicación de Shopify [Product Reviews app](https://apps.shopify.com/product-reviews) antes de habilitar esta opción.",
+                "fr": "Vous devrez installer Shopify's [application de commentaires de produits](https://apps.shopify.com/product-reviews) avant d'activer cette option.",
+                "pt-PT": "Terá de instalar a [aplicação de Avaliações de Produtos](https://apps.shopify.com/product-reviews) da Shopify antes de ativar esta opção."
+            }
+        }
+    ],
+    "blocks": [
+        {
+            "type": "text",
+            "name": "Filterable Collection",
+            "settings": [
+                {
+                    "type": "collection",
+                    "id": "filter_collection",
+                    "label": "Filterable Collection",
+                    "info": "Select a collection to appear in the filter bar."
+                },
+                {
+                    "type": "collection",
+                    "id": "filter_collection_highlights",
+                    "label": "Filterable Collection Highlights",
+                    "info": "Select a collection to accompany this filter collection as highlights."
+                }
+            ]
+        }
+    ]
+}
+{% endschema %}

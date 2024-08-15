@@ -1,0 +1,96 @@
+<section class="bg-gray-100 px-4 md:px-8 py-5 md:py-16 xl:py-20">
+  <div class="max-w-6xl mx-auto grid sm:grid-cols-3 md:grid-cols-5 gap-8 lg:gap-16 items-center">
+    <div class="sm:col-span-2 md:col-span-3 order-2">
+      <h2>{{ section.settings.grid_section_title }}</h2>
+      <div class="text-lg">
+        {{ section.settings.grid_section_content }}
+      </div>
+    </div>
+    <div class="order-3 sm:order-1 md:col-span-2 grid grid-cols-6 gap-4 items-center xl:-ml-8 2xl:-ml-20">
+      <div class="col-start-2 col-span-2">
+        {% include 'responsive-image' with section.settings.grid_section_image_1, class: 'border-8 border-white' %}
+      </div>
+      <div class="col-span-3">
+        {% include 'responsive-image' with section.settings.grid_section_image_2, class: 'border-8 border-white' %}
+      </div>
+      <div class="col-span-4">
+        
+        {% if section.settings.grid_section_video.type == 'youtube' %}
+          <div class="embed-container border-8 border-white">
+            <div class="homepage-hero-youtube-video" id="homepage-hero-youtube-video-{{ section.id }}"
+                data-homepage-hero-video-link="{{ section.settings.grid_section_video.id }}"
+                data-homepage-hero-video-autoplay="true"
+                data-homepage-hero-video-loop="true"
+                data-homepage-hero-video-mute="false">
+            </div>
+          </div>
+        {% endif %}
+
+        {% if section.settings.grid_section_video.type == 'vimeo' %}
+          <div class="embed-container border-8 border-white">
+            <div class="homepage-hero-vimeo-video" id="homepage-hero-vimeo-video-{{ section.id }}"
+                data-vimeo-id="{{ section.settings.grid_section_video.id }}"
+                data-vimeo-autoplay="true"
+                data-vimeo-loop="true"
+                data-vimeo-width="746"
+                data-homepage-hero-video-mute="false">
+            </div>
+          </div>
+        {% endif %}
+      </div>
+      <div class="col-span-2">
+        {% include 'responsive-image' with section.settings.grid_section_image_3, class: 'border-8 border-white' %}
+      </div>
+    </div>
+</section>
+
+{% schema %}
+{
+  "name": "CMS Grid Section",
+  "settings": [
+    {
+        "type": "header",
+        "content": "Grid Section"
+    },
+    {
+        "type": "image_picker",
+        "id": "grid_section_image_1",
+        "label": "Grid Section Image 1"
+    },
+    {
+        "type": "image_picker",
+        "id": "grid_section_image_2",
+        "label": "Grid Section Image 2"
+    },
+    {
+        "type": "image_picker",
+        "id": "grid_section_image_3",
+        "label": "Grid Section Image 3"
+    },
+    {
+        "type": "video_url",
+        "id": "grid_section_video",
+        "label": "Grid Section Video",
+        "accept": [
+            "youtube",
+            "vimeo"
+        ]
+    },
+    {
+        "type": "text",
+        "id": "grid_section_title",
+        "label": "Grid Section Title"
+    },
+    {
+        "type": "richtext",
+        "id": "grid_section_content",
+        "label": "Grid Section Content"
+    }
+  ],
+  "presets": [
+    {
+      "name": "CMS Grid Section"
+    }
+  ]
+}
+{% endschema %}

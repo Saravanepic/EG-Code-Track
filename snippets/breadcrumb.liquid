@@ -1,0 +1,105 @@
+<!-- /snippets/breadcrumb.liquid -->
+{% comment %}
+  Documentation - http://docs.shopify.com/support/your-website/navigation/creating-a-breadcrumb-navigation
+{% endcomment %}
+
+<div class="hide_on_iframe wrapper">
+  {% unless template == 'index' or template == 'cart' %}
+  <nav class="breadcrumb" role="navigation" aria-label="breadcrumbs">
+    <a href="{{ routes.root_url }}" title="{{ 'general.breadcrumbs.home_link_title' | t }}">{{ 'general.breadcrumbs.home' | t }}</a>
+
+    {% if template contains 'product' %}
+
+      {% if product %}
+        <span aria-hidden="true">&rsaquo;</span>
+        {% if product.vendor != empty %}
+          {% capture url %}/collections/{{ product.vendor | handleize }}{% endcapture %}
+          {{ product.vendor | link_to: url }}
+        {% endif %}
+
+      {% elsif collection %}
+        <span aria-hidden="true">&rsaquo;</span>
+        {% if collection.handle %}
+          {% capture url %}/collections/{{ collection.handle }}{% endcapture %}
+          {{ collection.title | link_to: url }}
+        {% endif %}
+      {% endif %}
+      <span aria-hidden="true">&rsaquo;</span>
+      <span>{{ product.title }}</span>
+
+    {% elsif template contains 'collection' and collection.handle %}
+
+      {% if collection.handle == 'all' or pseudo_all %}
+
+        <span aria-hidden="true">&rsaquo;</span>
+        {% if current_tags %}
+          {% capture url %}/collections/{{ collection.handle }}{% endcapture %}
+          {{ 'Artworks' | link_to: url }}
+          <span aria-hidden="true">&rsaquo;</span>
+          <span>{{ current_tags | join: " + " | replace: ':', ': ' }}</span>
+        {% else %}
+          <span>Artworks</span>
+        {% endif %}
+
+      {% else %}
+
+        <span aria-hidden="true">&rsaquo;</span>
+        <a href="/collections/" title="Return to Artists">Artists</a>
+
+        <span aria-hidden="true">&rsaquo;</span>
+        {% if current_tags %}
+          {% capture url %}/collections/{{ collection.handle }}{% endcapture %}
+          {{ collection.title | link_to: url }}
+          <span aria-hidden="true">&rsaquo;</span>
+          <span>{{ current_tags | join: " + " }}</span>
+        {% else %}
+          <span>{{ collection.title }}</span>
+        {% endif %}
+
+      {% endif %}
+
+    {% elsif template == 'blog' %}
+
+      <span aria-hidden="true">&rsaquo;</span>
+      {% if current_tags %}
+        <a href="{{ blog.url }}/tagged/{{ current_tags | join: ' + ' | replace: " ", "-" | downcase }}">{{ current_tags | join: " + " }}</span>
+      {% else %}
+      <span>{{ blog.title }}</span>
+      {% endif %}
+
+    {% elsif template == 'article' %}
+
+      <span aria-hidden="true">&rsaquo;</span>
+      <a href="{{ blog.url }}">Articles</a>
+      <span aria-hidden="true">&rsaquo;</span>
+      <span>{{ article.title }}</span>
+
+    {% elsif template contains 'page' %}
+
+     <span aria-hidden="true">&rsaquo;</span>
+     <span>{{ page.title }}</span>
+
+    {% elsif template contains 'search' %}
+
+     <span aria-hidden="true">&rsaquo;</span>
+     <span>{{ search.terms | remove: ' and -tag:No-Search' }}</span>
+
+    {% elsif template contains 'contact' %}
+
+     <span aria-hidden="true">&rsaquo;</span>
+     <span>{{ page.title }}</span>
+
+    {% elsif template contains 'list-collections' %}
+
+     <span aria-hidden="true">&rsaquo;</span>
+     <span>Artists</span>
+
+    {% else %}
+
+     <span aria-hidden="true">&rsaquo;</span>
+     <span>{{ page_title }}</span>
+
+    {% endif %}
+  </nav>
+  {% endunless %}
+</div>

@@ -1,0 +1,857 @@
+<div id="algolia" class="md:tw-pt-12 tw-pb-12 md:tw-flex md:tw-pt-12">
+
+  <div id="search-panel" class="tw-w-full md:tw-w-1/4 sm:tw-pr-4 md:tw-pr-8 tw-mb-4 md:tw-pb-0">
+
+    <div id="searchbox" class="tw-block tw-w-full"></div>
+    <div id="autocomplete"></div>
+
+    <button id="algoliaSearchFiltersToggle" class="closed btn tw-mt-4 tw-mb-4 tw-py-2 tw-block tw-w-full md:tw-hidden">Show filters</button>
+    <div id="algoliaSearchFilters" class="tw-hidden md:tw-block">
+      <!--<div class="facet tw-pt-4" id="facet-in-stock"></div>-->
+      <!--<div class="facet tw-pt-4" id="facet-in-stock_old"></div>-->
+      <!--<div class="facet tw-pt-4" id="facet-type"></div>--><div class="facet tw-pt-4" id="facet-tags"> </div>
+      <!--<div class="facet tw-pt-4" id="facet-price"></div>-->
+      <!--<div class="facet tw-pt-4" id="facet-colour"></div>-->
+      <div class="facet tw-pt-4" id="facet-size"></div>
+      <!--<div class="facet tw-pt-4" id="facet-sale"></div>-->
+      <!--<div class="facet tw-pt-4" id="facet-orientation"></div>-->
+      <div class="facet tw-pt-4" id="facet-style"></div>
+      <div class="facet tw-pt-4" id="facet-medium"></div>
+      <div class="facet tw-pt-4" id="facet-subject"></div>
+      <div class="facet tw-pt-4" id="facet-vendor"></div>
+      {% comment %} Artist {% endcomment %}
+    </div>
+  </div>
+
+  <div id="search-results" class="tw-w-full md:tw-w-3/4">
+    <div class="tw-flex tw-mb-2 tw-items-center">
+      <div id="search-stats" class="tw-w-1/2 tw-font-bold tw-leading-none"></div>
+      <div class="tw-w-1/2 tw-text-right tw-flex tw-items-center tw-justify-end">
+        <span class="tw-hidden md:tw-inline tw-font-bold">Sort by:&nbsp;</span>
+        <div id="search-sort" class=""></div>
+      </div>
+    </div>
+    <div id="current-refinements" class="tw-mb-2"></div>
+    <div id="search-hits" class="tw-grid collection collection--grid grid--gallery grid--middle"></div>
+    <div class="tw-pt-8 tw-pb-8" id="search-pagination"></div>
+  </div>
+
+</div>
+
+
+
+{% comment %}<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/instantsearch.css@7.4.5/themes/algolia-min.css" crossorigin="anonymous">{% endcomment %}
+{% comment %}
+<link
+rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/instantsearch.css@7.1.0/themes/algolia.css"
+/>
+{% endcomment %}{% comment %}<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/instantsearch.css@7.4.5/themes/satellite-min.css" crossorigin="anonymous">{% endcomment %}<script
+  src="https://cdn.jsdelivr.net/npm/algoliasearch@4.5.1/dist/algoliasearch-lite.umd.js"
+  integrity="sha256-EXPXz4W6pQgfYY3yTpnDa3OH8/EPn16ciVsPQ/ypsjk="
+  crossorigin="anonymous"> </script>
+<script
+  src="https://cdn.jsdelivr.net/npm/instantsearch.js@4.8.3/dist/instantsearch.production.min.js"
+  integrity="sha256-LAGhRRdtVoD6RLo2qDQsU2mp+XVSciKRC8XPOBWmofM="
+  crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/mustache@4.2.0/mustache.min.js"></script>
+{% raw %}
+  <script>
+    var $ = jQuery;
+    $(document).ready(function() {
+
+
+// //////////////////////////////
+// Open Search Filters Mobile //
+// //////////////////////////////
+      $('#algoliaSearchFiltersToggle').on('click', function() {
+        if ($(this).hasClass('closed')) {
+          $(this).addClass('open').removeClass('closed').text('Hide Filters');
+        } else {
+          $(this).addClass('closed').removeClass('open').text('Show Filters');
+        } $('#algoliaSearchFilters').toggle();
+      });
+
+// //////////////////
+// Item template //
+// ////////////////
+      const itemTemplate = (item) => {
+
+// console.log(item)
+
+// Add to cart //
+        item.add_to_cart = function() {
+          if (item.inventory_available) {
+            return `<button>add to cart</button>`
+          } else {
+            return null;
+          }
+        }
+
+// Sold Out Badge //
+        item.sold_out = function() {
+
+// return null; // DISABLED FOR NOW
+          if (!item.inventory_available) {
+            return `
+          <div class="product-item__label search-hits-product-sold-out">
+            <span class="label label--on-sold-out">sold out</span>
+          </div>
+        `
+          } else {
+            return null;
+          }
+        }
+
+// Sale Badge //
+        item.sale_badge = function() {
+          if (item.hasOwnProperty('compare_at_price') && item.compare_at_price > item.price) {
+            return `
+          <div class="product-item__label search-hits-product-sale">
+            <span class="label label--on-sale">sale</span>
+          </div>
+        `
+          } else {
+            return null;
+          }
+        }
+
+// Limited Edition Badge //
+        item.limited_edition_badge = function() {
+          if (item.hasOwnProperty('tags') && item.tags.includes("limited edition")) {
+            return `
+          <div class="product-item__label search-hits-product-limited">
+            <span class="label label--limited-edition">Limited Edition</span>
+          </div>
+        `
+          } else {
+            return null;
+          }
+        }
+
+// Render Price / Sale Price //
+        item.render_price = function() {
+
+// Check for POA
+          if (item.hasOwnProperty('meta') && item['meta'].hasOwnProperty('Details') && item['meta']['Details'].hasOwnProperty('price_display_override') && item['meta']['Details']['price_display_override']) {
+            if (item
+                .meta
+                .Details
+                .price_display_override
+                .toLowerCase() == "poa" && item.inventory_available) {
+              return "<div class='search-hits-product-price' style='font-size:16px'>POA</div>";
+            } else if (item
+                .meta
+                .Details
+                .price_display_override
+                .toLowerCase() == "poa" && !item.inventory_available) {
+              return `<div class="sold-out-badge badge">Sold out</div>`
+            } else if (!item.inventory_available) {
+              return `<div class="sold-out-badge badge">Sold out</div>`
+            }
+            if (item
+                .meta
+                .Details
+                .price_display_override
+                .toLowerCase() == "coming soon") {
+              return "<div class='search-hits-product-price'>Coming Soon</div>";
+            }
+          }
+
+          if (Shopify.currency.active == "GBP") {
+            var currency_symbol = "&pound;";
+            if (item.hasOwnProperty('compare_at_price') && item.compare_at_price > item.price && item.inventory_available) {
+              return `
+            <div class="search-hits-product-price">
+              <span class="search-hits-product-sale-price">${
+                Shopify.formatMoney(item.price * 100, currency_symbol + "{{amount}}")
+              }</span>
+              <span class="search-hits-product-old-price">${
+                Shopify.formatMoney(item.compare_at_price * 100, currency_symbol + "{{amount}}")
+              }</span>
+            </div>
+            `
+            } else if (item.inventory_available) {
+              return `
+            <div class="search-hits-product-price limoniapps-discountninja-productprice">
+              <span class="search-hits-product-sale-price">${
+                Shopify.formatMoney(item.price * 100, currency_symbol + "{{amount}}")
+              }</span>
+            </div>
+          `
+            } else {
+              return `
+            <div class="sold-out-badge badge">Sold out</div>
+          `
+            }
+          } else { // Exchange needed
+            var exchange_rate = Shopify.currency.rate;
+            var currency_symbol = "£"
+            switch (Shopify.currency.active) {
+              case "GBP": currency_symbol = "£";
+                break;
+              case "USD": currency_symbol = "$";
+                break;
+              case "EUR": currency_symbol = "€";
+                break;
+              case "EUR": currency_symbol = "€";
+                break;
+              case "CAD": currency_symbol = "CAD $";
+                break;
+              default: currency_symbol = Shopify.currency.active + " "
+            }
+
+// console.log(Shopify.currency.active)
+// console.log(currency_symbol)
+
+            if (item.hasOwnProperty('compare_at_price') && item.compare_at_price > item.price && item.inventory_available) {
+              return `
+            <div class="search-hits-product-price">
+              <span class="search-hits-product-sale-price">${
+                Shopify.formatMoney(Math.ceil(item.price * 100 * exchange_rate / 100) * 100, currency_symbol + "{{amount}}")
+              }</span>
+              <span class="search-hits-product-old-price">${
+                Shopify.formatMoney(Math.ceil(item.compare_at_price * 100 * exchange_rate / 100) * 100, currency_symbol + "{{amount}}")
+              }</span>
+            </div>
+            `
+            } else if (!item.inventory_available) {
+              return `<div class="sold-out-badge badge">Sold out</div>`
+            } else {
+              return `
+            <div class="search-hits-product-price">
+              <span class="search-hits-product-sale-price">${
+                Shopify.formatMoney(Math.ceil(item.price * 100 * exchange_rate / 100) * 100, currency_symbol + "{{amount}}")
+              }</span>
+            </div>
+          `
+            }
+          }
+        }
+
+// JudgeMe Reviews //
+        item.reviews = function() {
+          if (item.hasOwnProperty('meta') && item.meta.hasOwnProperty('judgeme') && item.meta.judgeme.hasOwnProperty('badge') && item.meta.judgeme.badge) {
+            return "<div class='search-hits-product-reviews'>" + item.meta.judgeme.badge + "</div>"
+          } else {
+            return null;
+          }
+        }
+
+// Product link (with search and object ID)
+// - search and object ID are used for tracking results efficiency
+        item.product_link = function() {
+          return "/products/" + item.handle + "?searchID=" + window
+            .asearch
+            .helper
+            .lastResults
+            .queryID + "&searchObject=" + item.objectID
+        }
+
+// Template //
+        var template = `
+      <div class="search-hits-product animated animatedFadeInUp fadeInUp" data-limoniapps-discountninja-product-handle="${
+          item.handle
+        }">
+        <div class="search-hits-badges">
+          {{{ sold_out }}}
+          {{{ limited_edition_badge }}}
+          {{{ sale_badge }}}
+        </div>
+        <!-- meta.landy.stock_available = {{ meta.landy.stock_available }} -->
+        <!-- meta.landy.stock_available_qty = {{ meta.landy.stock_available_qty }} -->
+        <!-- meta.landy.last_updated = {{ meta.landy.last_updated }} -->
+        <a href="{{{ product_link }}}">
+		      <img class="search-hits-product-image tw-w-full" style="" src="{{image}}&width=400" alt="{{title}}">
+	      </a>
+        <a href="{{{ product_link }}}">
+          <h2 class="search-hits-product-vendor" data-product-id="{{id}}">{{vendor}}</h2>
+          <h3 class="search-hits-product-title" data-product-id="{{id}}">{{title}}</h3>
+        </a>
+        {{{ render_price }}}
+        {{{reviews}}}
+        <!--
+        <form id="algolia-add-to-cart-{{ id }}" style="display: none;" action="/cart/add" method="post" enctype="multipart/form-data">
+          <input type="hidden" name="id" value="{{ id }}" />
+        </form>
+        {{{ add_to_cart }}}
+        -->
+      </div>
+    `
+        var output = Mustache.render(template, item);
+        return output;
+      }
+
+// ////////////////
+// Init Search //
+// //////////////
+      const asearch = instantsearch({
+        indexName: 'shopify_products',
+        searchClient,
+        urlSync: true,
+        routing: true,
+        searchParameters: {
+          hitsPerPage: 24,
+          facetingAfterDistinct: true
+        }
+      }); // end instantsearch setup
+      window.asearch = asearch;
+
+// /////////////////
+// Init Widgets //
+// ///////////////
+      asearch.addWidgets([
+
+        // Configuration
+        instantsearch.widgets.configure(
+          {
+            hitsPerPage: 24, clickAnalytics: true,
+
+  // enablePersonalization: true,
+          }
+        ),
+
+// suggestions - NOT WORKING
+
+/*
+    instantsearch.widgets
+    .index({ indexName: 'shopify_products_query_suggestions' })
+    .addWidgets([
+      instantsearch.widgets.autocomplete({
+        container: '#autocomplete',
+        onSelectChange({ query }) {
+          search.helper.setQuery(query).search();
+        },
+      }),
+    ]),
+	*/
+
+// ///////////////
+// Search box //
+// /////////////
+        instantsearch.widgets.searchBox(
+          {container: '#searchbox', searchAsYouType: false}
+        ),
+
+// //////////
+// Stats //
+// ////////
+        instantsearch.widgets.stats(
+          {
+            container: '#search-stats',
+            templates: {
+              text: `
+          {{#areHitsSorted}}
+            {{#hasNoSortedResults}}No relevant results{{/hasNoSortedResults}}
+            {{#hasOneSortedResults}}1 relevant result{{/hasOneSortedResults}}
+            {{#hasManySortedResults}}{{#helpers.formatNumber}}{{nbSortedHits}}{{/helpers.formatNumber}} relevant results{{/hasManySortedResults}}
+            sorted out of {{#helpers.formatNumber}}{{nbHits}}{{/helpers.formatNumber}}
+          {{/areHitsSorted}}
+          {{^areHitsSorted}}
+            {{#hasNoResults}}No results{{/hasNoResults}}
+            {{#hasOneResult}}1 result{{/hasOneResult}}
+            {{#hasManyResults}}{{#helpers.formatNumber}}{{nbHits}}{{/helpers.formatNumber}} results{{/hasManyResults}}
+          {{/areHitsSorted}}
+          <span class="tw-hidden" style="color: #eee;">found in {{processingTimeMS}}ms</span>
+        `
+            }
+          }
+        ),
+
+// ////////////
+// Sorting //
+// //////////
+        instantsearch.widgets.sortBy(
+          {
+            container: '#search-sort',
+            items: [
+              {
+                label: 'Default',
+                value: 'shopify_products'
+              },
+              {
+                label: 'Alphabetically, A-Z',
+                value: 'shopify_products_title_asc'
+              },
+              {
+                label: 'Alphabetically, Z-A',
+                value: 'shopify_products_title_desc'
+              },
+              {
+                label: 'Price, low to high',
+                value: 'shopify_products_price_asc'
+              }, {
+                label: 'Price, high to low',
+                value: 'shopify_products_price_desc'
+              }
+            ]
+          }
+        ),
+
+// ///////////////////
+// Hits / results //
+// /////////////////
+
+/**
+    instantsearch.widgets.hits({
+      container: '#search-hits',
+      templates: {
+        empty: () => `<p>No results</p>`,
+        item: (data) => itemTemplate(data),
+        //item: data => `
+  		},
+      cssClasses: {
+        root: 'algolia-hits',
+        list: 'algolia-hits-list',
+        item: 'algolia-hits-item'
+      },
+    })
+    **/
+      ]);
+
+// //////////////////
+// Auto Complete //
+// ////////////////
+
+
+      const renderIndexListItem = ({indexId, hits}) => `
+  <li>
+    Index: ${indexId}
+    <ol>
+      ${
+        hits.map(hit => `<li>${
+          instantsearch.highlight({attribute: 'title', hit})
+        }</li>`).join('')
+      }
+    </ol>
+  </li>
+`;
+
+// 1. Create a render function
+      const renderAutocomplete = (renderOptions, isFirstRender) => {
+
+// Rendering logic
+        console.log("auto complete");
+        const {indices, currentRefinement, refine} = renderOptions;
+        console.log(indices);
+        const container = document.querySelector('#autocomplete');
+
+        if (isFirstRender) {
+          const input = document.createElement('input');
+          const ul = document.createElement('ul');
+
+          input.addEventListener('input', event => {
+            refine(event.currentTarget.value);
+          });
+
+          container.appendChild(input);
+          container.appendChild(ul);
+        }
+
+        container.querySelector('input').value = currentRefinement;
+        container.querySelector('ul').innerHTML = indices.map(renderIndexListItem).join('');
+      };
+
+// 2. Create the custom widget
+      const customAutocomplete = instantsearch.connectors.connectAutocomplete(renderAutocomplete);
+
+// 3. Instantiate
+// asearch.addWidgets([
+//    instantsearch.widgets.index({ indexName: 'shopify_products_query_suggestions' }),
+// customAutocomplete({
+//    // instance params
+// })
+// ]);
+
+
+// 1. Create a render function
+      const renderHits = (renderOptions, isFirstRender) => {
+
+// Rendering logic
+        const {hits, results, sendEvent, widgetParams} = renderOptions;
+
+        if (isFirstRender) { // Do some initial rendering and bind events
+        }
+
+// Render the widget
+        document.querySelector('#search-hits').innerHTML = "<div class='search-hits-list'>" + hits.map(item => itemTemplate(item)).join('') + "</div>";
+      };
+
+// 2. Create the custom widget
+      const customHits = instantsearch.connectors.connectHits(renderHits);
+
+// 3. Instantiate
+      asearch.addWidgets([customHits(
+          { // instance params
+            container: '#search-hits'
+          }
+        )]);
+
+
+// ////////////////////////
+// Current Refinements //
+// //////////////////////
+      const refinementsPanel = instantsearch.widgets.currentRefinements({
+        container: '#current-refinements',
+        transformItems(items) {
+          return items.filter(function(item) {
+
+// Transform various labels
+            console.log(item.label);
+            if (item.label == "inventory_available") {
+              return null
+            }
+            item.label = item.label.replace('named_tags.', '');
+            item.label = item.label.replace('vendor', 'Artist');
+            item.label = item.label.replace('inventory_available:', 'In Stock');
+            return item;
+          });
+        }
+      });
+      asearch.addWidget(refinementsPanel);
+
+
+// ////////////////////////////////
+// In stock with panel (UNUSED) //
+// ///////////////////////////////
+
+/*
+  const stockPanel = instantsearch.widgets.panel({
+    templates: {
+      header: 'In Stock',
+    },
+  })(instantsearch.widgets.toggleRefinement);
+
+  asearch.addWidget(
+    stockPanel({
+      container: '#facet-in-stock',
+      attribute: 'meta.landy.stock_available',
+      on: 1,
+      //off: "0",
+      templates: {
+        labelText: 'Show only products in stock',
+      },
+    })
+  );
+  */
+
+// ////////////////////////
+// In stock with panel //
+// //////////////////////
+
+/*
+  const stockPanel = instantsearch.widgets.panel({
+    templates: {
+      header: 'Stock',
+    },
+  })(instantsearch.widgets.toggleRefinement);
+
+  asearch.addWidget(
+    stockPanel({
+      container: '#facet-in-stock',
+      attribute: 'inventory_available',
+      on: false,
+      off: true,
+      templates: {
+        labelText: 'Show out of stock products',
+      },
+    })
+  );
+  */
+
+// ////////////////////////////////
+// Size with panel (DEPRECATED) //
+// ///////////////////////////////
+
+/*
+  const sizePanel = instantsearch.widgets.panel({
+    templates: {
+      header: 'Size',
+    },
+  })(instantsearch.widgets.refinementList);
+
+  asearch.addWidget(
+    sizePanel({
+      container: '#facet-size',
+      attribute: 'options.size',
+      limit: 15,
+      showMoreLimit: 200,
+      showMore: true,
+      //sortBy: ['name','count'],
+      sortBy: function(a,b){
+        //console.log("sorting function: " + a.name + " / " + b.name);
+        //console.log(a);
+        var sorting = [];
+        var pos_a = sorting.indexOf(a.name);
+        var pos_b = sorting.indexOf(b.name);
+        if (pos_a >= 0 && pos_b >= 0){
+          // Both exist in sorting array
+          if (pos_a < pos_b){
+            return -1
+          } else {
+           	return 1
+          }
+        } else if (pos_a == -1 && pos_b == -1){
+          // Both not found (sort alphabetically)
+          return a.name.localeCompare(b.name);
+        } else if (pos_a > pos_b){
+		  //console.log("-1");
+          return -1;
+        } else if (pos_b > pos_a){
+          //console.log("1");
+          return 1;
+        } else {
+          //console.log("0");
+          return 0;
+        }
+        //return 0;
+      }
+      //templates: {
+      //	item: `
+      //      <input type="checkbox" id="{{label}}" {{#isRefined}}checked{{/isRefined}}/>
+      //      <label for="{{label}}" class="{{#isRefined}}isRefined{{/isRefined}}">
+      //        {{label}}
+      //          <span class="color" style="display: inline-block; width:20px; height: 20px; background-color: {{label}}"></span>
+      //      </label>`
+      //  }
+    })
+  );
+  */
+
+// /////////////////////////////
+// Artist/vendor with panel //
+// ///////////////////////////
+      const typePanel = instantsearch.widgets.panel({
+        templates: {
+          header: 'Artist'
+        }
+      })(instantsearch.widgets.refinementList);
+
+      asearch.addWidget(typePanel({
+        container: '#facet-vendor',
+        attribute: 'vendor',
+        limit: 10,
+        showMoreLimit: 50,
+        showMore: true
+      }));
+
+// ///////////////////////////
+// Orientation with panel //
+// /////////////////////////
+
+/*
+  const orientationPanel = instantsearch.widgets.panel({
+    templates: {
+      header: 'Orientation',
+    },
+  })(instantsearch.widgets.refinementList);
+
+  asearch.addWidget(
+    orientationPanel({
+      container: '#facet-orientation',
+      attribute: 'named_tags.orientation',
+      limit: 10,
+      showMoreLimit: 50,
+      showMore: true,
+    })
+  );
+  */
+
+// ///////////////////////////
+// Style with panel //
+// /////////////////////////
+      const stylePanel = instantsearch.widgets.panel({
+        templates: {
+          header: 'Style'
+        }
+      })(instantsearch.widgets.refinementList);
+
+      asearch.addWidget(stylePanel({
+        container: '#facet-style',
+        attribute: 'named_tags.style',
+        limit: 10,
+        showMoreLimit: 50,
+        showMore: true
+      }));
+
+// ///////////////////////////
+// Medium with panel //
+// /////////////////////////
+      const mediumPanel = instantsearch.widgets.panel({
+        templates: {
+          header: 'Medium'
+        }
+      })(instantsearch.widgets.refinementList);
+
+      asearch.addWidget(mediumPanel({
+        container: '#facet-medium',
+        attribute: 'named_tags.medium',
+        limit: 10,
+        showMoreLimit: 50,
+        showMore: true
+      }));
+
+// ///////////////////////////
+// Subject with panel //
+// /////////////////////////
+      const subjectPanel = instantsearch.widgets.panel({
+        templates: {
+          header: 'Subject'
+        }
+      })(instantsearch.widgets.refinementList);
+
+      asearch.addWidget(subjectPanel({
+        container: '#facet-subject',
+        attribute: 'named_tags.subject',
+        limit: 10,
+        showMoreLimit: 50,
+        showMore: true
+      }));
+
+// ///////////////////////////
+// Size with panel //
+// /////////////////////////
+      const sizePanel = instantsearch.widgets.panel({
+        templates: {
+          header: 'Size'
+        }
+      })(instantsearch.widgets.refinementList);
+
+      asearch.addWidget(sizePanel({
+        container: '#facet-size',
+        attribute: 'named_tags.size',
+        limit: 10,
+        showMoreLimit: 50,
+        showMore: true
+      }));
+
+// ////////////////////
+// Tags with panel //
+// //////////////////
+      const tagsPanel = instantsearch.widgets.panel({
+        templates: {
+          header: 'Show only'
+        }
+      })(instantsearch.widgets.refinementList);
+
+      const allowed_tags = ['sale', 'limited edition'];
+
+      asearch.addWidget(tagsPanel({
+        container: '#facet-tags',
+        attribute: 'tags',
+        limit: 500,
+        showMoreLimit: 50,
+        showMore: false,
+        transformItems: function(items) {
+
+// console.log(items)
+          return items.filter(function(item) {
+            return(allowed_tags.includes(item.label.toLowerCase()))
+          });
+        }
+      }));
+
+// /////////////////////////////
+// Color with panel (UNUSED) //
+// /////////////////////////////
+
+/*
+  const colorPanel = instantsearch.widgets.panel({
+    templates: {
+      header: 'Colour',
+    },
+  })(instantsearch.widgets.refinementList);
+
+  asearch.addWidget(
+    colorPanel({
+      container: '#facet-colour',
+      attribute: 'options.color',
+    })
+  );
+  */
+
+// /////////////////////
+// Price with panel //
+// ///////////////////
+
+/**
+  const pricePanel = instantsearch.widgets.panel({
+    templates: {
+      header: 'Price',
+    },
+  })(instantsearch.widgets.rangeSlider);
+
+  asearch.addWidget(
+    pricePanel({
+      container: '#facet-price',
+      attribute: 'price',
+    })
+  );
+  **/
+
+      asearch.start();
+
+// ////////////////////
+// Search Listener //
+// //////////////////
+      asearch.helper.on('result', function(res) {
+        console.log("result")
+        const hits = document.querySelector('#hits');
+        if (res && res.hits && res.hits.length > 0) {
+          hits.style.display = 'block';
+        } else {
+          hits.style.display = 'none';
+        }
+      });
+
+// //////////////////////
+// Hide empty facets //
+// ////////////////////
+      asearch.on('render', function() {
+        console.log("render callback")
+
+// show all facets
+        var allFacetsSelector = '.ais-RefinementList';
+        var allFacets = document.querySelectorAll(allFacetsSelector);
+        allFacets.forEach(function(elem) {
+          elem
+            .parentNode
+            .parentNode
+            .parentNode
+            .parentNode
+            .style
+            .display = 'block';
+        });
+
+// hide empty ones
+        var emptyFacetSelector = '.ais-RefinementList--noRefinement';
+        var emptyFacets = document.querySelectorAll(emptyFacetSelector);
+        emptyFacets.forEach(function(elem) {
+          elem
+            .parentNode
+            .parentNode
+            .parentNode
+            .parentNode
+            .style
+            .display = 'none';
+        });
+      });
+
+// //////////////////////////////////////////////////////
+// Add this after the other search.addWidget() calls //
+// /////////////////////////////////////////////////////
+      asearch.addWidget(instantsearch.widgets.pagination({
+        container: '#search-pagination',
+        render: function(my_obj) {
+          console.log("render");
+          console.log(my_obj);
+        },
+        getConfiguration: function(my_obj) {
+          console.log("getConfiguration");
+          console.log(my_obj);
+        }
+      }));
+
+    })
+  </script>
+{% endraw %}

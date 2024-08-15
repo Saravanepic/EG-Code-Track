@@ -1,0 +1,74 @@
+/* .home-review-sec .feefowidget-carousel-single-slide-content{
+	text-align:center;
+}
+ */
+.home-review-sec .feefowidget-carousel-summary {
+	text-align:center;
+}
+
+.footer-rev-img {margin-top:11px;display:block;}
+
+
+/* Mobile Chnages */
+@media all and (max-width:767px){
+  .section--1653400675f0121189 .inspiration-container {
+    grid-template-rows: auto;
+  }
+  
+  .section--1653400675f0121189 .inspiration-box {
+      grid-area: auto;
+  }
+  
+  .section--1653400675f0121189  .inspiration-box .grid-image {
+      max-height: 200px;
+  }
+
+
+  .homepage-sections-wrapper .blog-grid-new {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow: scroll;
+  }
+  
+  .homepage-sections-wrapper .blog-grid-new .grid__item {
+      width: 80%;
+      min-width: 80%;
+  }
+
+  .site-footer .gridlayout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .site-footer .gridlayout .grid__item:nth-child(1),.gridlayout .grid__item:nth-child(4) {
+      grid-column: 1/-1;
+  }
+  
+  .site-footer .gridlayout .grid__item:nth-child(4) ul {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+  }
+
+  .product-single .product-details-product-title {
+    font-size: 20px;
+    line-height: 26px;
+  }
+  
+  .product-single .product-details-wrapper {
+      padding: 20px 0;
+  }
+
+  .payment-icons svg {
+    width: 40px;
+    height: 40px;
+  }
+
+  /* Menu CSS */
+  ul.mobile-nav__sublist_artists .mobile-nav__has-sublist.mobile-nav--expanded + ul.mobile-nav__sublist {
+    max-height: 270px;
+    overflow: scroll;
+}
+  .mobile-nav__item a {
+    padding: 10px 30px!important;
+}
+}

@@ -1,0 +1,143 @@
+<section class="bg-gray-100 px-4 md:px-8 py-5 md:py-16 xl:py-20">
+<div class="wrapper">
+  <div class="text-with-gallery" style="">
+    <div class="text-with-gallery__blocks" style="">
+      <h2 class="text-with-gallery__title" style=" ">{{ section.settings.second_section_title }}</h2>
+      <div class="text-lg text-with-gallery__text" style="">
+        {{ section.settings.second_section_content }}
+      </div>
+      <div class="show-view-all--button">
+      <a href="/pages/our-history" class="btn">
+        Our History
+      </a>
+    </div>
+    </div>
+    <div class="order-2 sm:order-1 text-with-gallery__grid-container">
+      <div class="text-with-gallery__box1">
+        {% include 'responsive-image' with section.settings.second_section_image_1, class: 'border-8 border-white', force_aspect: 0.5, allow_stretch: true %}
+      </div>
+      <div class="text-with-gallery__box2">
+        {% include 'responsive-image' with section.settings.second_section_image_2, class: 'border-8 border-white', force_aspect: 1.5, allow_stretch: true %}
+      </div>
+      <div class="text-with-gallery__box3">
+         {% include 'responsive-image' with section.settings.second_section_image_3, class: 'border-8 border-white', force_aspect: 1.5, allow_stretch: true %}
+
+      </div>
+      <div class="text-with-gallery__box4">
+        {% include 'responsive-image' with section.settings.second_section_image_4, class: 'border-8 border-white', force_aspect: 0.5, allow_stretch: true %}
+      </div>
+    </div>
+    
+    </div>
+</section>
+
+<style>
+.text-with-gallery{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.text-with-gallery__blocks{
+  width: 50%; 
+  padding: 15px;
+}
+.text-with-gallery__title{
+  font-size: 30px;
+  letter-spacing: 1.5px; 
+  line-height: 40px;
+}
+.text-with-gallery__text{
+  font-size: 14px;
+  letter-spacing: 1.75px;
+  line-height: 21px;
+  margin-bottom: 30px;
+}
+.text-with-gallery__grid-container {
+    display: grid; 
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr; 
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr; 
+  gap: 20px 20px; 
+  padding: 30px 0;
+}
+.text-with-gallery__box3 { grid-area: 3 / 1 / 6 / 4; }
+.text-with-gallery__box4 {
+  justify-self: stretch; 
+  grid-area: 4 / 4 / 6 / 8; 
+  display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+}
+.text-with-gallery__box1 { grid-area: 1 / 2 / 3 / 6; }
+.text-with-gallery__box2 { grid-area: 1 / 6 / 4 / 9;
+display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-line-pack: end;
+            align-items: flex-end; }
+
+@media screen and (max-width: 768px) {
+  .text-with-gallery{
+    flex-direction: column;
+}
+.text-with-gallery__blocks{
+  width: 100%; 
+}
+}
+</style>
+
+
+{% schema %}
+    {
+        "name": "Text with gallery",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Second Section"
+        },
+        {
+            "type": "image_picker",
+            "id": "second_section_image_1",
+            "label": " Image 1 horizontal"
+        },
+        {
+            "type": "image_picker",
+            "id": "second_section_image_2",
+            "label": " Image 2 vertical"
+        },
+        {
+            "type": "image_picker",
+            "id": "second_section_image_3",
+            "label": " Image 3 vertical"
+        },
+        {
+            "type": "image_picker",
+            "id": "second_section_image_4",
+            "label": " Image 4 horizontal"
+        },
+        {
+            "type": "text",
+            "id": "second_section_title",
+            "label": " Title"
+        },
+        {
+            "type": "richtext",
+            "id": "second_section_content",
+            "label": " Content"
+        }
+        ],
+        "presets": [
+        {
+            "name": {
+                "en": "Text with gallery"
+            },
+            "category": {
+                "en": "Collection",
+                "de": "Kollektion",
+                "es": "Colección",
+                "fr": "Collection",
+                "pt-PT": "Coleção"
+            }
+        }
+    ]
+    }
+{% endschema %}

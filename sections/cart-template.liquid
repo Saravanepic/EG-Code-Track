@@ -1,0 +1,407 @@
+<!-- /templates/cart.liquid -->
+{% comment %}
+
+  For info on test orders:
+    - General http://docs.shopify.com/manual/your-store/orders/test-orders
+    - Shopify Payments - http://docs.shopify.com/manual/more/shopify-payments/testing-shopify-payments
+
+{% endcomment %}
+
+{% assign has_pbf = false %}
+
+{% if cart.item_count > 0 %}
+
+<div class="sitewide--title-wrapper">
+  {% if settings.heading_style == 'zigzag' %}<span class="zig-zag-border"></span>{% endif %}
+  <h1 class="page--title">{{ 'cart.general.title' | t }}</h1>
+</div>
+
+
+  {% comment %}
+	#### Start upsell ####
+    Select an upsell product in the theme settings
+    and a product upsell banner will be show on the cart page
+    prompting user to add the product to their order
+  {% endcomment %}
+  {% assign upsell_product = settings.upsell_product %}
+  {% if upsell_product %}
+    {% assign upsell = settings.upsell_product.handle %}
+    {% assign hasUpsell = false %}
+    {%- for item in cart.items -%}
+      {% if item.product.handle == upsell %}
+          {% assign hasUpsell = true %}
+          {% comment %}Delete upsell if only item in the cart{% endcomment %}
+          {% if cart.items.size == 1 %}
+              <script>
+                  var $ = jQuery;
+                  let variantId = {{ item.variant_id }};
+                  $.ajax({
+                    type: "POST",
+                    url: "/cart/change.js",
+                    dataType: "json",
+                    data: {
+                      id: parseFloat(variantId),
+                      quantity: 0,
+                    },
+                  }).then((data) => {
+                    // Reload cart?
+                    window.location.reload();
+                  });
+              </script>
+          {% endif %}
+      {% endif %}
+    {% endfor %}
+
+    {% comment %}Only upsell if does not already have upsell item in cart and item(s) in the cart{% endcomment %}
+    {% if hasUpsell == false and cart.item_count > 0 %}
+	{% comment %}
+    <script>
+      var $ = jQuery;
+      $(document).ready( function(){
+        $.getJSON( "/products/{{ upsell }}.js", function( data ) {
+              console.log(data);
+              var upsell = $("#cart-upsell");
+              //upsell.find("h3").text(data.title);
+        	  //upsell.find("h4").text(data.price);
+              //upsell.find("img#product-image").attr('src', data.featured_image);
+              //upsell.find('#cart-upsell-form-variant').attr('value', data['variants'][0].id);
+          });
+      });
+    </script>
+	{% endcomment %}
+
+    <style>
+      #cart-upsell {
+        background: #fff6de;
+        background: #eee;
+        background: #f5e608b8;
+        padding: 20px;
+        margin-bottom: 20px;
+        border: 3px solid #004ab0;
+        border-radius: 10px;
+        display: flex;
+      }
+      #cart-upsell .col {
+        width: 45%;
+      }
+      #cart-upsell .col:first-child {
+        margin-right: 10%;
+      }
+      #cart-upsell .upsell-image {
+        height: 150px;
+        width: auto;
+        margin-right: 20px;
+      }
+      @media (max-width: 820px){
+        #cart-upsell {
+          flex-direction: column;
+        }
+        #cart-upsell .col {
+          width: 100%;
+        }
+        #cart-upsell .col:first-child {
+          margin-right: 0%;
+        }
+      }
+
+    </style>
+
+  <div style="" id="cart-upsell">
+    <div class="col">
+      <div style="display: flex; margin-bottom: 20px; align-items: center;">
+          <img src="https://cdn.shopify.com/s/files/1/0268/6510/7057/files/adam-smigielski-Xo7JXfknVVs-unsplash.jpg?v=1648476129" style="height: 30px; width: 50px; margin-right: 20px;" />
+          <h2 style="margin-top: 0; margin-bottom: 0;">
+              {{ settings.upsell_heading }}
+          </h2>
+      </div>
+      <p>{{ settings.upsell_description }}</p>
+    </div>
+
+    <div class="col">
+       <div style="display: flex;">
+         {{ upsell_product.featured_image | img_url: '600x600' | img_tag: product.featured_image.alt, 'upsell-image' }}
+         {% comment %}<img src="{{ upsell_product.featured_image | img_url: '600x600' | img_tag: product.featured_image.alt }}" id="product-image" style="width: 100px; margin-right: 20px;" />{% endcomment %}
+
+          <div>
+              <div>
+                <h3 style="margin-bottom: 0;">{{ upsell_product.title }}</h3>
+                <h4>{{ upsell_product.price | money }}</h4>
+              </div>
+              <form method="post" action="/cart/add" id="cart-upsell-form">
+                  <input id="cart-upsell-form-variant" type="hidden" name="id" value="{{ upsell_product.variants[0].id }}" />
+                  <input min="1" type="number" id="quantity" name="quantity" value="1"/>
+                  <input type="submit" value="Add to your order" class="btn" />
+              </form>
+          </div>
+      </div>
+    </div>
+    </div>
+    {% endif %}
+  {% endif %}
+
+
+  <form action="{{ routes.cart_url }}" method="post" novalidate class="cart table-wrap">
+
+    <div class="gridlayout">
+    <div class="grid__item small--one-whole large--one-half">
+
+    <table class="cart-table full table--responsive">
+      <thead class="cart__row cart__header-labels">
+        <th colspan="2" class="text-center"></th>
+        <th class="text-center">{{ 'cart.label.price' | t }}</th>
+        <th class="text-center">{{ 'cart.label.quantity' | t }}</th>
+        <th class="text-center">{{ 'cart.label.total' | t }}</th>
+      </thead>
+      <tbody>
+        {% for item in cart.items %}
+
+          {% unless item.product.tags contains 'Not-eligible-for-PaybyFinance' %}
+            {% assign has_pbf = true %}
+          {% endunless %}
+
+          <tr class="cart__row table__section">
+            <td data-label="{{ 'customer.order.product' | t }}">
+              <a href="{{ item.url | within: collections.all }}" class="cart__image">
+                {% comment %}
+                  More image size options at:
+                    - http://docs.shopify.com/themes/filters/product-img-url
+                {% endcomment %}
+                {% include 'responsive-image' with item, alt: item.title %}
+              </a>
+            </td>
+            <td>
+              <a href="{{ item.url }}" class="h5">
+                {{ item.product.title }}
+              </a>
+              <div class="limoniapps-discountninja-cart-item-product-comment" data-limoniapps-discountninja-cart-key="{{item.key}}"></div>
+              {% unless item.variant.title contains 'Default' %}
+                <div class="cart__meta-text">
+                  {% for option in item.product.options %}
+                    {{ option }}: {{ item.variant.options[forloop.index0] }}<br/>
+                  {% endfor %}
+                </div>
+              {% endunless %}
+
+              {% if settings.cart_vendor_enable %}
+                <p>{{ item.vendor }}</p>
+              {% endif %}
+
+              {% comment %}
+                Optional, loop through custom product line items if available
+
+                For more info on line item properties, visit:
+                  - http://docs.shopify.com/support/your-store/products/how-do-I-collect-additional-information-on-the-product-page-Like-for-a-monogram-engraving-or-customization
+              {% endcomment %}
+              {% assign property_size = item.properties | size %}
+              {% if property_size > 0 %}
+                {% for p in item.properties %}
+                  {% if p.last != blank and p.first.first != '_' %}
+                    {{ p.first }}:
+
+                    {% comment %}
+                      Check if there was an uploaded file associated
+                    {% endcomment %}
+                    {% if p.last contains '/uploads/' %}
+                      <a href="{{ p.last }}">{{ p.last | split: '/' | last }}</a>
+                    {% else %}
+                      {{ p.last }}
+                    {% endif %}
+                    <br />
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
+
+              <a href="{{ routes.cart_url }}/change?line={{ forloop.index }}&amp;quantity=0" class="cart__remove">
+                <small>{{ 'cart.general.remove' | t }}</small>
+              </a>
+            </td>
+            <td class="text-center" data-label="{{ 'cart.label.price' | t }}">
+                {%- if item.original_price != item.final_price -%}
+                  <span class="hidden">{{ 'products.general.regular_price' | t }}</span>
+                  <span class="h5">
+                    <del><span class="money">{{ item.original_price | money_without_trailing_zeros }}</span></del>
+                  </span>
+                  <span class="hidden">{{ 'products.general.sale_price' | t }}</span>
+                <span class="h5">
+                  <span class="order-discount discount--sale-color"><span class="money">{{ item.final_price | money_without_trailing_zeros }}</span></span>
+                </span>
+                {%- else -%}
+                <span class="h5 limoniapps-discountninja-cart-item-product-price" data-limoniapps-discountninja-cart-key="{{item.key}}">
+                  <span class="money">{{ item.original_price | money_without_trailing_zeros }}</span>
+                </span>
+                {%- endif -%}
+
+                {% include 'unit-price-measurement-variant', variant: item %}
+              </span>
+            </td>
+            <td class="text-center" data-label="{{ 'cart.label.quantity' | t }}">
+              <input type="number" name="updates[]" id="updates_{{ item.id }}" value="{{ item.quantity }}" min="0">
+            </td>
+            <td class="text-center cart-total-label limoniapps-discountninja-cart-item-line-price" data-limoniapps-discountninja-cart-key="{{item.key}}" data-label="{{ 'cart.label.total' | t }}">
+              {%- if item.original_line_price != item.final_line_price -%}
+  							<span class="hidden">{{ 'products.general.regular_price' | t }}</span>
+                <span class="h5">
+  						    <del><span class="money">{{ item.original_line_price | money_without_trailing_zeros }}</span></del>
+                </span>
+  							<span class="hidden">{{ 'products.general.sale_price' | t }}</span>
+                <span class="h5">
+  							  <span class="order-discount discount--sale-color"><span class="money">{{ item.final_line_price | money_without_trailing_zeros }}</span></span>
+                </span>
+  						{%- else -%}
+  							<span class="money">{{ item.original_line_price | money_without_trailing_zeros }}</span>
+  						{%- endif -%}
+
+              {%- if item.line_level_discount_allocations != blank -%}
+                <ul class="order-discount--cart-list discount--sale-color" aria-label="{{ 'customer.order.discount' | t }}">
+                  {%- for discount_allocation in item.line_level_discount_allocations -%}
+                    <li class="order-discount--item">
+                      <strong>{{ discount_allocation.discount_application.title }} (-<span class="money">{{ discount_allocation.amount | money_without_trailing_zeros }}</span>)</strong>
+                    </li>
+                  {%- endfor -%}
+                </ul>
+              {%- endif -%}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    {% if settings.cart_notes_enable %}
+      <div class="">
+        <label for="CartSpecialInstructions">{{ 'cart.general.note' | t }}</label>
+        <textarea name="note" class="input-full" id="CartSpecialInstructions">{{ cart.note }}</textarea>
+      </div>
+    {% endif %}
+
+    <input type="submit" name="update" class="btn--secondary update-cart cart--button-update" value="{{ 'cart.general.update' | t }}">
+
+    </div>
+    <div class="grid__item small--one-whole large--one-half">
+    <div class="gridlayout cart__row">
+      <div class="grid__item small--one-whole">
+        {%- if cart.cart_level_discount_applications != blank -%}
+          <div class="cart--order-discount-wrapper custom-font discount--sale-color text-right">
+            {%- for discount_application in cart.cart_level_discount_applications -%}
+            <div class="cart--order-discount-wrapper--indiv">
+              <span class="order-discount--cart-title">
+
+              </span>
+              <span class="order-discount">-<span class="money"></span></span>
+            </div>
+            <p>
+              <span class="cart__subtotal-title"><span class="hidden">{{ 'customer.order.discount' | t }}:</span>{{- discount_application.title -}}</span>
+              <span class="h3 cart__subtotal"><span class="money">{{ discount_application.total_allocated_amount | money_without_trailing_zeros }}</span></span>
+            </p>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+
+
+        <p class="text-right">
+          <span class="cart__subtotal-title">{{ 'cart.general.subtotal' | t }}</span>
+          <span class="h3 cart__subtotal limoniapps-discountninja-cart-subtotal-price"><span class="money">{{ cart.total_price | money_without_trailing_zeros }}</span></span>
+        </p>
+        <div class="limoniapps-discountninja-cart-promotionsummary"></div>
+        <div class="limoniapps-discountninja-cartdiscountfield-placeholder"></div>
+        {%- capture taxes_shipping_checkout -%}
+          {%- if shop.taxes_included and shop.shipping_policy.body != blank -%}
+            {{ 'cart.general.taxes_included_and_shipping_policy_html' | t: link: shop.shipping_policy.url }}
+          {%- elsif shop.taxes_included -%}
+            {{ 'cart.general.taxes_included_but_shipping_at_checkout' | t }}
+          {%- elsif shop.shipping_policy.body != blank -%}
+            {{ 'cart.general.taxes_and_shipping_policy_at_checkout_html' | t: link: shop.shipping_policy.url }}
+          {%- else -%}
+            {{ 'cart.general.taxes_and_shipping_at_checkout' | t }}
+          {%- endif -%}
+        {%- endcapture -%}
+
+        <div class="cart__shipping rte text-right"><em>{{ taxes_shipping_checkout }}</em></div>
+
+        <div class="text-center">
+          <input type="submit" name="checkout" class="btn cart--button-checkout" value="{{ 'cart.general.checkout' | t }}">
+          {% if additional_checkout_buttons and settings.enable-additional-checkout-buttons %}
+            <div class="additional-checkout-buttons additional-checkout-buttons--horizontal">
+                {{ content_for_additional_checkout_buttons }}
+            </div>
+          {% endif %}
+        </div>
+
+        <!--  -->
+
+      
+
+    {% if cart.currency.symbol == "£"  %}
+      {% if cart.total_price < 25000 %}
+  
+        
+      {% else %}
+      
+          {% if has_pbf and settings.own_art_checkout == true %}
+          <div class="own-art-box">
+              <div class="own-art-box--inner">
+                {% comment %}
+                {% render 'own-art-logo' with color: 'black' %}
+                {% endcomment %}
+                <div class="rte" style="padding-left: 0;">
+                  {{ section.settings.own_art_text }}
+  
+                    <div class="rte">
+                      <i>Items available on finance</i>
+                      <ul>
+                      {% for item in cart.items %}
+                        {% unless item.product.tags contains 'Not-eligible-for-PaybyFinance' %}
+                          <li>{{ item.title }}</li>
+                        {% endunless %}
+                      {% endfor %}
+                      </ul>
+                    </div>
+  
+                </div>
+              </div>
+            <div class="js-pbf-cart-hook"></div>
+          </div>
+          {% endif %}
+        
+        {% endif %}
+      {% endif %}
+        
+       
+
+        <!--  -->
+      </div>
+    </div>
+    </div>
+
+
+  </div>
+  </form>
+{% else %}
+<div class="sitewide--title-wrapper">
+  {% if settings.heading_style == 'zigzag' %}<span class="zig-zag-border"></span>{% endif %}
+  <h1 class="page--title">{{ 'cart.general.title' | t }}</h1>
+</div>
+<div class="cart--empty-cart">
+	<p>{{ 'cart.general.empty' | t }}</p>
+	<p>{{ 'cart.general.continue_browsing_html' | t }}</p>
+</div>
+{% endif %}
+
+{% schema %}
+{
+    "name": {
+        "en": "Product pages",
+        "de": "Produktseiten",
+        "es": "Páginas de producto",
+        "fr": "Pages des produits",
+        "pt-PT": "Páginas de produtos"
+    },
+    "settings": [
+        {
+          "type": "richtext",
+          "id": "own_art_text",
+          "label": "Own Art Text",
+          "default": "<p>Some items in your cart are covered by the Art Own Scheme.</p><p><b>Complete this form if you wish to pay in installments and finance these artworks.</b></p>"
+        }
+    ]
+}
+{% endschema %}

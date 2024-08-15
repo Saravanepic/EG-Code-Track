@@ -1,0 +1,488 @@
+{% assign block = mega-menu %}
+
+<div class="mega-menu-block {% if block.id == "cce32aab-0ca8-440e-8638-25f35ee15b29" %} mega_block_drop_one {% endif %}" data-mega-menu-block-id="{{ block.id }}" {{ block.shopify_attributes }} >
+  {% assign mega = block.settings.mega-menu %}
+  {% assign mega_nav_column_count = 5 %}
+  {% assign mega_column_width = link.links.size %}
+  {% if block.settings.mega_image_1 %}
+    {% assign mega_nav_column_count = mega_nav_column_count | minus: 1 %}
+    {% assign mega_column_width = mega_column_width | plus: 1 %}
+  {% endif %}
+
+  {% if block.settings.mega_image_2 %}
+    {% assign mega_nav_column_count = mega_nav_column_count | minus: 1 %}
+    {% assign mega_column_width = mega_column_width | plus: 1 %}
+  {% endif %}
+
+  {% assign mega_column_width = mega_column_width | limit: 5 %}
+  {% for sub_link in link.links limit: mega_nav_column_count %}
+    {% if mega_column_width <= 3 %}
+      {% assign grid_item_width = 'grid__item large--one-third medium--one-third'  %}
+    {% elsif mega_column_width == 4 %}
+      {% assign grid_item_width = 'grid__item large--one-quarter medium--one-quarter'  %}
+    {% else %}
+      {% assign grid_item_width = 'grid__item large--one-fifth medium--one-fifth'  %}
+    {% endif %}
+    {% if mega == 'Artists' %}
+      {% assign grid_item_width = 'grid__item large--one-fifth medium--one-fifth'  %}
+    {% endif %}
+
+   
+
+    
+        {% if sub_link.title == "Artists Section" %}
+          {% assign menuArt = linklists["Artists"] %}
+            
+
+            {% comment %} {% assign grid_item_width = 'grid__item large--one-fifth medium--one-fifth'  %}
+              <li class="dropdown-submenu {{ grid_item_width }}" aria-haspopup="true">
+                 <div class="inner">
+                    <p class="h4"><a href="{{ sub_link.url }}">{{ sub_link.title | escape }}</a></p>
+                    <ul class="menu-link">
+                      {% for sub_sub_link in sub_link.links %}
+                        <li>
+                          <a href="{{ sub_sub_link.url }}">{{ sub_sub_link.title | escape }}</a>
+                        </li>
+                       {% endfor %}
+                    </ul>
+                </div>
+              </li> {% endcomment %}
+
+
+            <div class="tabset" style="width: 80%">
+              {% for sub_link in menuArt.links %}
+                 <input type="radio" name="tabset" id="tab{{forloop.index}}" aria-controls="tab{{forloop.index}}" {% if forloop.index == 1 %} checked {% endif %}>
+                     <label class="nav-menu__titles" for="tab{{forloop.index}}">{{ sub_link.title }}</label>
+              {% endfor %}
+                  <div class="tab-panels">
+                    {% for sub_link in menuArt.links %}
+                      <section id="tab-{{forloop.index}}" class="tab-panel" data-title="{{heading}}" data-down="false">
+                              <div class="tab-text">
+                                {% for sub_sub_link in sub_link.links %}
+                                  {% assign mod = forloop.index | modulo: 10 %}
+                                  {% if forloop.first == true or mod == 1 %}
+                                    <ul class="menu-link artist-menu__divs">
+                                  {% endif %}
+                                    <li>
+                                      <a href="{{ sub_sub_link.url }}">{{ sub_sub_link.title | escape }}</a>
+                                    </li>
+                                  {% if forloop.last == true or mod == 0 %}  
+                                    </ul>
+                                  {% endif %}
+                                {% endfor %}
+                              </div>
+                      </section>
+                    
+                    {% endfor %}
+                  </div>
+            </div>
+
+              <style>
+              .nav-menu__titles{
+                font-family: Kanit;
+                font-size: 16px;
+                font-weight: 600;
+                letter-spacing: 1.52px;
+                line-height: 24px;
+                margin-bottom: 0;
+              }
+              
+                .tabset{
+                  text-align: left;
+                  margin: 2% 0;
+                  }
+
+                .tabset > label{
+                  min-width: 60px
+                }
+
+                  .tabset > input[type="radio"] {
+                  position: absolute;
+                  left: -200vw;
+                }
+
+                .tabset .tab-panel {
+                  height: 0; 
+                  overflow: hidden;
+                }
+
+                .tabset > input:first-child:checked ~ .tab-panels > .tab-panel:first-child,
+                .tabset > input:nth-child(3):checked ~ .tab-panels > .tab-panel:nth-child(2),
+                .tabset > input:nth-child(5):checked ~ .tab-panels > .tab-panel:nth-child(3),
+                .tabset > input:nth-child(7):checked ~ .tab-panels > .tab-panel:nth-child(4),
+                .tabset > input:nth-child(9):checked ~ .tab-panels > .tab-panel:nth-child(5),
+                .tabset > input:nth-child(11):checked ~ .tab-panels > .tab-panel:nth-child(6) {
+                  display: block;
+                  height: auto; 
+                }
+
+                .tabset > label {
+                  position: relative;
+                  display: inline-block;
+                  font-size: 16px;
+                  cursor: pointer;
+                  color: gray;
+                  margin: 0 30px 0 0;
+                  font-family: Kanit;
+                  font-weight: 600;
+                  letter-spacing: 1.52px;
+                  line-height: 24px;
+                  
+                }
+
+                .tabset > label:hover,
+                .tabset > input:focus + label {
+                  font-weight: 600;
+                }
+
+                .tabset > label:hover::after,
+                .tabset > input:focus + label::after,
+                .tabset > input:checked + label::after {
+                  background: #000;
+                }
+
+                .tabset > input:checked + label {
+                  color: black;
+                }
+                .artist-menu__divs {
+                  width: 25%;
+                }
+
+                .artist-menu__divs li{
+                  font-family: Kanit;
+                  font-size: 14px;
+                  letter-spacing: 1.33px;
+                 }
+
+                .tab-text{
+                  display: flex;
+                }
+
+              </style>
+
+
+
+              {% comment %} {% assign first_paragraph = page.content  | split: "<h6" | first %}
+                  {% assign fp = first_paragraph %}
+                  {% assign first_paragraph = first_paragraph | strip_html | replace: "&nbsp;", "" | replace: " ", "" | strip_newlines %}
+
+                  {% assign description_parts = pages.copy-of-size-chart.content | split: "<h6" %}
+                  
+                    {% for part in description_parts %}
+                      {% assign fp = part | append: " " | split: "</h6>" | last %}
+                      {% assign p = part | append: " " | split: "</h6>" | last | strip_html | replace: "&nbsp;", "" | replace: " ", "" | strip_newlines %}
+
+                      {% if part contains "</h6>" %}
+                        {% assign remove = part | split: ">" | first | append: ">" %}
+                        {% assign heading = part | split: "</h6>" | first | strip_html | replace: remove, "" %}
+                        {% assign tct = part | split: "</h6>" | last %}
+                          <input type="radio" name="tabset" id="tab{{forloop.index}}" aria-controls="tab{{forloop.index}}" {% if forloop.index == 2 %} checked {% endif %}>
+                          <label for="tab{{forloop.index}}">{{ heading }}</label>
+                    {% endif %}
+                    {% endfor %}
+                  <div class="tab-panels">
+                      {% for part in description_parts %}
+                        {% assign fp = part | append: " " | split: "</h6>" | last %}
+                        {% assign p = part | append: " " | split: "</h6>" | last | strip_html | replace: "&nbsp;", "" | replace: " ", "" | strip_newlines %}
+
+                        {% if part contains "</h6>" %}
+                        
+                          {% assign remove = part | split: ">" | first | append: ">" %}
+                          {% assign heading = part | split: "</h6>" | first | strip_html | replace: remove, "" %}
+                          {% assign tct = part | split: "</h6>" | last %}
+                            <section id="tab-{{forloop.index}}" class="tab-panel" data-title="{{heading}}" data-down="false">
+                            <div class="tab-text">
+                              <p>{{ tct }}</p>
+                            </div>
+                          </section>
+                        {% endif %}
+                      {% endfor %}
+                  </div>
+          
+            </div> {% endcomment %}
+
+           
+
+   
+
+
+
+
+        {% else %}
+
+          {% if block.id == "cce32aab-0ca8-440e-8638-25f35ee15b29" %}
+
+          <li class="dropdown-submenu {% if sub_link.title == 'Artists Hightlights' %} 'grid__item large--one-fifth medium--one-fifth' {% else %} {{ grid_item_width }} {% endif %}" aria-haspopup="true">
+            <div class="inner">
+                
+                    <p class="nav-menu__titles"><a href="{{ sub_link.url }}">{{ sub_link.title | escape }}</a></p>
+                    <ul class="menu-link">
+                      {% for sub_sub_link in sub_link.links %}
+                        <li>
+                          <a href="{{ sub_sub_link.url }}">{{ sub_sub_link.title | escape }}</a>
+                        </li>
+                      {% endfor %}
+                    </ul>   
+            
+              
+         
+            </div>
+          </li>
+
+            <!-- Tabs -->
+            {% if sub_link.title == 'Artists Highlights' %}
+<li class="dropdown-submenu  grid__item  dropdown-submenu_tabs">
+            <div class="tab_blocks">
+               <div class="tabs">
+                  <button class="tablinks active" onclick="openTab(event, 'Tab1')">A - F</button>
+                  <button class="tablinks" onclick="openTab(event, 'Tab2')">G - M</button>
+                  <button class="tablinks" onclick="openTab(event, 'Tab3')">N - Z</button>
+                  <a href="/collections">All Artists A-Z</a>
+              </div>
+
+              <div id="Tab1" class="tabcontent" style="display: block;">
+                  
+                  <ul class="menu-link">
+
+                    {% for link in linklists.menu-tab-1.links %}
+                      <li>
+                      <a href="{{ link.url }}">{{ link.title }}</a>
+                      </li>
+                    {% endfor %}
+                    
+                  </ul>
+              </div>
+          
+              <div id="Tab2" class="tabcontent">
+                  
+                  <ul class="menu-link">
+
+                    {% for link in linklists.menu-tab-2.links %}
+                      <li>
+                      <a href="{{ link.url }}">{{ link.title }}</a>
+                      </li>
+                    {% endfor %}
+                    
+                  </ul>
+              </div>
+          
+              <div id="Tab3" class="tabcontent">
+                  
+                  <ul class="menu-link">
+
+                    {% for link in linklists.menu-tab-3.links %}
+                      <li>
+                      <a href="{{ link.url }}">{{ link.title }}</a>
+                      </li>
+                    {% endfor %}
+                    
+                  </ul>
+              </div>
+            </div>
+          </li>  
+              {% else %}
+              
+            {% endif %}
+            <!--  -->
+          
+            
+          {% else %}
+
+
+            <li class="dropdown-submenu  {{ grid_item_width }} " aria-haspopup="true">
+              <div class="inner">
+                  
+                      <p class="nav-menu__titles"><a href="{{ sub_link.url }}">{{ sub_link.title | escape }}</a></p>
+                      <ul class="menu-link">
+                        {% for sub_sub_link in sub_link.links %}
+                          <li>
+                            <a href="{{ sub_sub_link.url }}">{{ sub_sub_link.title | escape }}</a>
+                          </li>
+                        {% endfor %}
+                      </ul>   
+              
+                
+           
+              </div>
+            </li>
+              
+          {% endif %} 
+          
+        
+    {% endif %}
+  {% endfor %}
+ 
+
+  {% if block.settings.mega_image_1 %}
+    <li class="dropdown-submenu {{ grid_item_width }}" aria-haspopup="true">
+      <div class="inner mega-menu--image-wrapper">
+        <div class="mega-menu--image">
+          {% if block.settings.mega_image_link_1 %}
+            <a href="{{ block.settings.mega_image_link_1 }}">
+          {% endif %}
+          {% capture img_props %}style="max-width: {{ block.settings.mega_image_1.width }}px"{% endcapture %}
+          {% include 'responsive-image' with block.settings.mega_image_1, props: img_props  %}
+          {% if block.settings.mega_image_link_1 %}
+            </a>
+          {% endif %}
+
+          {% if block.settings.mega_image_header_1 %}
+            <p class="h4 mega-menu--image-title">
+              {% if block.settings.mega_image_link_1 %}
+                <a href="{{ block.settings.mega_image_link_1 }}">
+              {% endif %}
+              {{ block.settings.mega_image_header_1 }}
+              {% if block.settings.mega_image_link_1 %}
+                </a>
+              {% endif %}
+            </p>
+          {% endif %}
+          {% if block.settings.mega_image_subheader_1 %}
+            <p class="h5">
+              {% if block.settings.mega_image_link_1 %}
+                <a href="{{ block.settings.mega_image_link_1 }}">
+              {% endif %}
+              {{ block.settings.mega_image_subheader_1 }}
+              {% if block.settings.mega_image_link_1 %}
+                </a>
+              {% endif %}
+            </p>
+          {% endif %}
+        </div>
+      </div>
+    </li>
+  {% endif %}
+
+  {% if block.settings.mega_image_2 %}
+    <li class="dropdown-submenu {{ grid_item_width }}" aria-haspopup="true">
+      <div class="inner mega-menu--image-wrapper">
+        <div class="mega-menu--image">
+          {% if block.settings.mega_image_link_2 %}
+            <a href="{{ block.settings.mega_image_link_2 }}">
+          {% endif %}
+          {% capture img_props %}style="max-width: {{ block.settings.mega_image_2.width }}px"{% endcapture %}
+          {% include 'responsive-image' with block.settings.mega_image_2, props: img_props %}
+          {% if block.settings.mega_image_link_2 %}
+            </a>
+          {% endif %}
+          {% if block.settings.mega_image_header_2 %}
+            <p class="h4 mega-menu--image-title">
+              {% if block.settings.mega_image_link_2 %}
+                <a href="{{ block.settings.mega_image_link_2 }}">
+              {% endif %}
+              {{ block.settings.mega_image_header_2 }}
+              {% if block.settings.mega_image_link_2 %}
+                </a>
+              {% endif %}
+            </p>
+          {% endif %}
+          {% if block.settings.mega_image_subheader_2 %}
+            <p class="h5">
+              {% if block.settings.mega_image_link_2 %}
+                <a href="{{ block.settings.mega_image_link_2 }}">
+              {% endif %}
+              {{ block.settings.mega_image_subheader_2 }}
+              {% if block.settings.mega_image_link_2 %}
+                </a>
+              {% endif %}
+            </p>
+          {% endif %}
+        </div>
+      </div>
+    </li>
+  {% endif %}
+
+</div>
+
+<!--  NEW CSS FOR TABS -->
+<style>
+/* Hide some */
+/* .mega_block_drop_one li.dropdown-submenu:nth-child(1) ul li:nth-child(3), .mega_block_drop_one li.dropdown-submenu:nth-child(1) ul li:nth-child(8), .mega_block_drop_one li.dropdown-submenu:nth-child(1) ul li:nth-child(11), .mega_block_drop_one li.dropdown-submenu:nth-child(1) ul li:nth-child(13),.mega_block_drop_one li.dropdown-submenu:nth-child(1) ul li:nth-child(14) {
+    display: none;
+} */
+
+  
+  
+  .mega_block_drop_one  li.dropdown-submenu {
+    display: none;
+}
+
+.mega_block_drop_one  li.dropdown-submenu:nth-child(1),
+  .mega_block_drop_one .dropdown-submenu_tabs{
+    display: block!important;
+}
+  .mega_block_drop_one .dropdown-submenu_tabs{
+    padding: 0 2%;
+    margin: 2% 0;
+    width:70%;
+  }
+
+ .tab_blocks {
+	
+}
+ .tab_blocks .tabs {
+	 overflow: hidden;
+	 background-color: transparent;
+   display: flex;
+    justify-content: flex-start;
+    gap: 50px;
+}
+ .tab_blocks .tablinks {
+	 background-color: inherit;
+	 float: left;
+	 border: none;
+	 outline: none;
+	 cursor: pointer;
+	 padding: 0;
+	 transition: 0.3s;
+	 font-size: 14px;
+}
+ .tab_blocks .tablinks:hover {
+	    background-color: transparent;
+    color: black;
+    font-weight: 600;
+}
+ .tab_blocks .tablinks.active {
+	    background-color: transparent;
+    color: black;
+    font-weight: 600;
+}
+ .tab_blocks .tabcontent {
+	 display: none;
+	 padding: 20px 0 0;
+	 border-top: none;
+}
+ 
+.tabcontent ul.menu-link {
+    display: grid;
+    grid-template-rows: repeat(10,1fr);
+    grid-template-columns: repeat(4,1fr);
+    grid-auto-flow: column;
+    margin-top:-5px!important;
+}
+  
+</style>
+
+<script>
+  function openTab(evt, tabName) {
+    // Declare all variables
+    var i, tabcontent, tablinks;
+
+    // Get all elements with class="tabcontent" and hide them
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+
+    // Get all elements with class="tablinks" and remove the class "active"
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.className += " active";
+}
+
+</script>

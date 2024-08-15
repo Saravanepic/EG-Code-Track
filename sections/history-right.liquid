@@ -1,0 +1,147 @@
+<section class="bg-gray-100 py-5 md:py-16 xl:py-20">
+    <div class="wrapper">
+        <div class="history-right" style="">
+            <div class="order-0 sm:order-0 history-right__grid-container">
+                <div class="history-right__box1">
+                    {% include 'responsive-image' with section.settings.second_section_image_1, class: 'border-8 border-white', force_aspect: 0.5, allow_stretch: true %}
+                </div>
+                <div class="history-right__box history-right__box2">
+                    {% include 'responsive-image' with section.settings.second_section_image_2, class: 'border-8 border-white', force_aspect: 1.5, allow_stretch: true %}
+                </div>
+                <div class="history-right__box history-right__box3">
+                    {% include 'responsive-image' with section.settings.second_section_image_3, class: 'border-8 border-white', force_aspect: 1.5, allow_stretch: true %}
+
+                </div>
+                <div class="history-right__box history-right__box4">
+                    {% include 'responsive-image' with section.settings.second_section_image_4, class: 'border-8 border-white', force_aspect: 0.5, allow_stretch: true %}
+                </div>
+            </div>
+        
+            <div class="history-right__blocks" style="">
+                <h2 class="history-right__title" style=" ">{{ section.settings.second_section_title }}</h2>
+                <div class="text-lg history-right__text" style="">
+                    {{ section.settings.second_section_content }}
+                </div>
+                <div class="show-view-all--button">
+                    <a href="{{section.settings.button_link}}" class="btn">
+                        {{ section.settings.button_label}}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+.history-right{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.history-right__blocks{
+  width: 50%; 
+  padding: 0px 0 0px 50px;
+}
+.history-right__title{
+  font-size: 30px;
+  letter-spacing: 0; 
+  line-height: 40px;
+}
+.history-right__text{
+  font-size: 14px;
+  letter-spacing: 1.33px;
+  line-height: 21px;
+  margin-bottom: 30px;
+}
+.history-right__grid-container {
+    display: grid; 
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr; 
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr; 
+  gap: 20px 20px; 
+  padding: 30px 0;
+}
+.history-right__box .lazyload-wrapper{
+  max-height: 250px;
+  width: 100%;
+}
+.history-right__box .lazyload-wrapper img{
+  max-height: 250px;
+}
+
+.history-right__box3 { grid-area: 3 / 6 / 6 / 9; }
+.history-right__box4 {
+  grid-area: 4 / 2 / 6 / 6; 
+  display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+}
+.history-right__box1 { grid-area: 1 / 4 / 3 / 8; }
+.history-right__box2 { grid-area: 1 / 1 / 4 / 4;
+display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-line-pack: end;
+            align-items: flex-end; }
+
+@media screen and (max-width: 768px) {
+  .history-right{
+    flex-direction: column;
+}
+.history-right__blocks{
+  width: 100%; 
+  padding: 20px 10px;
+}
+}
+</style>
+
+
+{% schema %}
+    {
+        "name": "Text with gallery right",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Second Section"
+        },
+        {
+            "type": "image_picker",
+            "id": "second_section_image_1",
+            "label": " Image 1 horizontal"
+        },
+        {
+            "type": "image_picker",
+            "id": "second_section_image_2",
+            "label": " Image 2 vertical"
+        },
+        {
+            "type": "image_picker",
+            "id": "second_section_image_3",
+            "label": " Image 3 vertical"
+        },
+        {
+            "type": "image_picker",
+            "id": "second_section_image_4",
+            "label": " Image 4 horizontal"
+        },
+        {
+            "type": "text",
+            "id": "second_section_title",
+            "label": " Title"
+        },
+        {
+            "type": "richtext",
+            "id": "second_section_content",
+            "label": " Content"
+        }, {
+            "type": "text",
+            "id": "button_label",
+            "label":  "Button text"        
+        },
+        {
+            "type": "url",
+            "id": "button_link",
+            "label": "Button link"
+        }
+        ]
+    }
+{% endschema %}

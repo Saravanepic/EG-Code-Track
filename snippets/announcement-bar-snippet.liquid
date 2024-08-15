@@ -1,0 +1,59 @@
+{% if section.settings.enable_announcement_bar %}
+
+      <style>
+
+        .notification-bar{
+          background-color: {{ section.settings.notification-bar--background-color }};
+          color: {{ section.settings.notification-bar--text-color }};
+        }
+
+        .notification-bar a, .notification-bar .social-sharing.is-clean a{
+          color: {{ section.settings.notification-bar--text-color }};
+        }
+
+      </style>
+
+      <div class="notification-bar">
+
+        {% if section.settings.enable_social_icons %}
+          <div id="sharing" class="social-sharing is-clean" data-permalink="{{ permalinkURL }}">
+            {% include 'social-icons' %}
+          </div>
+        {% endif %}
+
+       {% if section.settings.message_text_left != blank or section.settings.message_text_right != blank %}
+        <div class="notification-bar__message">
+
+          <div><a href="{{section.settings.message_link_left}}">{{ section.settings.message_text_left }}</a></div>
+          <div class=""><a href="{{section.settings.message_link_right}}">{{ section.settings.message_text_right }}</a></div>
+
+        </div>
+    {% endif %}
+
+      </div>
+      {% endif %}
+
+
+    <style>
+  .notification-bar__message {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 30px;
+    }
+
+   @media screen and (max-width: 480px){
+     .mobile-hide{ display: none;}
+     .notification-bar {
+       padding: 1px 0;
+     }
+     .notification-bar__message {
+		display: block;
+       	padding: 0 10px;
+     }
+     .notification-bar__message div:nth-child(2) {
+       margin-top: 10px;
+	 }
+   } 
+</style>

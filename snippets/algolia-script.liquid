@@ -1,0 +1,210 @@
+    {% comment %}Start Algolia:  {% endcomment %}
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+	{% comment %}
+	<script src="https://unpkg.com/alpine-teleport@1.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.js"></script>
+	{% endcomment %}
+    <script src="https://cdn.jsdelivr.net/npm/algoliasearch@4.5.1/dist/algoliasearch-lite.umd.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/algoliasearch-helper-js/2.28.1/algoliasearch.helper.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@algolia/autocomplete-js@1.3.0/dist/umd/index.production.js"></script>
+	{{ 'algolia-tw-min.css' | asset_url | stylesheet_tag }}
+    {{ 'algolia-extra.css' | asset_url | stylesheet_tag }}
+    <style>
+      [x-cloak] { display: none !important; }
+    </style>
+    <script>
+
+      ///////////////////////////////////
+      //// Algolia Search for header ////
+      ///////////////////////////////////
+window.algoliaAppId = "3X2MU4D68N";
+window.algoliaApiKey = '50cb1564bea534ce9cfa005a97e3dec9';
+
+const searchClient = algoliasearch(window.algoliaAppId, window.algoliaApiKey);
+
+function initSearch() {
+  searchHelper.on('result', results => {
+    console.log("result:");
+    console.log(results)
+    //this.facets = results.getFacetValues('category', ['selected', 'count:desc']).slice(0, 5);
+  });
+}
+
+// Main search data for component
+function searchData(){
+  return {
+    suggestionsEnabled: false,
+    productBaseURL: "/products/",
+    collectionBaseURL: "/collections/",
+    searchBaseURL: "/search",
+    searchHelper: algoliasearchHelper(searchClient, 'shopify_products', {
+      //disjunctiveFacets: ['category'],
+      hitsPerPage: 5,
+      maxValuesPerFacet: 3
+    }),
+    init(){
+      this.searchHelper.on('result', results => {
+        console.log("result:");
+        console.log(results);
+        this.results = results.hits;
+        //this.facets = results.getFacetValues('category', ['selected', 'count:desc']).slice(0, 5);
+      });
+      // init suggestions #TODO - only fire this if search icon is opened
+    },
+    firstOpen: function(){
+       if (!this.opened){
+         this.opened = true;
+         if (this.suggestionsEnabled){
+         	this.doSuggestions();
+         }
+       }
+    },
+    // Create our number formatter.
+    formatter: new Intl.NumberFormat('en-GB', {
+      style: 'currency',
+      currency: 'GBP',
+      // These options are needed to round to whole numbers if that's what you want.
+      //minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
+      //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
+    }),
+    opened: false,
+    open: false,
+    closing: false,
+    loading: false,
+    popular: [],
+    suggestions: [],
+    suggestionClick: function(suggestion){
+      var search_url = this.searchBaseURL + `?shopify_products[query]=${suggestion}`;
+      //window.open(search_url);
+      window.location = search_url;
+    },
+    resultsHtml: null,
+    results: [],
+    results_total: 0,
+    collections: [],
+    collections_total: 0,
+    artist: [],
+    artist_total: 0,
+    sendEvent: function(eventType, eventName, index, userToken, timestamp = false, queryID = false, objectIDs = [], filters = [], positions = false){
+      // This function will be used to report events back to Algolia insights
+      // https://www.algolia.com/doc/rest-api/insights/#push-events
+
+    },
+    doSuggestions: function(){
+      // Suggestions
+      const host = `https://${window.algoliaAppId}-dsn.algolia.net`;
+      const url = `${host}/1/indexes/*/queries?&x-algolia-api-key=${window.algoliaApiKey}
+&x-algolia-application-id=${window.algoliaAppId}&query=${encodeURIComponent(this.query)}`;
+
+      data = {
+        "requests":[
+          {
+            "indexName":"shopify_products_query_suggestions",
+            "params":`hitsPerPage=100&query=${this.query}&highlightPreTag=__ais-highlight__&highlightPostTag=__%2Fais-highlight__&facets=%5B%5D&tagFilters=`
+          }
+        ]
+      }
+
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'X-Algolia-Application-Id': window.algoliaAppId,
+          'X-Algolia-API-Key': window.algoliaApiKey,
+        },
+         body: JSON.stringify(data),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          this.resultsHtml = null;
+          //console.log(data);
+          if (data.results[0].hits.length) {
+            // Suggestions
+            this.suggestions = [];
+            this.suggestions = data.results[0].hits.map(({ query, shopify_products }) => {
+              return query;
+            });
+
+
+            // Results
+            this.resultsHtml = data.results[0].hits.map(({ query, shopify_products }) => {
+              //console.log(query);
+              return `<a
+                href="${query}"
+                class="block px-2 py-3 bg-white text-sm text-left border-b border-gray-300 hover:bg-gray-200 hover:no-underline"
+              >${query}</a>`;
+            }).join('');
+          }
+
+          this.loading = false;
+        });
+    },
+    searchReceived: function(that, results){
+      console.log("searchReceived: ")
+      console.log(results);
+      const collectionResults = results.results[1].hits.filter(function(item) {
+        console.log(item?.meta?.accentuate?.collection_type);
+        if (item?.meta?.accentuate?.collection_type != 'Artist' && item?.meta?.accentuate?.collection_type != 'Artworks') {
+          return item;
+        }
+      });
+      const artistResults = results.results[1].hits.filter(function(item) {
+        if (item?.meta?.accentuate?.collection_type == 'Artist') {
+          return item;
+        }
+      });
+      console.log(artistResults);
+      //window.results = results;
+      that.results = results.results[0].hits;
+      that.results_total = results.results[0].nbHits;
+      that.collections = collectionResults;
+      that.collections_total = collectionResults.length;
+      that.artist = artistResults;
+      that.artist_total = artistResults.length;
+    },
+    search: function(){
+      this.loading = true;
+      console.log("search: " + this.query)
+      // Multiple index search
+      const queries = [
+        {
+          indexName: 'shopify_products',
+          query: this.query,
+          filters: 'inventory_available = 1',
+          params: {
+            hitsPerPage: 5,
+          }
+        },
+        {
+          indexName: 'shopify_collections',
+          query: this.query,
+        }
+      ];
+
+        //searchClient.multipleQueries(queries).then(( results, "test" ) => {
+        //  console.log(results);
+        //searchReceived(results);
+        //});
+        var searchReceived = this.searchReceived;
+        var that = this;
+        searchClient.multipleQueries(queries).then(function(results) {
+          that.searchReceived(that, results);
+        }, that);
+
+
+      // Search products
+      //this.searchHelper.setQuery(this.query).search();
+
+      // Suggestions
+      if (this.suggestionsEnabled){
+        this.doSuggestions();
+      }
+
+    },
+    query: ''
+  }
+}
+    </script>
+    {{ 'algolia-tw.min.css' | asset_url | stylesheet_tag }}
+    {% comment %}<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" />{% endcomment %}
+    {% comment %}<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/utilities.min.css" integrity="sha512-Y8cJYgNbd3VacNNezxAdncUu75Uj7uR/Dtb4ffepQrtFww5/QlgYt2IwexMwB8/SZWCCVe6kOY20A2Q4zQf5vQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />{% endcomment %}
+    {% comment %}End Algolia {% endcomment %}

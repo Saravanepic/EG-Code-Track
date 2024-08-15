@@ -1,0 +1,332 @@
+<!-- /templates/blog.liquid -->
+
+{% assign header_image = section.settings.blog-sidebar-image %}
+{% assign _current_tag = current_tags | first | handlize %}
+
+{% for block in section.blocks %}
+    {% case block.type %}
+    {% when 'blog-filter' %}
+      {% assign _possible_tag = block.settings.filter-tag | handlize %}
+      {% if _possible_tag == _current_tag %}
+        {% assign header_image = block.settings.filter-image %}
+      {% endif %}
+    {% endcase %}
+{% endfor %}
+
+{% if header_image != blank %}
+
+  {% if section.settings.blog-sidebar-image-size == 'original' %}
+        {% include 'responsive-image' with header_image, alt: collection.title, class: 'collection-page--feature-image' %}
+  {% else %}
+
+    <style>
+      {% if header_image != blank %}
+        {% capture selector %}.collection-image .img{% endcapture %}
+        {% if collection.metafields.accentuate.optional_header_replacement != blank %}
+          {{ selector }} {
+            background-image: url('{{ header_image | append: 'w_1660' }}');
+          }
+        {% else %}
+          {% include 'responsive-background-image' with header_image, selector: selector %}
+        {% endif %}
+
+        .collection-image .img {
+          background-position: center;
+          background-repeat: no-repeat;
+          background-size: cover;
+        }
+      {% endif %}
+
+      .collection-image .img {
+        height: {{ section.settings.blog-sidebar-image-size }};
+      }
+
+      @media only screen and (min-width: 768px) {
+        .collection-image .rellax.img {
+          height: {{ section.settings.blog-sidebar-image-size | remove:'vw' | times:1.15 | append:'vw' }};
+          margin-top: {{ section.settings.blog-sidebar-image-size | remove:'vw' | times:-0.6 | append:'vw' }};
+        }
+      }
+
+      .parallax.collection-image-parallax {
+        height: {{ section.settings.blog-sidebar-image-size }};
+      }
+    </style>
+
+    {% capture image_layout %}
+      <div class="collection-image">
+          <div class="collection-page--feature-image {% if section.settings.parallax %} parallax collection-image-parallax{% endif %}">
+            <div id="rellax--collection-image" class="img{% if section.settings.parallax %} rellax {% else %} aspect-locked {% endif %}" data-rellax-percentage="0.15" data-rellax-speed="-4"></div>
+          </div>
+      </div>
+    {% endcapture %}
+
+    {{ image_layout }}
+
+  {% endif %}
+{% else %}
+  <div class="no-collection-img"></div>
+{% endif %}
+
+
+<div class="wrapper main-content" id="overview">
+
+{% include 'breadcrumb' %}
+
+{% comment %}
+
+  Loop through a defined number of articles with the 'paginate' tag.
+  Don't forget to close the tag after your loop.
+
+{% endcomment %}
+
+{% paginate blog.articles by 9 %}
+
+{% comment %}
+  This template is also used for listing out articles of a specific tag.
+  You can change layouts or styles by checking if current_tags is true.
+{% endcomment %}
+
+<div class="wrapper">
+
+            <header class="section-header collection-page--header">
+              <div class="sitewide--title-wrapper list-collections--title-artists--wrapper">
+                {% if settings.heading_style == 'zigzag' %}<span class="zig-zag-border"></span>{% endif %}
+                {% if current_tags %}
+                  {% if settings.heading_style == 'zigzag' %}<span class="zig-zag-border"></span>{% endif %}
+                  <h1 class="page--title">
+                    <a href="{{ blog.url }}/tagged/{{ current_tags | join: ' + ' | replace: ' ', '-' | downcase }}">{{ current_tags.first }}</a>
+                  </h1>
+                {% else %}
+                  {% if settings.heading_style == 'zigzag' %}<span class="zig-zag-border"></span>{% endif %}
+                  <h1 class="page--title">News
+                  {% comment %} <a href="{{ shop.url }}{{ blog.url }}.atom"><i class="fa fa-rss" aria-hidden="true"></i></a> {% endcomment %}
+                  </h1>
+                {% endif %}
+                <div class="list-collections--filter-subset-links">
+                    {% for block in section.blocks %}
+                       {% case block.type %}
+                        {% when 'blog-filter' %}
+                        {% assign _possible_tag = block.settings.filter-tag | handlize %}
+                        {% if block.settings.filter-tag == "News" %}
+                          <a class="{% if blog.title == 'Art' %} active {% endif %}" href="/blogs/news">News</a>
+                        {% elsif block.settings.filter-tag == "Events"  %}
+                          <a class="{% if _possible_tag == blog.title %} active {% endif %}" href="/blogs/events">Events</a>
+                        {% elsif block.settings.filter-tag == "Competitions"  %}
+                          <a class="{% if _possible_tag == blog.title %} active {% endif %}" href="/blogs/competitions">Competitions</a>
+                        {% else %}
+                          <a class="{% if _possible_tag == _current_tag %} active {% endif %}" href="{{ blog.url }}/tagged/{{ block.settings.filter-tag }}">{{ block.settings.filter-tag }}</a>
+                        {% endif %}
+                       {% endcase %}
+                    {% endfor %}
+                </div>
+              </div>
+            </header>
+
+
+<div class="blog-main--wrapper generic--match-height collection-main-body-inner" id="blog-articles">
+    {% comment %}
+      Loop through each article in your blog. This is limited to what you set for pagination above.
+
+      For more info on article liquid tags:
+        - http://docs.shopify.com/themes/liquid-variables/article
+    {% endcomment %}
+
+    {% for article in blog.articles %}
+        {% assign mod = forloop.index0 | modulo: 3 %}
+
+        {% if mod == 0 %}
+        <div class="gridlayout pagination-item">
+        {% endif %}
+
+				<div class="grid__item small--one-whole medium--one-half large--one-third blog-card">
+
+        <div class="aspect-rect">
+					<div class="article-image grid__image aspect-rect--inner">
+						<a href="{{ article.url }}" class="faux-img">
+            {% if article.image %}
+							{% include 'responsive-image' with article.image, alt: article.title %}
+            {% else %}
+							{% include 'responsive-image' with header_image, alt: article.title %}
+				    {% endif %}
+						</a>
+					</div>
+        </div>
+
+					<time class="homepage-blog--date" datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: format: 'month_day_year' }}</time>
+					<h3 class="homepage-blog--title"><a href="{{ article.url }}">{{ article.title }}</a></h3>
+
+					<div class="rte">
+					{% if article.excerpt.size > 0 %}
+						{{ article.excerpt }}
+					{% else %}
+						<p>{{ article.content | strip_html | truncatewords: 20 }}</p>
+					{% endif %}
+					</div>
+
+				</div>
+
+
+        {% if mod == 2 %}
+        </div>
+        {% endif %}
+
+    {% endfor %}
+</div>
+
+<div class="gridlayout blog-main--wrapper">
+  <div class="grid__item large--one-whole">
+	    {% if paginate.pages > 1 %}
+<div class="pagination pagination--load-more grid__item small--one-whole" data-paginate-items={{ paginate.items }} data-paginate-offset={{ paginate.current_offset }} data-paginate-size={{ paginate.page_size }}>
+
+  <ul>
+    {% if paginate.previous %}
+      <li class="pagination-arrow"><a href="{{ paginate.previous.url }}"><i class="fa fa-chevron-left"></i></a></li>
+    {% else %}
+      <li class="prev disabled"><a href="#" onclick="return false;">&laquo;</a></li>
+    {% endif %}
+
+    {% for part in paginate.parts %}
+      {% if part.is_link %}
+        <li class="pagination-number">{{ part.title | link_to: part.url }}</li>
+      {% else %}
+        {% if part.title == '&hellip;' %}
+        <li class="ellipsis">{{ part.title }}</li>
+        {% else %}
+        <li class="active pagination-number">{{ part.title | link_to: part.url }}</li>
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+
+    {% if paginate.next %}
+      <li class="pagination-arrow pagination-next"><a href="{{ paginate.next.url }}"><i class="fa fa-chevron-right"></i></a></li>
+    {% else %}
+      <li class="next disabled"><a href="#" onclick="return false;">&raquo;</a></li>
+    {% endif %}
+  </ul>
+</div>
+{% endif %}
+
+	</div>
+
+</div>
+</div>
+</div>
+
+{% endpaginate %}
+
+{% schema %}
+{
+    "name": {
+        "en": "Blog pages",
+        "de": "Blogseiten",
+        "es": "Páginas del blog",
+        "fr": "Pages du blog",
+        "pt-PT": "Páginas de blogs"
+    },
+    "settings": [
+        {
+            "type": "image_picker",
+            "id": "blog-sidebar-image",
+            "label": {
+                "en": "Image",
+                "de": "Bild",
+                "es": "Imagen",
+                "fr": "Image",
+                "pt-PT": "Imagem"
+            }
+        },
+        {
+            "type": "select",
+            "id": "blog-sidebar-image-size",
+            "label": {
+                "en": "Image size",
+                "de": "Größe",
+                "es": "Tamaño de la Imagen",
+                "fr": "Taille de l'image",
+                "pt-PT": "Tamanho da imagem"
+            },
+            "options": [
+                {
+                    "value": "20vh",
+                    "label": {
+                        "en": "Small",
+                        "de": "Klein",
+                        "es": "Pequeño",
+                        "fr": "Petite",
+                        "pt-PT": "Pequeno"
+                    }
+                },
+                {
+                    "value": "30vh",
+                    "label": {
+                        "en": "Medium",
+                        "de": "Mittel",
+                        "es": "Mediano",
+                        "fr": "Moyenne",
+                        "pt-PT": "Médio"
+                    }
+                },
+                {
+                    "value": "60vh",
+                    "label": {
+                        "en": "Large",
+                        "de": "Groß",
+                        "es": "Grande",
+                        "fr": "Grande",
+                        "pt-PT": "Grande"
+                    }
+                },
+                {
+                    "value": "original",
+                    "label": {
+                        "en": "Original",
+                        "de": "Original",
+                        "es": "Original",
+                        "fr": "D'origine",
+                        "pt-PT": "Original"
+                    }
+                }
+            ],
+            "default": "20vh"
+        },
+      {
+            "type": "checkbox",
+            "id": "parallax",
+            "label": {
+                "en": "Enable parallax effect",
+                "de": "Parallaxeneffekt aktivieren",
+                "es": "Habilitar efecto de paralaje",
+                "fr": "Activer l'effet parallaxe",
+                "pt-PT": "Ativar efeito de paralaxe"
+            },
+            "default": false,
+            "info": {
+                "en": "Parallax won't be visible when the 'Image size' is set to 'Original'",
+                "de": "Parallax wird nicht angezeigt, wenn die 'Bildgröße' auf 'Original' eingestellt ist",
+                "es": "Parallax no estará visible cuando el 'Tamaño de la imagen' esté establecido como 'Original'",
+                "fr": "La parallaxe ne sera pas visible lorsque la 'Taille de l'image' sera réglée sur 'D'origine'.",
+                "pt-PT": "A paralaxe não será visível quando o \"Tamanho da imagem\" estiver definido como \"Original\""
+            }
+        }
+    ],
+    "blocks": [
+            {
+              "type": "blog-filter",
+              "name": "Blog Filter",
+              "settings": [
+                  {
+                    "id": "filter-tag",
+                    "type": "text",
+                    "label": "Fitler Tag"
+                  },
+                  {
+                  "id": "filter-image",
+                  "type": "image_picker",
+                  "label": "Filter Image"
+                  }
+              ]
+            }
+    ]
+}
+{% endschema %}

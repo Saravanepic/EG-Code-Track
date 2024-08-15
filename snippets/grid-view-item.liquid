@@ -1,0 +1,180 @@
+{% if lazyload %}
+	{% assign lazyload = true %}
+{% else %}
+	{% assign lazyload = false %}
+{% endif %}
+{% if importance %}
+{% else %}
+	{% assign importance = "auto" %}
+{% endif %}
+
+{% comment%}Work out whether product is pre-order based on collection{% endcomment %}
+{% assign pre_order = false %}
+{% for c in product.collections %}
+  {% if c.handle == "pre-order" %}
+    {% assign pre_order = true %}
+  {% endif %}
+{% endfor %}
+
+<div class="grid-view-item" data-limoniapps-discountninja-product-handle="{{ product.handle }}"
+data-limoniapps-discountninja-product-collections="{{ product.collections | map: 'handle' | join: ',' | default: '[[--NONE--]]' }}"
+data-limoniapps-discountninja-product-collectionids="{{ product.collections | map: 'id' | join: ',' | default: '[[--NONE--]]' }}"
+data-limoniapps-discountninja-product-available="{{ product.available}}"
+data-limoniapps-discountninja-product-price="{{ product.first_available_variant.price | default: product.price }}"
+data-limoniapps-discountninja-product-compareatprice="{{ product.first_available_variant.compare_at_price | default: product.first_available_variant.price | default: product.compare_at_price | default: product.price }}"
+data-limoniapps-discountninja-product-pricevaries="{{ product.price_varies}}"
+data-limoniapps-discountninja-product-pricemin="{{ product.price_min}}"
+data-limoniapps-discountninja-product-tags="{{ product.tags | join: ',' | escape | default: '[[--NONE--]]' }}">
+  <div class="grid-view-item-image aspect-square limoniapps-discountninja-collectionbadge">
+
+    <!-- logic whether to do a hover effect or not .. -->
+    {% assign do_hover = false %}
+    {% if section.settings.hover-effect %}
+      <!-- hover effect is wanted -->
+      {% if product.metafields.accentuate.thumbnail_optional_legacy == blank 
+         and product.metafields.accentuate.thumbnail_optional == blank %}
+         <!-- no optional thumbnail present -->
+            {% if product.media.size > 1 %} 
+              {% assign do_hover = true %} <!-- it has a second media item to do it -->
+            {% endif %}
+      {% else %}
+        <!-- there is optional media -->
+          {% if product.media.size > 0 %}
+            {% assign do_hover = true %} <!-- it has a standard media item to do it -->
+          {% endif %}
+      {% endif %}
+    {% endif %}
+
+    {% if do_hover %}
+      <div class="reveal">
+    {% endif %}
+
+    <a href="{{ product.url | within: collection }}" title="{{product.title}}" class="product_link grid__image grid__image__match aspect-square--inner">
+
+      {% if product.metafields.accentuate.thumbnail_optional_legacy == blank 
+         and product.metafields.accentuate.thumbnail_optional == blank %}
+
+          <!-- classic shopify image -->
+          {% assign image = product.media[0].preview_image %}
+          {% capture props %}
+            style="max-width: {{ image.width }}px"
+          {% endcapture %}
+          <div class="faux-img">
+          {% include 'responsive-image' with image, alt: image.alt, props: props, lazyload: lazyload, importance: importance %}
+
+          {% if do_hover %}
+            <div class="hidden">
+              {% assign image = product.media[1].preview_image %}
+              {% capture props %}
+                style="max-width: {{ image.width }}px"
+              {% endcapture %}
+              {% include 'responsive-image' with image, alt: image.alt, props: props, lazyload: lazyload, importance: importance %}
+            </div>
+          {% endif %}
+          </div>
+          <!-- end classic shopify image -->
+
+      {% else %}
+
+          <!-- replacement image logic -->
+
+          <!-- accenutate optional replacement image -->
+          {% assign image = product.media[0].preview_image %}
+          {% capture props %}
+              style="max-width: {{ image.width }}px"
+          {% endcapture %}
+
+
+          {% if product.metafields.accentuate.thumbnail_optional_legacy != blank %}
+            {% assign image = product.metafields.accentuate.thumbnail_optional_legacy %}
+          {% endif %}
+          {% if product.metafields.accentuate.thumbnail_optional != blank %}
+            {% assign image = product.metafields.accentuate.thumbnail_optional[0]['src'] %}
+          {% endif %}
+
+          <!-- {{ product.metafields.accentuate.thumbnail_optional }} -->
+
+          <!-- replacement image -->
+
+          <div class="faux-img">
+          {% if lazyload %}  
+          	<img data-src="{{ image }}" alt="{{ img.alt }}" {{ props }} importance="{{ importance }}" />
+          {% else %}
+            <img src="{{ image }}" alt="{{ img.alt }}" {{ props }} importance="{{ importance }}" />
+            {% comment %}
+            	<img src="{{ product | image_url: width: 600, height: 600, crop: "top" }}" alt="{{ img.alt }}" {{ props }} />
+            {% endcomment %}
+          {% endif %}
+          {% include 'responsive-image' with image, alt: image.alt, props: props, lazyload: lazyload, importance: importance %}
+          {% if do_hover %}
+            <div class="hidden">
+              {% assign image = product.media[0].preview_image %}
+              {% capture props %}
+                style="max-width: {{ image.width }}px"
+              {% endcapture %}
+              {% include 'responsive-image' with image, alt: images.alt, props: props, lazyload: lazyload, importance: importance %}
+            </div>
+          {% endif %}
+          </div>
+          <!-- end accenutate optional replacement image -->
+
+      {% endif %}
+
+
+    </a>
+
+    {% if do_hover %}
+      </div>
+    {% endif %}
+
+
+    {% if section.settings.quick_shop_enable %}
+      <div class="shop-now-wrapper">
+        <a class="shop-now-button" href="{{ product.url | within: collection }}">{{ 'products.product.quick_shop' | t }}</a>
+      </div>
+    {% endif %}
+
+  </div>
+
+  <div class="grid-view-item--desc-wrapper">
+    <div>
+      {% if section.settings.show-vendor or show_vendor %}
+        <div class="product-grid--vendor-text"><a href="/collections/{{ product.vendor | handleize }}">{{ product.vendor }}</a></div>
+      {% endif %}
+      <p class="product-grid--title">
+        <a href="{{ product.url | within: collection }}">{{ product.title }}</a>
+      </p>
+      <p class="product-grid--price limoniapps-discountninja-productprice limoniapps-discountninja-align-center">
+        {% if product.available %}
+          {% include 'product-grid-item-price' %}
+        {% endif %}
+      </p>
+
+      {% if pre_order %}
+        {% if settings.pre_orders_badge_show %}
+          <div class="pre-order-badge badge">{{ settings.pre_orders_badge }}</div>
+        {% endif %}
+      {% endif %}
+
+        {% if settings.enable-sold-out-badge %}
+        {% unless product.available %}
+            <div class="sold-out-badge badge">{{ 'products.product.sold_out' | t }}</div>
+        {% endunless %}
+    {% endif %}
+      
+    </div>
+  </div>
+
+    {% if product.compare_at_price_max > product.price and product.available and settings.enable-sale-badge %}
+        <div class="sale-badge badge">{{ 'products.product.on_sale' | t }}</div>
+    {% endif %}
+
+</div>
+
+<div class="grid-item-boz-show-now">
+  <!--  Quick View Content Hook -->
+  <div class="grid-item-boz-show-now-hook">
+    <a class="grid-item-boz-show-now-close-btn">CLOSE</a>
+    <div class="grid-item-boz-show-now-hook-inner"></div>
+  </div>
+</div>

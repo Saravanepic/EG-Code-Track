@@ -1,0 +1,37 @@
+<script id="LiveSearchResultTemplate" type="text/template">
+  {% raw %}
+    <div class="indiv-search-listing-grid">
+      <div class="gridlayout">
+        {{#if image}}
+        <div class="grid__item large--one-third live-search--image">
+          <a href="{{url}}" title="{{title}}">
+            <img
+                class="lazyload"
+                src="{{image}}"
+                alt="{{title}}"
+                {{#if imageResponsive}}
+                data-src="{{imageResponsive}}"
+                data-sizes="auto"
+                {{/if}}
+            >
+          </a>
+        </div>
+        {{/if}}
+        <div class="grid__item large--two-thirds line-search-content">
+          <a href="{{url}}" title="">
+            <h3 style="margin-bottom: 0;">
+              {{title}}
+            </h3>
+            <span class="product__meta--vendor"
+                  style="font-size: 1em;
+                        font-weight: bold;">{{vendor}}</span>
+          </a>
+          <div>
+            {{{price_html}}}
+          </div>
+          <p>{{content}}</p>
+        </div>
+      </div>
+    </div>
+  {% endraw %}
+</script>

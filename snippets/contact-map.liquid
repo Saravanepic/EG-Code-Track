@@ -1,0 +1,18 @@
+{% if section.settings.show-map %}
+  {% if section.settings.map_address != blank %}
+    {% assign map_visible = true %}
+  {% else %}
+    {% assign map_visible = false %}
+  {% endif %}
+  <div class="padder"></div>
+  <h2 class="page--title">{{ section.settings.map_header }}</h2>
+  <div class="map-container">
+    <div class="map-wrapper map-wrapper" data-id="{{ section.id }}" data-colors="{{ section.settings.colors }}">
+      {% if map_visible %}
+        <div class="map-section__container">
+        <iframe src='https://maps.google.com/maps?q={{ section.settings.map_address | url_encode }}&z=10&ie=UTF8&iwloc=&output=embed'width="100%" height="400" frameborder="0" style="border: 0;" allowfullscreen=""></iframe>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endif %}

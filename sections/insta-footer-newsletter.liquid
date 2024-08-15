@@ -1,0 +1,243 @@
+{% if section.settings.show_section == true %}
+
+  <style>
+  #insta-feed{width:100%;}
+  #insta-feed h2{display: none;}
+  </style>
+
+  {% case section.settings.colors %}
+    {% when 'white' %}
+      <div class="homepage-sections-wrapper homepage-sections-wrapper--white newsletter--section">
+    {% when 'light' %}
+      <div class="homepage-sections-wrapper homepage-sections-wrapper--light newsletter--section">
+    {% when 'accent' %}
+      <div class="homepage-sections-wrapper homepage-sections-wrapper--accent newsletter--section">
+    {% when 'dark' %}
+      <div class="homepage-sections-wrapper homepage-sections-wrapper--dark newsletter--section">
+  {% endcase %}
+
+    <div class="wrapper show-on-scroll">
+      <div class="gridlayout row--table">
+        {% comment %}
+        <div class="grid__item extra-large--one-half small--one-whole newsletter--section--grid vertical--align" id="newsletter-instagram-block">
+
+        <div class="newsletter--section--grid_inner newsletter_title">
+          <h3>{{ section.settings.instagram_heading }}</h3>
+        </div>
+
+          <!--<div id="insta-feed"></div>-->
+
+        </div>
+        {% endcomment %}
+        <div class="grid__item extra-large--one-whole small--one-whole newsletter--section--grid vertical--align">
+
+          <div class="newsletter--section--grid_inner newsletter_title">
+            <h3>{{ section.settings.newsletter_heading }}</h3>
+              {% if section.settings.newsletter_description != empty %}
+                <div class="rte">{{ section.settings.newsletter_description }}</div>
+              {% endif %}
+          </div>
+
+          <div class="newsletter--section--grid_inner newsletter_form_section">
+
+              {% comment %}
+              {% form 'customer' %}
+                <input type="hidden" name="contact[tags]" value="Website Newsletter Footer">
+                <div id="newsletter-wrapper" class="gridlayout newsletter-wrapper-sizer">
+                  <div class="grid__item small--one-whole large--one-half">
+                    <label for="newsletter_text_name">{{ 'general.newsletter_form_section.newsletter_text_name' | t }}</label>
+                    <input id="newsletter_text_name" type="text" value="{% if customer %}{{ customer.firstName }} {{ customer.firstName }}{% endif %}" placeholder="" name="contact[first_name]" class="input-group-field name" aria-label="{{ 'general.newsletter_form_section.newsletter_text_name' | t }}" autocorrect="off" autocapitalize="off">
+                    <input type="hidden" value="" name="contact[last_name]">
+                  </div>
+                  <div class="grid__item small--one-whole large--one-half">
+                    <label for="newsletter_text">{{ 'general.newsletter_form_section.newsletter_text' | t }}</label>
+                    <input id="newsletter_text" type="email" value="{% if customer %}{{ customer.email }}{% endif %}" placeholder="{{ 'general.newsletter_form_section.newsletter_text_inner' | t }}" name="contact[email]" class="input-group-field email" aria-label="{{ 'general.newsletter_form_section.newsletter_email' | t }}" autocorrect="off" autocapitalize="off">
+                  </div>
+                </div>
+                <div class="gridlayout newsletter-wrapper-sizer newsletter-wrapper-submits">
+                  <div class="grid__item small--one-whole large-one-whole extra-large--two-thirds">
+                    <div class="consent-block">
+                      <input id="newsletter_gdpr" type="checkbox" name="contact[consent]" required>
+                      <label for="newsletter_gdpr" class="consent">
+                      {% if section.settings.newsletter_consent != empty %}
+                        <div class="rte">{{ section.settings.newsletter_consent }}</div>
+                      {% endif %}
+                      </label>
+                    </div>
+                  </div>
+                  <div class="grid__item small--one-whole large-one-whole extra-large--one-third" style="vertical-align: top;">
+                    <input id="newsletter_submit" type="submit" class="btn btn-default" name="subscribe" value="Subscribe">
+                  </div>
+                </div>
+
+              {{ form.errors | default_errors }}
+              {% if form.posted_successfully? %}
+                <p class="note form-success success_section">{{ 'general.newsletter_form_section.thanks' | t }}</p>
+              {% endif %}
+              {% endform %}
+              {% endcomment %}
+
+            {% comment %} Replace Shopify form with HubSpot injected form.. {% endcomment %}
+
+          <div id="newsletter-wrapper" class="newsletter-wrapper-sizer">
+            <div>
+            <!--[if lte IE 8]>
+            <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/v2-legacy.js"></script>
+            <![endif]-->
+            <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/v2.js"></script>
+            <script>
+              hbspt.forms.create({
+              portalId: "7609117",
+              formId: "657ac3d0-2b2a-4528-8fd3-3bed691a11c4"
+            });
+            </script>
+            </div>
+          </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+{% endif %}
+
+{% schema %}
+{
+    "name": {
+        "en": "Insta / Newsletter",
+        "de": "Newsletter",
+        "es": "Boletín de noticias",
+        "fr": "Bulletin d'information",
+        "pt-PT": "Newsletter"
+    },
+    "class": "footer-section--newsletter-wrapper",
+    "settings": [
+        {
+            "type": "checkbox",
+            "id": "show_section",
+            "label": {
+                "en": "Show section",
+                "de": "Abschnitt anzeigen",
+                "es": "Mostrar sección",
+                "fr": "Afficher la section",
+                "pt-PT": "Mostrar secção"
+            },
+            "default": false
+        },
+        {
+            "type": "select",
+            "id": "colors",
+            "label": {
+                "en": "Color scheme",
+                "de": "Farbschema",
+                "es": "Esquema de colores",
+                "fr": "Palette de couleurs",
+                "pt-PT": "Esquema de cores"
+            },
+            "default": "light",
+            "options": [
+                {
+                    "value": "white",
+                    "label": {
+                        "en": "Minimal",
+                        "fr": "Minimal",
+                        "de": "Minimal",
+                        "es": "Mínimo",
+                        "pt-PT": "Mínimo"
+                    }
+                },
+                {
+                    "value": "light",
+                    "label": {
+                        "en": "Light",
+                        "de": "Licht",
+                        "es": "Luz",
+                        "fr": "Clair",
+                        "pt-PT": "Claro"
+                    }
+                },
+                {
+                    "value": "accent",
+                    "label": {
+                        "en": "Feature",
+                        "de": "Eigenschaft",
+                        "es": "Destacado",
+                        "fr": "Caractéristique",
+                        "pt-PT": "Funcionalidade"
+                    }
+                },
+                {
+                    "value": "dark",
+                    "label": {
+                        "en": "Dark",
+                        "de": "Dunkel",
+                        "es": "Oscuro",
+                        "fr": "Foncé",
+                        "pt-PT": "Escuro"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "instagram_heading",
+            "type": "text",
+            "label": {
+                "en": "Instagram Heading",
+                "de": "Instagram Überschrift",
+                "es": "Instagram Encabezado",
+                "fr": "Instagram Rubrique",
+                "pt-PT": "Instagram Título"
+            },
+            "default": {
+                "en": "Instagram",
+                "de": "Instagram",
+                "es": "Instagram",
+                "fr": "Instagram",
+                "pt-PT": "Instagram"
+            }
+        },
+        {
+            "id": "newsletter_heading",
+            "type": "text",
+            "label": {
+                "en": "Newsletter Heading",
+                "de": "Überschrift",
+                "es": "Encabezado",
+                "fr": "Rubrique",
+                "pt-PT": "Título"
+            },
+            "default": {
+                "en": "Join our Mailing List",
+                "de": "Melden Sie sich bei unserer Mailingliste an",
+                "es": "Únase a nuestra lista de correo electrónico",
+                "fr": "Inscrivez-vous à notre liste d'envoi",
+                "pt-PT": "Aderir à nossa Lista de E-mails"
+            }
+        },
+        {
+            "type": "richtext",
+            "id": "newsletter_description",
+            "label": {
+                "en": "Description",
+                "de": "Beschreibung",
+                "es": "Descripción",
+                "fr": "Description",
+                "pt-PT": "Descrição"
+            }
+        },
+        {
+            "type": "richtext",
+            "id": "newsletter_consent",
+            "label": {
+                "en": "Consent Description",
+                "de": "Consent Beschreibung",
+                "es": "Consent Descripción",
+                "fr": "Consent Description",
+                "pt-PT": "Consent Descrição"
+            }
+        }
+    ]
+}
+{% endschema %}

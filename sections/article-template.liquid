@@ -1,0 +1,496 @@
+<!-- /templates/article.liquid -->
+{% comment %}
+
+  Comments will not appear right after they are submitted, either to be checked for spam
+  or to await moderation. When a comment is submitted, the browser is redirected to a page
+  that includes the new comment id in its URL.
+    Example: http://shopname.myshopify.com/blogs/news/2022072-my-post?comment=3721372
+
+  More information:
+    - http://docs.shopify.com/themes/liquid-variables/comment
+
+{% endcomment %}
+
+{% assign number_of_comments = article.comments_count %}
+
+{% comment %}
+  If a comment was just submitted and it has no blank fields, we have an extra comment to count.
+{% endcomment %}
+{% if comment and comment.created_at %}
+  {% assign number_of_comments = article.comments_count | plus: 1 %}
+{% endif %}
+
+
+{% assign header_image = section.settings.blog-sidebar-image %}
+
+{% if article.metafields.accentuate.optional_header_replacement != blank %}
+  {% assign header_image = article.metafields.accentuate.optional_header_replacement[0]['src'] %}
+{% endif %}
+
+{% if header_image != blank %}
+
+  {% if section.settings.article-sidebar-image-size == 'original' %}
+        {% include 'responsive-image' with header_image, alt: collection.title, class: 'collection-page--feature-image' %}
+  {% else %}
+
+    <style>
+      {% if header_image != blank %}
+        {% capture selector %}.collection-image .img{% endcapture %}
+        {% if article.metafields.accentuate.optional_header_replacement != blank %}
+          {{ selector }} {
+            background-image: url('{{ header_image | append: 'w_1660' }}');
+          }
+        {% else %}
+          {% include 'responsive-background-image' with header_image, selector: selector %}
+        {% endif %}
+
+        .collection-image .img {
+          background-position: center;
+          background-repeat: no-repeat;
+          background-size: cover;
+        }
+      {% endif %}
+
+      .collection-image .img {
+        height: {{ section.settings.article-sidebar-image-size }};
+      }
+
+      @media only screen and (min-width: 768px) {
+        .collection-image .rellax.img {
+          height: {{ section.settings.article-sidebar-image-size | remove:'vw' | times:1.15 | append:'vw' }};
+          margin-top: {{ section.settings.article-sidebar-image-size | remove:'vw' | times:-0.6 | append:'vw' }};
+        }
+      }
+
+      .parallax.collection-image-parallax {
+        height: {{ section.settings.article-sidebar-image-size }};
+      }
+    </style>
+
+    {% capture image_layout %}
+      <div class="collection-image">
+          <div class="collection-page--feature-image {% if section.settings.parallax %} parallax collection-image-parallax{% endif %}">
+            <div id="rellax--collection-image" class="img{% if section.settings.parallax %} rellax {% else %} aspect-locked {% endif %}" data-rellax-percentage="0.15" data-rellax-speed="-4"></div>
+          </div>
+      </div>
+    {% endcapture %}
+
+    {{ image_layout }}
+
+  {% endif %}
+{% else %}
+  <div class="no-collection-img"></div>
+{% endif %}
+
+
+<div class="wrapper main-content" id="overview">
+
+{% include 'breadcrumb' %}
+
+<div class="blog-main--wrapper">
+
+<article class="blog-article" itemscope itemtype="http://schema.org/Article">
+
+
+    <div class="sitewide--title-wrapper">
+      {% if settings.heading_style == 'zigzag' %}<span class="zig-zag-border"></span>{% endif %}
+      <h1 class="page--title">{{ article.title }}</h1>
+    </div>
+    {% if section.settings.blog_show_date %}
+        <time class="post-time" datetime="{{ article.published_at | date: '%Y-%m-%d' }}">
+        Posted on
+        {% assign d = article.published_at | date: "%-d" %}
+        {{ article.published_at | date: "%B" }}
+        {% case d %}{% when "1" or "21" or "31" %}{{ d }}st{% when "2" or "22" %}{{ d }}nd{% when "3" or "23" %}{{ d }}rd{% else %}{{ d }}th{% endcase %},
+        {{ article.published_at | date: "%Y" }}
+        </time>
+    {% endif %}
+
+    <div class="rte" itemprop="articleBody">
+      {{ article.content }}
+    </div>
+
+    {% if settings.social_sharing_blog %}
+        {% include 'social-share' %}
+    {% endif %}
+
+    {% comment %}
+      Create links to the next and previous articles, if available.
+    {% endcomment %}
+
+    {% comment %}
+    {% if blog.next_article or blog.previous_article %}
+      <hr>
+      <p class="clearfix">
+        {% if blog.previous_article %}
+          <span class="left">
+            &larr; {{ 'blogs.article.older_post' | t | link_to: blog.previous_article }}
+          </span>
+        {% endif %}
+        {% if blog.next_article %}
+          <span class="right">
+            {{ 'blogs.article.newer_post' | t | link_to: blog.next_article }} &rarr;
+          </span>
+        {% endif %}
+      </p>
+    {% endif %}
+    {% endcomment %}
+
+    {% if blog.comments_enabled? %}
+	{% if number_of_comments > 0 %}
+      <hr>
+
+      <div class="h3">{{ 'blogs.comments.with_count' | t: count: number_of_comments }}</div>
+	{% endif %}
+
+      {% comment %}
+        Just like blog.liquid page, define how many comments should be on each page.
+      {% endcomment %}
+      {% paginate article.comments by 5 %}
+        {% comment %}
+          #comments is required, it is used as an anchor link by Shopify.
+        {% endcomment %}
+        <div id="comments">
+
+          {% if comment and comment.created_at %}
+            <p class="note form-success">
+              {% if blog.moderated? %}
+                {{ 'blogs.comments.success_moderated' | t }}
+              {% else %}
+                {{ 'blogs.comments.success' | t }}
+              {% endif %}
+            </p>
+          {% endif %}
+
+          {% if number_of_comments > 0 %}
+            <ul class="no-bullets">
+              {% comment %}
+                If a comment was just submitted with no blank field, show it.
+              {% endcomment %}
+              {% if comment and comment.created_at %}
+                <li id="{{ comment.id }}" class="comment comment-wrapper first{% if article.comments_count == 0 %} last{% endif %}">
+                  <div class="comment">
+                    <div class="rte">
+                      {{ comment.content }}
+                    </div>
+
+                    <span class="comment-data">
+                      {% capture author %}{{ comment.author }}{% endcapture %}
+                      {% if section.settings.blog_show_date %}
+                        {% capture date %}<time datetime="{{ comment.created_at | date: '%Y-%m-%d' }}">{{ comment.created_at | date: format: 'month_day_year' }}</time>{% endcapture %}
+                      {% endif %}
+                      {{ 'blogs.article.comment_meta_html' | t: author: author, date: date }}
+                    </span>
+                  </div>
+                </li>
+              {% endif %}
+
+              {% comment %}
+                Showing the rest of the comments.
+              {% endcomment %}
+              {% for comment in article.comments %}
+                <li id="{{ comment.id }}" class="comment comment-wrapper {% unless number_of_comments > article.comments_count %}{% if forloop.first %} first{% endif %}{% endunless %}{% if forloop.last %} last {% endif %}">
+                  <div class="comment">
+                    <div class="rte">
+                      {{ comment.content }}
+                    </div>
+
+                    <span class="comment-data">
+                      {% capture author %}{{ comment.author }}{% endcapture %}
+                      {% if section.settings.blog_show_date %}
+                        {% capture date %}<time datetime="{{ comment.created_at | date: '%Y-%m-%d' }}">{{ comment.created_at | date: format: 'month_day_year' }}</time>{% endcapture %}
+                      {% endif %}
+                      {{ 'blogs.article.comment_meta_html' | t: author: author, date: date }}
+                    </span>
+                  </div>
+                </li>
+              {% endfor %}
+            </ul>
+
+            {% if paginate.pages > 1 %}
+<div class="pagination">
+
+  <ul>
+    {% if paginate.previous %}
+      <li class="pagination-arrow"><a href="{{ paginate.previous.url }}"><i class="fa fa-chevron-left"></i></a></li>
+    {% else %}
+      <li class="prev disabled"><a href="#" onclick="return false;">&laquo;</a></li>
+    {% endif %}
+
+    {% for part in paginate.parts %}
+      {% if part.is_link %}
+        <li class="pagination-number">{{ part.title | link_to: part.url }}</li>
+      {% else %}
+        {% if part.title == '&hellip;' %}
+        <li class="ellipsis">{{ part.title }}</li>
+        {% else %}
+        <li class="active pagination-number">{{ part.title | link_to: part.url }}</li>
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+
+    {% if paginate.next %}
+      <li class="pagination-arrow"><a href="{{ paginate.next.url }}"><i class="fa fa-chevron-right"></i></a></li>
+    {% else %}
+      <li class="next disabled"><a href="#" onclick="return false;">&raquo;</a></li>
+    {% endif %}
+  </ul>
+
+</div>
+{% endif %}
+
+
+            <hr>
+
+          {% endif %}
+
+          <div class="form-vertical">
+            {% form 'new_comment', article %}
+              <div class="h3">{{ 'blogs.comments.title' | t }}</div>
+
+              {{ form.errors | default_errors }}
+
+              <div class="gridlayout">
+
+                <div class="grid__item large--one-half">
+                  <label for="CommentAuthor" class="hidden-label">{{ 'blogs.comments.name' | t }}</label>
+                  <input type="text" name="comment[author]" id="CommentAuthor" class="input-full{% if form.errors contains 'author' %} error{% endif %}" placeholder="{{ 'blogs.comments.name' | t }}" value="{{ form.author }}" autocapitalize="words">
+
+                  <label for="CommentEmail" class="hidden-label">{{ 'blogs.comments.email' | t }}</label>
+                  <input type="email" name="comment[email]" id="CommentEmail" class="input-full{% if form.errors contains 'email' %} error{% endif %}" placeholder="{{ 'blogs.comments.email' | t }}" value="{{ form.email }}" autocorrect="off" autocapitalize="off">
+                </div>
+
+                <div class="grid__item large--one-half">
+                  <label for="CommentBody" class="hidden-label">{{ 'blogs.comments.message' | t }}</label>
+                  <textarea name="comment[body]" id="CommentBody" class="input-full{% if form.errors contains 'body' %} error{% endif %}" placeholder="{{ 'blogs.comments.message' | t }}">{{ form.body }}</textarea>
+                </div>
+
+              </div>
+
+              {% if blog.moderated? %}
+                <p>{{ 'blogs.comments.moderated' | t }}</p>
+              {% endif %}
+
+              <input type="submit" class="btn article-comment--btn" value="{{ 'blogs.comments.post' | t }}">
+            {% endform %}
+          </div>
+
+        </div>
+      {% endpaginate %}
+    {% endif %}
+
+  </article>
+</div> <!-- end blog main wrapper -->
+
+  {% comment %}
+    Use class grid-uniform to have evenly sized columns clear
+    each other properly at each breakpoint.
+  {% endcomment %}
+
+  {% assign desktop_item_width = 'large--one-third wow fadeInUp' %}
+  {% assign tablet_item_width = 'medium--one-half' %}
+  {% assign mobile_item_width = 'small--one-half' %}
+
+  <div id="related-artists-header" style="display: none;">
+  <div class="padder"></div>
+  <header class="section-header collection-page--header">
+    <div class="sitewide--title-wrapper list-collections--title-artists--wrapper">
+      {% if settings.heading_style == 'zigzag' %}<span class="zig-zag-border"></span>{% endif %}
+      <h1 class="page--title">
+      Artist Collection Highlights
+      </h1>
+    </div>
+  </header>
+
+  {% capture grid_item_width %}large--one-third medium--one-third small--one-whole{% endcapture %}
+  <div class="grid-uniform products--match-height">
+
+  {% assign count = 0 %}
+  {% assign uniq_tags = article.tags | uniq %}
+  {% for tag in uniq_tags %}   
+    {% assign handle = tag | handleize %}
+    {% assign collection = collections[handle] %}
+        {% if collection != blank %}
+        {% assign count = count | plus: 1 %}
+        {% if count > 6 %}{% break %}{% endif %}
+        {% capture collection_title %}{{ collection.title | escape }}{% endcapture %}
+        <div class="grid__item {{ grid_item_width }}">
+          <div class="grid-view-item">
+            <div class="aspect-square">
+            <a href="{{ collection.url }}" class="grid__image aspect-square--inner" title="{{ 'collections.general.link_title' | t: title: collection_title }}">
+                <div class="faux-img">
+                {% if collection.image %}
+                  <img src="{{ collection.image | img_url: 'large' }}" alt="{{ collection_title }}" class="list-collections--indiv-banner-image" />
+                {% else %}
+                  <img src="{{ collection.products[0].featured_image | img_url: 'large' }}" alt="{{ collection_title }}" class="list-collections--indiv-banner-image" />
+                {% endif %}
+                </div>
+            </a>
+            </div>
+            <h3 class="list-collections--indiv-collection-title">{{ collection_title }}</h3>
+          </div>
+        </div>
+
+
+      {% endif %}
+  {% endfor %}
+  </div>
+
+  {% for tag in article.tags %}
+    {% assign handle = tag | handleize %}
+    <!-- {{ handle }} -->
+    {% assign collection = collections[handle] %}
+        {% if collection != blank %}
+        <script>document.getElementById('related-artists-header').style.display='block';</script>
+        {% break %}
+        {% endif %}
+  {% endfor %}
+
+  </div>
+
+</div>
+
+{% schema %}
+{
+    "name": {
+        "en": "Article pages",
+        "de": "Artikelseiten",
+        "es": "Páginas de artículos",
+        "fr": "Pages d'articles",
+        "pt-PT": "Páginas de artigos"
+    },
+    "settings": [
+        {
+            "type": "image_picker",
+            "id": "blog-sidebar-image",
+            "label": {
+                "en": "Image",
+                "de": "Bild",
+                "es": "Imagen",
+                "fr": "Image",
+                "pt-PT": "Imagem"
+            }
+        },
+        {
+            "type": "url",
+            "id": "blog-sidebar-link",
+            "label": {
+                "en": "Link",
+                "de": "Link",
+                "es": "Enlace",
+                "fr": "Lien",
+                "pt-PT": "Ligação"
+            }
+        },
+        {
+            "type": "checkbox",
+            "id": "show_blog_tags",
+            "label": {
+                "en": "Show tags",
+                "de": "Tags anzeigen",
+                "es": "Mostrar etiquetas",
+                "fr": "Afficher les étiquettes",
+                "pt-PT": "Mostrar etiquetas"
+            },
+            "default": false
+        },
+        {
+            "type": "checkbox",
+            "id": "show_recent_posts",
+            "label": {
+                "en": "Show 'Latest articles'",
+                "de": "„Neueste Artikel“ anzeigen",
+                "es": "Mostar «Últimos artículos»",
+                "fr": "Afficher les « Derniers articles »",
+                "pt-PT": "Mostrar \"Artigos mais recentes\""
+            },
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "blog_show_date",
+            "label": {
+                "en": "Show date",
+                "de": "Datum anzeigen",
+                "es": "Mostrar fecha",
+                "fr": "Date d'affichage",
+                "pt-PT": "Mostrar data"
+            },
+            "default": true
+        },
+        {
+            "type": "select",
+            "id": "article-sidebar-image-size",
+            "label": {
+                "en": "Image size",
+                "de": "Größe",
+                "es": "Tamaño de la Imagen",
+                "fr": "Taille de l'image",
+                "pt-PT": "Tamanho da imagem"
+            },
+            "options": [
+                {
+                    "value": "20vh",
+                    "label": {
+                        "en": "Small",
+                        "de": "Klein",
+                        "es": "Pequeño",
+                        "fr": "Petite",
+                        "pt-PT": "Pequeno"
+                    }
+                },
+                {
+                    "value": "30vh",
+                    "label": {
+                        "en": "Medium",
+                        "de": "Mittel",
+                        "es": "Mediano",
+                        "fr": "Moyenne",
+                        "pt-PT": "Médio"
+                    }
+                },
+                {
+                    "value": "60vh",
+                    "label": {
+                        "en": "Large",
+                        "de": "Groß",
+                        "es": "Grande",
+                        "fr": "Grande",
+                        "pt-PT": "Grande"
+                    }
+                },
+                {
+                    "value": "original",
+                    "label": {
+                        "en": "Original",
+                        "de": "Original",
+                        "es": "Original",
+                        "fr": "D'origine",
+                        "pt-PT": "Original"
+                    }
+                }
+            ],
+            "default": "20vh"
+        },
+      {
+            "type": "checkbox",
+            "id": "parallax",
+            "label": {
+                "en": "Enable parallax effect",
+                "de": "Parallaxeneffekt aktivieren",
+                "es": "Habilitar efecto de paralaje",
+                "fr": "Activer l'effet parallaxe",
+                "pt-PT": "Ativar efeito de paralaxe"
+            },
+            "default": false,
+            "info": {
+                "en": "Parallax won't be visible when the 'Image size' is set to 'Original'",
+                "de": "Parallax wird nicht angezeigt, wenn die 'Bildgröße' auf 'Original' eingestellt ist",
+                "es": "Parallax no estará visible cuando el 'Tamaño de la imagen' esté establecido como 'Original'",
+                "fr": "La parallaxe ne sera pas visible lorsque la 'Taille de l'image' sera réglée sur 'D'origine'.",
+                "pt-PT": "A paralaxe não será visível quando o \"Tamanho da imagem\" estiver definido como \"Original\""
+            }
+        }
+    ]
+}
+{% endschema %}

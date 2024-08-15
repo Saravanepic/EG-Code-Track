@@ -1,0 +1,439 @@
+{% case section.settings.colors %}
+  {% when 'white' %}
+    <div class="homepage-sections-wrapper homepage-sections-wrapper--white">
+  {% when 'light' %}
+    <div class="homepage-sections-wrapper homepage-sections-wrapper--light">
+  {% when 'accent' %}
+    <div class="homepage-sections-wrapper homepage-sections-wrapper--accent">
+  {% when 'dark' %}
+    <div class="homepage-sections-wrapper homepage-sections-wrapper--dark">
+{% endcase %}
+
+{%- assign items-per-row = section.settings.items-per-row -%}
+
+  <div class="homepage-collections-background">
+
+    <div class="wrapper show-on-scroll section--{{ section.id }}">
+
+    	<div class="page-width">
+    	  {% if section.settings.title != blank %}
+    	    <div class="sitewide--title-wrapper" style="text-align: center;">
+            {% if settings.heading_style == 'zigzag' %}<span class="zig-zag-border"></span>{% endif %}
+    	      <h2 class="homepage-sections--title">{{ section.settings.title | escape }}</h2>
+    	    </div>
+    	  {% endif %}
+
+
+    	  <div class="inspiration-container">
+    	      {% for block in section.blocks %}
+
+            <style>
+              .section--{{ section.id }} .block-section--{{ block.id }} .homepage-collection-grid-item-details--background-gradient,
+              .section--{{ section.id }} .block-section--{{ block.id }} .hover-outer .hover-inner::before {
+                background: {{ block.settings.overlay_color | color_modify: 'alpha', 0.3 }};
+              }
+
+              
+                {% if block.settings.overlay-btn-text != blank %}
+                .section--{{ section.id }} .block-section--{{ block.id }} .collection-item__title:after {
+                    content: '{{ block.settings.overlay-btn-text }}';
+                }
+                {% endif %}
+              
+              
+              .section--{{ section.id }} .block-section--{{ block.id }} .collection-item__subheading,
+              .section--{{ section.id }} .block-section--{{ block.id }} .collection-item__title,
+              .section--{{ section.id }} h3 {
+                color: {{ block.settings.overlay_font_color }}
+              }
+
+            </style>
+
+            {%- assign collection = collections[block.settings.collection] -%}
+            {% capture collection_title %}{{ collection.title | escape }}{% endcapture %}
+
+            {% if collection.empty? %}
+              {% comment %}add default state for collection block in storefront editor{% endcomment %}
+              {% capture collection_title %}{{ 'homepage.onboarding.collection_title' | t }}{% endcapture %}
+            {% else %}
+              {% capture collection_title %}{{ collection.title }}{% endcapture %}
+            {% endif %}
+
+    	        <div class="inspiration-box inspiration-box{{ forloop.index }} block-section--{{ block.id }}" {{ block.shopify_attributes }}>
+                
+                	<div class="grid-image" style="height: 100%;">
+                		<a href="{% if collection.empty? %}{{ routes.all_products_collection_url }}{% else %}{{ collection.url }}{% endif %}" class="grid-image--centered" style="height: 100%;">
+
+                			{% if collection.empty? %}
+                        {% if block.settings.collection_img %}
+                          {% include 'responsive-image' with block.settings.collection_img, alt: image.alt, class: class %}
+                        {% else %}
+                				  {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+                				  {{ 'collection-' | append: current | placeholder_svg_tag: 'icon icon--placeholder' }}
+                        {% endif %}
+                			{% else %}
+                        {% if block.settings.collection_img %}
+                          {% assign image = block.settings.collection_img %}
+                				{% elsif collection.image %}
+                					{% assign image = collection.image %}
+                				{% elsif collection.products.size > 0 %}
+                					{% assign product = collection.products | first %}
+                					{% assign image = product.media[0].preview_image %}
+                				{% else %}
+                					{% assign image = nil %}
+                				{% endif %}
+
+                				{% if section.blocks.size == 1 %}
+                					{% assign class = 'homepage-collection-grid-image-single' %}
+                				{% else %}
+                					{% assign class = '' %}
+                				{% endif %}
+
+                				{% include 'responsive-image' with image, alt: image.alt, class: class %}
+                			{% endif %}
+
+                		</a>
+                	</div>
+
+                    <a href="{{ collection.url }}" class="inspiration-overlay{% if block.settings.show-gradient-overlay and section.settings.content-position != 'below-image' %} homepage-collection-grid-item-details--background-gradient{% endif %}">
+                        <div class="collection-item__content">
+                        {% if block.settings.subheading != blank %}
+                            {% comment %}<a href="{{ collection.url }}" class="collection-item__title">{% endcomment %}
+                                <h3>{{ block.settings.subheading }}</h3>
+                            {% comment %}</a>{% endcomment %}
+                        {% else %}
+                        {% comment %}<a href="{{ collection.url }}" class="collection-item__title">{% endcomment %}
+                            <h3>{{ collection_title }}</h3>
+                        {% comment %}</a>{% endcomment %}
+                        {% endif %}
+    
+                        </div>
+                    </a>
+
+
+    	        </div>
+    	      {% endfor %}
+    	  </div>
+
+        {% if section.blocks.size == 0 %}
+          <div class="placeholder-noblocks">
+            {{ 'homepage.onboarding.no_content' | t }}
+          </div>
+        {% endif %}
+
+    	</div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<style>
+.inspiration-container {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    grid-column-gap: 15px;
+    grid-row-gap: 15px;
+    max-height: 500px;
+    }
+.inspiration-box{
+    position: relative;
+}
+
+.inspiration-box1 { grid-area: 1 / 1 / 3 / 2; }
+.inspiration-box2 { grid-area: 3 / 1 / 6 / 2; }
+.inspiration-box3 { grid-area: 1 / 2 / 4 / 3; }
+.inspiration-box4 { grid-area: 4 / 2 / 6 / 3; }
+.inspiration-box5 { grid-area: 1 / 3 / 3 / 4; }
+.inspiration-box6 { grid-area: 3 / 3 / 6 / 4; }
+.inspiration-box7 { grid-area: 1 / 4 / 4 / 5; }
+.inspiration-box8 { grid-area: 4 / 4 / 6 / 5; }
+.inspiration-box9 { grid-area: 1 / 5 / 3 / 6; }
+.inspiration-box10 { grid-area: 3 / 5 / 6 / 6; }
+
+.inspiration-box1 img,.inspiration-box2 img,.inspiration-box3 img,
+.inspiration-box4 img,.inspiration-box5 img,.inspiration-box6 img,
+.inspiration-box7 img,.inspiration-box8 img,.inspiration-box9 img,
+.inspiration-box10 img{
+    height: 100%;
+    object-fit: cover;
+}
+
+
+.inspiration-container .lazyload-wrapper{
+    height: 100%;
+    }
+.section--{{ section.id }} .inspiration-overlay {
+  	display: block;
+    position: absolute;
+    top: 0%;
+    width: 100%;
+    height: 100%;
+}
+.section--{{ section.id }} .collection-item__content{
+    position: absolute;
+    top: 50%;
+    justify-content: center;
+    transform: translate(0, -50%);
+}
+
+
+
+
+@media screen and (max-width: 767px){
+    .inspiration-box9 { display: none; }
+    .inspiration-box10 { display: none; }
+}
+@media screen and (max-width: 480px){
+    .inspiration-container {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(10, 1fr);
+    grid-column-gap: 5px;
+    grid-row-gap: 5px;
+    max-height: none;
+    }
+    .inspiration-box1 { grid-area: 1 / 1 / 3 / 2; }
+    .inspiration-box2 { grid-area: 1 / 2 / 4 / 3; }
+    .inspiration-box3 { grid-area: 4 / 2 / 6 / 3; }
+    .inspiration-box4 { grid-area: 3 / 1 / 6 / 2; }
+    .inspiration-box5 { grid-area: 6 / 1 / 8 / 2; }
+    .inspiration-box6 { grid-area: 6 / 2 / 9 / 3; }
+    .inspiration-box7 { grid-area: 9 / 2 / 11 / 3; }
+    .inspiration-box8 { grid-area: 8 / 1 / 11 / 2; }
+    }
+    .inspiration-overlay h3{
+        font-size: 1.2rem;
+    }
+
+
+
+
+
+
+</style>
+
+{% schema %}
+{
+    "name": {
+        "en": "Inspiration Gallery"
+    },
+    "max_blocks": 10,
+    "settings": [
+        {
+            "type": "select",
+            "id": "colors",
+            "label": {
+                "en": "Color scheme",
+                "de": "Farbschema",
+                "es": "Esquema de colores",
+                "fr": "Palette de couleurs",
+                "pt-PT": "Esquema de cores"
+            },
+            "default": "light",
+            "options": [
+                {
+                    "value": "white",
+                    "label": {
+                        "en": "Minimal",
+                        "fr": "Minimal",
+                        "de": "Minimal",
+                        "es": "Mínimo",
+                        "pt-PT": "Mínimo"
+                    }
+                },
+                {
+                    "value": "light",
+                    "label": {
+                        "en": "Light",
+                        "de": "Licht",
+                        "es": "Luz",
+                        "fr": "Clair",
+                        "pt-PT": "Claro"
+                    }
+                },
+                {
+                    "value": "accent",
+                    "label": {
+                        "en": "Feature",
+                        "de": "Eigenschaft",
+                        "es": "Destacado",
+                        "fr": "Caractéristique",
+                        "pt-PT": "Funcionalidade"
+                    }
+                },
+                {
+                    "value": "dark",
+                    "label": {
+                        "en": "Dark",
+                        "de": "Dunkel",
+                        "es": "Oscuro",
+                        "fr": "Foncé",
+                        "pt-PT": "Escuro"
+                    }
+                }
+            ]
+        },
+        {
+            "type": "text",
+            "id": "title",
+            "label": {
+                "en": "Heading",
+                "de": "Überschrift",
+                "es": "Encabezado",
+                "fr": "Rubrique",
+                "pt-PT": "Título"
+            },
+            "default": {
+                "en": "Featured Collections",
+                "de": "Hervorgehobene Kollektionen",
+                "es": "Colecciones destacadas",
+                "fr": "Collections en vedette",
+                "pt-PT": "Coleções em Destaque"
+            }
+        }
+    ],
+    "blocks": [
+        {
+            "type": "featured_collection",
+            "name": {
+                "en": "Collection",
+                "de": "Kollektion",
+                "es": "Colección",
+                "fr": "Collection",
+                "pt-PT": "Coleção"
+            },
+            "settings": [
+                {
+                    "label": {
+                        "en": "Collection",
+                        "de": "Kollektion",
+                        "es": "Colección",
+                        "fr": "Collection",
+                        "pt-PT": "Coleção"
+                    },
+                    "id": "collection",
+                    "type": "collection"
+                },
+          			{
+            				"id": "collection_img",
+            				"type": "image_picker",
+                    "label": {
+                        "en": "Image (Optional)",
+                        "de": "Bild (Optional)",
+                        "es": "Imagen (Opcional)",
+                        "fr": "Image (Facultatif)",
+                        "pt-PT": "Imagem (Opcional)"
+                    },
+                    "info": {
+                        "en": "1600 x 1600px recommended",
+                        "de": "1600 x 1600 px empfohlen",
+                        "es": "Recomendado 1600 x 1600 px",
+                        "fr": "1600 x 1600 px recommandé",
+                        "pt-PT": "1600 x 1600px, recomendado"
+                    }
+          			},
+                {
+                    "type": "text",
+                    "id": "subheading",
+                    "label": {
+                        "en": "Subheading",
+                        "de": "Unterüberschrift",
+                        "es": "Subtítulo",
+                        "fr": "Sous-titre",
+                        "pt-PT": "Subtítulo"
+                    },
+                    "default": {
+                        "en": "Subheading",
+                        "de": "Unterüberschrift",
+                        "es": "Subtítulo",
+                        "fr": "Sous-titre",
+                        "pt-PT": "Subtítulo"
+                    }
+                },
+                {
+            				"type": "text",
+                    "id": "overlay-btn-text",
+                    "label": {
+                        "en": "Button text",
+                        "de": "Buttontext",
+                        "es": "Texto del botón",
+                        "fr": "Texte des boutons",
+                        "pt-PT": "Texto do botão"
+                    },
+            				"default": {
+                        "en": "Shop now",
+                        "de": "Jetzt einkaufen",
+                        "es": "Comprar ahora",
+                        "fr": "Achetez maintenant",
+                        "pt-PT": "Compre agora"
+                    }
+        			   },
+                 {
+                      "type": "checkbox",
+                      "id": "show-gradient-overlay",
+                      "default": true,
+                      "label": {
+                         "en": "Enable overlay",
+                         "de": "Überlagerungsgradienten aktivieren",
+                         "es": "Activar el gradiente de superposición",
+                         "fr": "Activer le dégradé de superposition",
+                         "pt-PT": "Ativar sobreposição de gradiente"
+                      }
+                 },
+                 {
+                     "type": "color",
+                     "id": "overlay_font_color",
+                     "label": {
+                        "en": "Overlay text color",
+                        "de": "Überlagerungstext-Farbe",
+                        "es": "Color del texto de superposición",
+                        "fr": "Couleur du texte de superposition",
+                        "pt-PT": "Cor da sobreposição de texto"
+                     },
+                     "default": "#ffffff"
+                },
+                {
+                     "type": "color",
+                     "id": "overlay_color",
+                     "label": {
+                        "en": "Overlay color",
+                        "de": "Überlagerungsfarbe",
+                        "es": "Color de superposición",
+                        "fr": "Couleur de superposition",
+                        "pt-PT": "Cora da sobreposição"
+                     },
+                     "default": "#323232"
+                }
+            ]
+        }
+    ],
+    "presets": [
+        {
+            "name": {
+                "en": "Inspiration Gallery"
+            },
+            "category": {
+                "en": "Collection",
+                "de": "Kollektion",
+                "es": "Colección",
+                "fr": "Collection",
+                "pt-PT": "Coleção"
+            },
+            "blocks": [
+                {
+                    "type": "featured_collection"
+                },
+                {
+                    "type": "featured_collection"
+                },
+                {
+                    "type": "featured_collection"
+                }
+            ]
+        }
+    ]
+}
+{% endschema %}
