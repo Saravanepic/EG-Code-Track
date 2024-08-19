@@ -72,3 +72,9 @@
     padding: 10px 30px!important;
 }
 }
+
+/* Fix - Artist page - square not rectangle - All artists images on Main Artist page to be sqaure, not rectangle. AM has advised is possible - to confirm & progress internally OR Genisys - TBC */
+.aspect-rect-collection, 
+.aspect-rect-collection .aspect-rect-collection--inner {
+    padding-top: 100%!important;
+}

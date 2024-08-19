@@ -1,4 +1,4 @@
-<div class="collection-main-body">
+<div class="collection-main-body collection_custom">
 
   {% if section.settings.banner_image %}
     <div class="list-collections--banner-image">
@@ -186,6 +186,10 @@
                 <div class="aspect-rect-collection">
                   <a href="{{ collection.url }}" class="grid__image aspect-rect-collection--inner" title="{{ 'collections.general.link_title' | t: title: collection_title }}">
                       <div class="faux-img">
+
+                        {% include 'responsive-image' with collection.image, alt: collection_title, class: 'list-collections--indiv-banner-image' %}
+
+                        {% comment %}
                       {% if collection.metafields.accentuate.optional_listing_image_replace != blank %}
                         {% assign header_image = collection.metafields.accentuate.optional_listing_image_replace[0].cloudinary_src | append: 'w_600'%}
                       {% elsif collection.metafields.accentuate.optional_header_replacement != blank %}
@@ -207,6 +211,9 @@
                         <img src="{{ collection.products[0].featured_image | img_url: 'large' }}" alt="{{ collection_title }}" class="list-collections--indiv-banner-image" />
                         -->
                       {% endif %}
+                      {% endcomment %}
+                        
+                        
                       </div>
                   </a>
                   </div>
