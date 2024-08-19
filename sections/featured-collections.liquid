@@ -105,15 +105,19 @@
                         {% assign header_image = blank %}
                       {% endif %}
                       {% if header_image != blank %}
-                        <img src="{{ header_image }}" alt="{{ collection_title }}" class="list-collections--indiv-banner-image" />
+                        <img src="{{ collection.image | img_url: 'large' }}" alt="{{ collection_title }}" class="list-collections--indiv-banner-image" />
+                        <!-- <img src="{{ header_image }}" alt="{{ collection_title }}" class="list-collections--indiv-banner-image" /> -->
 
+                        
                       {% elsif collection.image %}
                         {% include 'responsive-image' with collection.image, alt: collection_title, class: 'list-collections--indiv-banner-image' %}
+                        
                         <!--
                         <img src="{{ collection.image | img_url: 'large' }}" alt="{{ collection_title }}" class="list-collections--indiv-banner-image" />
                         -->
                       {% else %}
                         {% include 'responsive-image' with collection.products[0].featured_image, alt: collection_title, class: 'list-collections--indiv-banner-image' %}
+                        
                         <!--
                         <img src="{{ collection.products[0].featured_image | img_url: 'large' }}" alt="{{ collection_title }}" class="list-collections--indiv-banner-image" />
                         -->
