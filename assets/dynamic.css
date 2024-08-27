@@ -78,3 +78,9 @@
 .aspect-rect-collection .aspect-rect-collection--inner {
     padding-top: 100%!important;
 }
+
+/*  */
+.service-carousel-container{
+  max-width:100%!important;
+  min-width:100%!important;
+}

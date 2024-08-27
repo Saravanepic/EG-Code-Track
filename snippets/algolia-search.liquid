@@ -7,19 +7,21 @@
 
     <button id="algoliaSearchFiltersToggle" class="closed btn tw-mt-4 tw-mb-4 tw-py-2 tw-block tw-w-full md:tw-hidden">Show filters</button>
     <div id="algoliaSearchFilters" class="tw-hidden md:tw-block">
+      <div class="facet tw-pt-4" id="facet-price"></div>
       <!--<div class="facet tw-pt-4" id="facet-in-stock"></div>-->
       <!--<div class="facet tw-pt-4" id="facet-in-stock_old"></div>-->
       <!--<div class="facet tw-pt-4" id="facet-type"></div>-->
       <div class="facet tw-pt-4" id="facet-tags"> </div>
-      <!--<div class="facet tw-pt-4" id="facet-price"></div>-->
+      
       <!--<div class="facet tw-pt-4" id="facet-colour"></div>-->
-      <div class="facet tw-pt-4" id="facet-size"></div>
+      
       <!--<div class="facet tw-pt-4" id="facet-sale"></div>-->
       <!--<div class="facet tw-pt-4" id="facet-orientation"></div>-->
       <div class="facet tw-pt-4" id="facet-style"></div>
       <div class="facet tw-pt-4" id="facet-medium"></div>
       <div class="facet tw-pt-4" id="facet-subject"></div>
       <div class="facet tw-pt-4" id="facet-vendor"></div>
+      <div class="facet tw-pt-4" id="facet-size"></div>
       {% comment %} Artist {% endcomment %}
     </div>
   </div>
@@ -774,21 +776,39 @@ href="https://cdn.jsdelivr.net/npm/instantsearch.css@7.1.0/themes/algolia.css"
 // /////////////////////
 // Price with panel //
 // ///////////////////
+// https://www.algolia.com/doc/guides/building-search-ui/widgets/showcase/js/
 
-/**
   const pricePanel = instantsearch.widgets.panel({
     templates: {
       header: 'Price',
     },
-  })(instantsearch.widgets.rangeSlider);
+  })(instantsearch.widgets.numericMenu);
 
   asearch.addWidget(
     pricePanel({
       container: '#facet-price',
       attribute: 'price',
+      items: [
+        { label: 'All' },
+        { label: 'Under £500', end: 500 },
+        { label: ' £500 - £1000', start: 500, end: 1000 },
+        { label: ' £1000 - £2000', start: 1000, end: 2000 },
+        { label: ' £2000 - £5000', start: 2000, end: 5000 },
+        { label: ' £5000+', start: 5000 },
+      ],
+      // transformItems(items) {
+      //   return items.map(item => ({
+      //     ...item,
+      //     label: item.label.toUpperCase(),
+      //   }));
+      // },
+      
     })
   );
-  **/
+
+ 
+   
+  /****/
 
       asearch.start();
 
@@ -854,5 +874,22 @@ href="https://cdn.jsdelivr.net/npm/instantsearch.css@7.1.0/themes/algolia.css"
       }));
 
     })
+  </script>
+
+  <script>
+     // On click sort price by ascending
+  // document.addEventListener('DOMContentLoaded', function () {
+  //   const radioButtons = document.querySelectorAll('.ais-NumericMenu-label');
+  //   const dropdown = document.querySelector('.ais-SortBy-select');
+  
+  //   radioButtons.forEach(radio => {
+  //     radio.addEventListener('click', function () {
+  //       alert("clicked");
+  //       dropdown.value = 'shopify_products_price_asc';
+  //       const event = new Event('change'); // Trigger change event to reflect the new selection
+  //       dropdown.dispatchEvent(event);
+  //     });
+  //   });
+  // });
   </script>
 {% endraw %}

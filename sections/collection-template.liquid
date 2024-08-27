@@ -396,9 +396,12 @@
             <header class="section-header">
               <div class="sitewide--title-wrapper">
                 {% if settings.heading_style == 'zigzag' %}<span class="zig-zag-border"></span>{% endif %}
+
+                
                 <h2 id="collection-title" class="page--title">
-                {{ collection.title }} Artworks
+                {{ collection.title }} {% if collection.title == "Art Books" %} {% else %} Artworks {% endif %}
                 </h2>
+                
               </div>
             </header>
             {% comment %}{% render "artists-filters" %}{% endcomment %}
