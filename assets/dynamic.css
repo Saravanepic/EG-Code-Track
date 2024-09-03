@@ -164,14 +164,16 @@ ul.slick-dots {
   @media all and (max-width:767px){
     .slick-prev, .slick-next {
     top: 100%!important;
+              width: 40px !important;
+        height: 40px !important;
 }
 
 .slick-prev {
-    left: 0;
+    left: 0!important;
 }
 
 .slick-next {
-    right: 0;
+    right: 0!important;
 }
   }
 
@@ -202,4 +204,14 @@ ul.slick-dots {
     min-height: 165px;
     object-fit: cover;
 }
+
+    /* Country Selector */
+.locale-selectors__selector {
+    max-width: 80%!important;
+}
+label#country_code_label {
+    max-width: 100%;
+}
   }
+
+
