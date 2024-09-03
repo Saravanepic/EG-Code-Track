@@ -84,3 +84,122 @@
   max-width:100%!important;
   min-width:100%!important;
 }
+
+
+
+/*  New Collection SLider CSS */
+.slick-prev:before, .slick-next:before {
+    color: black!important;
+    font-size: 40px;
+}
+
+.slick-prev, .slick-next {
+    width: 45px;
+    height: 45px;
+}
+
+.collection_slider .homepage-product-grid-wrapper .grid__item {
+    margin-bottom: 20px!important;
+}
+
+.collection_slider .grid-uniform {
+    margin: 0!important;
+}  
+
+ul.slick-dots {
+    bottom: 0!important;
+}
+.slick-dots li {
+    margin: 0!important;
+}
+  .slick-prev, .slick-next {
+    z-index: 9!important;
+}
+  .slick-prev, .slick-next{
+  top:90%!important;
+  }
+
+  .slick-prev:before {
+    content: ""!important;
+    background-image: url(https://cdn.shopify.com/s/files/1/0268/6510/7057/files/Vector_10.png?v=1725252273);
+    background-repeat: no-repeat;
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-size: 30%;
+    background-position: 45% 50%;
+    border: 1px solid black;
+    border-radius: 50%;
+    transition: 0.5s ease;
+}
+
+.slick-prev:hover:before {
+    width: 45px;
+    height: 45px;
+}
+
+.slick-next:before {
+    content: ""!important;
+    background-image: url(https://cdn.shopify.com/s/files/1/0268/6510/7057/files/Vector_11.png?v=1725252272);
+    background-repeat: no-repeat;
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-size: 30%;
+    background-position: 55% 50%;
+    border: 1px solid black;
+    border-radius: 50%;
+    transition: 0.5s ease;
+}
+
+.slick-next:hover:before {
+    width: 45px;
+    height: 45px;
+}
+
+  @media all and (max-width:767px){
+    .slick-prev, .slick-next {
+    top: 100%!important;
+}
+
+.slick-prev {
+    left: 0;
+}
+
+.slick-next {
+    right: 0;
+}
+  }
+
+
+/* Brochure Box CSS */
+  .blog-grid-new .brochure_point .image_part img {
+    display: block;
+    height: 260px;
+    width: 100%;
+    object-fit: cover;
+}
+
+  @media all and (max-width:767px){
+    .brochure_box .blog-grid-new {
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+
+.brochure_box .blog-grid-new .brochure_point {
+    width: 48%;
+    min-width: 48%;
+    padding: 0;
+}
+
+.blog-grid-new .brochure_point .image_part img {
+    height: 165px;
+    min-height: 165px;
+    object-fit: cover;
+}
+  }

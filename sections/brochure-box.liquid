@@ -1,0 +1,113 @@
+<div class="section-{{ section.id }}-padding  {{ section.settings.classname }} brochure_wrapper homepage-sections-wrapper">
+  <div class="wrapper">
+
+    {% if section.settings.heading != blank %}
+    <div class="sitewide--title-wrapper" style="text-align: center;">
+    	<h2 class="homepage-sections--title">{{ section.settings.heading }}    </h2>
+    </div>
+    {% endif %}
+
+    <div class="blog-grid-new">
+        {%- for block in section.blocks -%}
+
+          <div class="brochure_point grid__item large--two-sixths small--one-half medium--one-third">
+            <div class="image_part">
+              <img src="{{ block.settings.image | image_url : master}}" class="img-fluid"/>
+            </div>
+            
+            <div class="text-center">
+
+              {% if block.settings.heading != blank %}
+              <div class="collection-item__content">
+                  <div class="collection-item__title">
+                  <div class="h2">
+                    {{ block.settings.heading }}
+                  </div>
+                </div>
+              </div>
+              {% endif %}
+              
+              
+              {% if block.settings.button_label_1 != blank and block.settings.button_link_1 != blank %}
+  				<div>
+  					<a href="{{ block.settings.button_link_1 }}" class="homepage-featured-box-btn" style="margin-top:0">
+  						{{ block.settings.button_label_1 }}
+  					</a>
+  				</div>
+              {% endif %}
+            </div>
+            
+          </div>
+        {%- endfor -%}
+    </div>
+      
+    </div>
+</div>
+
+
+
+{% schema %}
+  {
+  "name": "Brochure Box",
+  "class": "section shopify-section brochure_box",
+  "disabled_on": {
+    "groups": [
+      "header",
+      "footer"
+    ]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "classname",
+      "label": "Class Name"
+    },
+      {
+          "type": "textarea",
+          "id": "heading",
+          "label": "Heading"
+        }
+  ],
+     "blocks": [
+    {
+      "type": "brochure",
+      "name": "Brochure",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "default": "Sub Heading",
+          "label": "Heading"
+        },
+        {
+          "type": "text",
+          "id": "button_label_1",
+          "label": "Button label"
+        },
+        {
+          "type": "url",
+          "id": "button_link_1",
+          "label": "Button Link"
+        }
+        
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Brochure Box"
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

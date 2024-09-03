@@ -1,0 +1,108 @@
+<section class="max-w-6xl mx-auto px-4 md:px-8 py-5 md:py-16 xl:py-20">
+  <div class="grid sm:grid-cols-3 md:grid-cols-5 gap-8 lg:gap-16 xl:gap-40 items-center {% if section.settings.mobile_text_center %} text-center {% endif %}">
+    <div class="sm:col-span-2 md:col-span-3 order-2 {{ section.settings.content_alignment }}">
+      <div class="sitewide--title-wrapper">
+        <h1 class="page--title">
+          {{ section.settings.heading }}
+        </h1>
+      </div>
+      <div class="text-lg">
+        {{ section.settings.text }}
+      </div>
+      {% if section.settings.button_label != blank and section.settings.button_link != blank %}
+				<div>
+					<a href="{{ section.settings.button_link }}" class="homepage-featured-box-btn">
+						{{ section.settings.button_label }}
+					</a>
+				</div>
+    {% endif %}
+    </div>
+    <div class="order-1 {{ section.settings.vertical_alignment }} md:col-span-2">
+    {% include 'responsive-image' with section.settings.cms_image %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "New CMS Title Section",
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Heading"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Paragraph",
+      "default": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>"
+    },
+    {
+      "type": "image_picker",
+      "id": "cms_image",
+      "label": "Content Image"
+    },
+    {
+      "type": "select",
+      "id": "vertical_alignment",
+      "label": "Vertical alignment",
+      "options": [
+        {
+          "value": "sm:order-3",
+          "label": "Image on Right"
+        },
+        {
+          "value": "sm:order-1",
+          "label": "Image on Left"
+        }
+      ],
+      "default": "sm:order-3"
+    },
+     {
+      "type": "select",
+      "id": "content_alignment",
+      "label": "Content alignment",
+      "options": [
+        {
+          "value": "text-left",
+          "label": "Left"
+        },
+        {
+          "value": "text-center",
+          "label": "Middle"
+        },
+        {
+          "value": "text-right",
+          "label": "Right"
+        }
+        
+      ],
+      "default": "text-left"
+    },
+    {
+            "type": "text",
+            "id": "button_label",
+            "label": "Button label"
+        },
+        {
+            "type": "url",
+            "id": "button_link",
+            "label": "Button link"
+        },
+      {
+          "type":"checkbox",
+          "id": "mobile_text_center",
+          "default": false,
+          "label": "Mobile Text Center"
+        }
+
+  ],
+  "presets": [
+    {
+      "name": "New CMS Title Section"
+    }
+  ]
+}
+{% endschema %}

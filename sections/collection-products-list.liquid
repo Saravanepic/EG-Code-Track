@@ -11,6 +11,17 @@
 
 {%- assign items-per-row = section.settings.items-per-row -%}
 
+{% if section.settings.auto_align_center_dektop %}
+<style>
+  .gridlayout.desktop-center {
+    justify-content: center;
+    display: flex;
+    flex-wrap: wrap;
+}  
+</style>
+{% endif %}
+
+      
   <div class="homepage-collections-background">
 
     <div class="wrapper show-on-scroll section--{{ section.id }}">
@@ -25,10 +36,17 @@
 
 
     	      {% for block in section.blocks %}
-                {% assign mod = forloop.index0 | modulo: 3 %}
+
+                
+                {% if section.settings.break_more_than_3 %} 
+                  {% assign mod = forloop.index0 | modulo: 50 %}
+                {% else %} 
+                  {% assign mod = forloop.index0 | modulo: 3 %}  
+                {% endif %}
+                
 
                 {% if mod == 0 %}
-                <div class="gridlayout">
+                <div class="gridlayout {% if section.settings.auto_align_center_dektop %} desktop-center {% else %}  desktop-normal {% endif %}">
                 {% endif %}
 
               {% case block.type %}
@@ -53,7 +71,7 @@
                     {% assign sold_out = false %}
                 {% endif %}
 
-                <div class="grid__item small--one-whole large--one-third">
+                <div class="grid__item {{ section.settings.mobile_layout }}  {% if section.settings.desktop_two_col %} large--one-half {% else %}  large--one-third {% endif %}">
                     {% include 'grid-view-item', with show_vendor: true %}
                 </div>
 
@@ -72,7 +90,7 @@
               {% capture collection_title %}{{ 'homepage.onboarding.collection_title' | t }}{% endcapture %}
             {% endif %}
 
-                <div class="grid__item grid__item small--one-whole large--one-third" data-initial="{{ collection_title | slice: 0 }}">
+                <div class="grid__item grid__item {{ section.settings.mobile_layout }}  {% if section.settings.desktop_two_col %} large--one-half {% else %}  large--one-third {% endif %}" data-initial="{{ collection_title | slice: 0 }}">
                 <div class="grid-view-item">
                   <a href="{{ collection.url }}" class="grid__image" title="{{ 'collections.general.link_title' | t: title: collection_title }}">
                   {% if block.settings.collection_img %}
@@ -93,7 +111,7 @@
 
                 {% capture link_title %}{{ block.settings.subheading | escape }}{% endcapture %}
 
-                <div class="grid__item grid__item small--one-whole large--one-third" data-initial="{{ collection_title | slice: 0 }}">
+                <div class="grid__item grid__item {{ section.settings.mobile_layout }} {% if section.settings.desktop_two_col %} large--one-half {% else %}  large--one-third {% endif %}" data-initial="{{ collection_title | slice: 0 }}">
                 <div class="grid-view-item">
                   <a href="{{ collection.url }}" class="grid__image">
                     <img src="{{ block.settings.link_img | img_url: 'large' }}" alt="{{ collection_title }}" class="list-collections--indiv-banner-image" />
@@ -104,9 +122,15 @@
 
             {% endcase %}
 
-                {% if mod == 2 %}
-                </div>
+
+                {% if section.settings.break_more_than_3 %} 
+                  
+                {% else %} 
+                  {% if mod == 2 %}
+                    </div>
+                  {% endif %}
                 {% endif %}
+                
 
     	      {% endfor %}
     	  </div>
@@ -136,7 +160,8 @@
     },
     "class": "featured-collections-wrapper",
     "max_blocks": 6,
-    "settings": [{
+    "settings": [
+      {
             "type": "select",
             "id": "colors",
             "label": {
@@ -205,8 +230,49 @@
                 "es": "Colecciones destacadas",
                 "fr": "Collections en vedette",
                 "pt-PT": "Coleções em Destaque"
+            },
+        },
+         {
+          "type":"checkbox",
+          "id": "break_more_than_3",
+          "default": false,
+          "label": "Remove break After 3 Col",
+           "info":"Use this if you dont want to break the columns after every 3"
+        },
+        {
+          "type":"checkbox",
+          "id": "desktop_two_col",
+          "default": false,
+          "label": "Desktop 2 Col Layout"
+        },
+         {
+          "type": "checkbox",
+          "id": "auto_align_center_dektop",
+          "default": false,
+          "label": "Desktop Layout Column Center",
+           "info":"Use if odd columns are there"
+        },
+       {
+          "type": "select",
+          "id": "mobile_layout",
+          "options": [
+            {
+              "value": "small--one-whole",
+              "label": "Mobile 1 per Col"
+            },
+            {
+              "value": "small--one-half",
+              "label": "Mobile 2 per Col"
+            },
+            {
+              "value": "small--one-third",
+              "label": "Mobile 3 per Col"
             }
+          ],
+          "default": "small--one-whole",
+          "label": "Mobile Sizes"
         }
+        
     ],
     "blocks": [
         {
