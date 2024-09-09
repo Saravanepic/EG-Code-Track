@@ -144,7 +144,7 @@ $headingStyleColor: #9e9e9e;
 
 // Color schemes
 $colorSchemeLightBackground: #f1f1f1;
-$colorSchemeLightText: #212121;
+$colorSchemeLightText: #000000;
 
 $colorSchemeFeatureBackground: #e3e5e7;
 $colorSchemeFeatureText: #212121;
@@ -9166,7 +9166,7 @@ form#contact_form .btn, .btn--secondary,
       color: $linkColor;
     }
     .homepage-sections-wrapper--light & {
-      color: #212121;
+      color: #000000;
     }
     .homepage-sections-wrapper--accent & {
       color: #212121;
@@ -10621,7 +10621,7 @@ $item-max-width: 160px;
 
   &.homepage-sections-wrapper--light {
     #newsletter_text{
-      border-color: rgba(33, 33, 33, 0.6);
+      border-color: rgba(0, 0, 0, 0.6);
     }
     #newsletter_submit,
     #newsletter_text,
