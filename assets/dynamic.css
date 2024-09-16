@@ -1,9 +1,9 @@
 /* .home-review-sec .feefowidget-carousel-single-slide-content{
-	text-align:center;
+text-align:center;
 }
- */
+*/
 .home-review-sec .feefowidget-carousel-summary {
-	text-align:center;
+    text-align:center;
 }
 
 .footer-rev-img {margin-top:11px;display:block;}
@@ -11,66 +11,66 @@
 
 /* Mobile Chnages */
 @media all and (max-width:767px){
-  .section--1653400675f0121189 .inspiration-container {
-    grid-template-rows: auto;
-  }
-  
-  .section--1653400675f0121189 .inspiration-box {
-      grid-area: auto;
-  }
-  
-  .section--1653400675f0121189  .inspiration-box .grid-image {
-      max-height: 200px;
-  }
-
-
-  .homepage-sections-wrapper .blog-grid-new {
-    display: flex;
-    flex-wrap: nowrap;
-    overflow: scroll;
-  }
-  
-  .homepage-sections-wrapper .blog-grid-new .grid__item {
-      width: 80%;
-      min-width: 80%;
-  }
-
-  .site-footer .gridlayout {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-  }
-  
-  .site-footer .gridlayout .grid__item:nth-child(1),.gridlayout .grid__item:nth-child(4) {
-      grid-column: 1/-1;
-  }
-  
-  .site-footer .gridlayout .grid__item:nth-child(4) ul {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-  }
-
-  .product-single .product-details-product-title {
-    font-size: 20px;
-    line-height: 26px;
-  }
-  
-  .product-single .product-details-wrapper {
-      padding: 20px 0;
-  }
-
-  .payment-icons svg {
-    width: 40px;
-    height: 40px;
-  }
-
-  /* Menu CSS */
-  ul.mobile-nav__sublist_artists .mobile-nav__has-sublist.mobile-nav--expanded + ul.mobile-nav__sublist {
-    max-height: 270px;
-    overflow: scroll;
-}
-  .mobile-nav__item a {
-    padding: 10px 30px!important;
-}
+    .section--1653400675f0121189 .inspiration-container {
+        grid-template-rows: auto;
+    }
+    
+    .section--1653400675f0121189 .inspiration-box {
+        grid-area: auto;
+    }
+    
+    .section--1653400675f0121189  .inspiration-box .grid-image {
+        max-height: 200px;
+    }
+    
+    
+    .homepage-sections-wrapper .blog-grid-new {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow: scroll;
+    }
+    
+    .homepage-sections-wrapper .blog-grid-new .grid__item {
+        width: 80%;
+        min-width: 80%;
+    }
+    
+    .site-footer .gridlayout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .site-footer .gridlayout .grid__item:nth-child(1),.gridlayout .grid__item:nth-child(4) {
+        grid-column: 1/-1;
+    }
+    
+    .site-footer .gridlayout .grid__item:nth-child(4) ul {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .product-single .product-details-product-title {
+        font-size: 20px;
+        line-height: 26px;
+    }
+    
+    .product-single .product-details-wrapper {
+        padding: 20px 0;
+    }
+    
+    .payment-icons svg {
+        width: 40px;
+        height: 40px;
+    }
+    
+    /* Menu CSS */
+    ul.mobile-nav__sublist_artists .mobile-nav__has-sublist.mobile-nav--expanded + ul.mobile-nav__sublist {
+        max-height: 270px;
+        overflow: scroll;
+    }
+    .mobile-nav__item a {
+        padding: 10px 30px!important;
+    }
 }
 
 /* Fix - Artist page - square not rectangle - All artists images on Main Artist page to be sqaure, not rectangle. AM has advised is possible - to confirm & progress internally OR Genisys - TBC */
@@ -81,8 +81,8 @@
 
 /*  */
 .service-carousel-container{
-  max-width:100%!important;
-  min-width:100%!important;
+    max-width:100%!important;
+    min-width:100%!important;
 }
 
 
@@ -112,14 +112,14 @@ ul.slick-dots {
 .slick-dots li {
     margin: 0!important;
 }
-  .slick-prev, .slick-next {
+.slick-prev, .slick-next {
     z-index: 9!important;
 }
-  .slick-prev, .slick-next{
-  top:90%!important;
-  }
+.slick-prev, .slick-next{
+    top:90%!important;
+}
 
-  .slick-prev:before {
+.slick-prev:before {
     content: ""!important;
     background-image: url(https://cdn.shopify.com/s/files/1/0268/6510/7057/files/Vector_10.png?v=1725252273);
     background-repeat: no-repeat;
@@ -161,57 +161,124 @@ ul.slick-dots {
     height: 45px;
 }
 
-  @media all and (max-width:767px){
+@media all and (max-width:767px){
     .slick-prev, .slick-next {
-    top: 100%!important;
-              width: 40px !important;
+        top: 100%!important;
+        width: 40px !important;
         height: 40px !important;
+    }
+    
+    .slick-prev {
+        left: 0!important;
+    }
+    
+    .slick-next {
+        right: 0!important;
+    }
 }
-
-.slick-prev {
-    left: 0!important;
-}
-
-.slick-next {
-    right: 0!important;
-}
-  }
 
 
 /* Brochure Box CSS */
-  .blog-grid-new .brochure_point .image_part img {
+.blog-grid-new .brochure_point .image_part img {
     display: block;
     height: 260px;
     width: 100%;
     object-fit: cover;
 }
 
-  @media all and (max-width:767px){
+@media all and (max-width:767px){
     .brochure_box .blog-grid-new {
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
-}
-
-.brochure_box .blog-grid-new .brochure_point {
-    width: 48%;
-    min-width: 48%;
-    padding: 0;
-}
-
-.blog-grid-new .brochure_point .image_part img {
-    height: 165px;
-    min-height: 165px;
-    object-fit: cover;
-}
-
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+    }
+    
+    .brochure_box .blog-grid-new .brochure_point {
+        width: 48%;
+        min-width: 48%;
+        padding: 0;
+    }
+    
+    .blog-grid-new .brochure_point .image_part img {
+        height: 165px;
+        min-height: 165px;
+        object-fit: cover;
+    }
+    
     /* Country Selector */
-body .locale-selectors__selector {
-    max-width: 80%!important;
+    body .locale-selectors__selector {
+        max-width: 80%!important;
+    }
+    body label#country_code_label {
+        max-width: 100%;
+    }
 }
-body label#country_code_label {
-    max-width: 100%;
-}
-  }
 
 
+/* Collection Template Read More Button*/
+.text-block {
+    position: relative;
+    width: 100%;
+}
+
+#text-content {
+    display: -webkit-box;
+    -webkit-line-clamp: 5; /* Limit the text to 3 lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 10px;
+}
+
+
+
+#read-more:focus {
+    outline: none;
+}
+
+.btn-new {
+    font-weight: 200;
+    text-transform: uppercase;
+    white-space: nowrap;
+    margin: auto;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.btn-new::before {
+    content: "";
+    width: 40%;
+    height: 1px;
+    background: #bcbcbc;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+}
+
+.btn-new::after {
+    content: "";
+    width: 40%;
+    height: 1px;
+    background: #bcbcbc;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+}
+@media all and (max-width:767px){
+    .btn-new::before,
+    .btn-new::after{
+        width: 35%;
+    }
+}
+
+
+/* Support Visibility for new sectionew- */
+.shopify-section .homepage-sections-wrapper .show-on-scroll {
+    visibility: visible;
+}

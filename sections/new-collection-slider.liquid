@@ -173,6 +173,17 @@
 </div>
 
 
+      
+{% case section.settings.colors %}
+  {% when 'white' %}
+    </div>
+  {% when 'light' %}
+  </div>
+  {% when 'accent' %}
+    </div>
+  {% when 'dark' %}
+    </div>
+{% endcase %}   
 
 <style>
 @media screen and (min-width: 768px) {

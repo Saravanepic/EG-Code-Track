@@ -170,68 +170,7 @@
                     </div>
                       <button id="read-more" class="btn-new">Read More</button>
 
-                    <style>
-                      .text-block {
-                          position: relative;
-                          width: 100%;
-                        }
-                        
-                        #text-content {
-                          display: -webkit-box;
-                          -webkit-line-clamp: 3; /* Limit the text to 3 lines */
-                          -webkit-box-orient: vertical;
-                          overflow: hidden;
-                          text-overflow: ellipsis;
-                          margin-bottom: 10px;
-                        }
-                        
-                      
-                        
-                        #read-more:focus {
-                          outline: none;
-                        }
 
-                      .btn-new {
-                            font-weight: 200;
-                            text-transform: uppercase;
-                            white-space: nowrap;
-                            margin: auto;
-                            position: relative;
-                            display: flex;
-                            justify-content: center;
-                            width: 100%;
-                        }
-                        
-                        .btn-new::before {
-                            content: "";
-                            width: 40%;
-                            height: 1px;
-                            background: #bcbcbc;
-                            position: absolute;
-                            left: 0;
-                            top: 50%;
-                            transform: translateY(-50%);
-                            z-index: 1;
-                        }
-                        
-                        .btn-new::after {
-                            content: "";
-                            width: 40%;
-                            height: 1px;
-                            background: #bcbcbc;
-                            position: absolute;
-                            right: 0;
-                            top: 50%;
-                            transform: translateY(-50%);
-                            z-index: 1;
-                        }
-                        @media all and (max-width:767px){
-                          .btn-new::before,
-                          .btn-new::after{
-                            width: 35%;
-                          }
-                        }
-                      </style>
 
                       <script>
                         const readMoreBtn = document.getElementById("read-more");
