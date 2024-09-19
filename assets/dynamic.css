@@ -191,6 +191,7 @@ ul.slick-dots {
         flex-wrap: wrap;
         gap: 10px;
         justify-content: center;
+        margin:auto;
     }
     
     .brochure_box .blog-grid-new .brochure_point {
