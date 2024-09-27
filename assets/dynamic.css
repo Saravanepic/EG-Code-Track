@@ -100,7 +100,18 @@ text-align:center;
 
 .collection_slider .homepage-product-grid-wrapper .grid__item {
     margin-bottom: 20px!important;
+    padding-left:0!important;
 }
+
+ 
+.collection_slider .homepage-product-grid-wrapper .slick-slide {
+      margin: 0 20px;
+}
+
+  
+  .collection_slider .homepage-product-grid-wrapper .slick-list {
+      margin: 0 -20px;
+  } 
 
 .collection_slider .grid-uniform {
     margin: 0!important;
